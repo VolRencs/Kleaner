@@ -14,6 +14,8 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 include(KDEInstallDirs)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
+include(CTest)
+
 # Single source of truth for the application identity.
 # The fork will be renamed later; changing these two variables is enough.
 set(STACER_APP_ID "fr.quentium.stacer" CACHE STRING "Application/DBus/policy ID")

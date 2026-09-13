@@ -28,3 +28,11 @@ target_link_libraries(stacer-core
         KF6::AuthCore
         KF6::KIOCore
 )
+
+if(BUILD_TESTING)
+    find_package(Qt6 6.11 REQUIRED COMPONENTS Test)
+
+    add_executable(stacer-core-tests tests/core_test.cpp)
+    target_link_libraries(stacer-core-tests PRIVATE stacer-core Qt6::Test)
+    add_test(NAME stacer-core-tests COMMAND stacer-core-tests)
+endif()
