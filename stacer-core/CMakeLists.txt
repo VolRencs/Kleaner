@@ -1,19 +1,30 @@
-cmake_minimum_required(VERSION 3.16)
-project(stacer-core)
+find_package(Qt6 6.11 REQUIRED COMPONENTS Concurrent)
+find_package(KF6 6.30 REQUIRED COMPONENTS Auth KIO)
 
-include_directories(
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Info"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Tools"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Utils"
+add_library(stacer-core STATIC
+    Info/cpu_info.cpp
+    Info/disk_info.cpp
+    Info/memory_info.cpp
+    Info/network_info.cpp
+    Info/process_info.cpp
+    Info/system_info.cpp
+    Services/service_backend.cpp
+    Startup/startup_apps.cpp
+    Cleaner/cleaner.cpp
+    Utils/format.cpp
+    Utils/helpers.cpp
+    Utils/hosts.cpp
+    Utils/procfs.cpp
 )
 
-file(GLOB_RECURSE ${PROJECT_NAME}_srcs "${CMAKE_CURRENT_SOURCE_DIR}/**.cpp")
+target_include_directories(stacer-core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_definitions(-DSTACERCORE_LIBRARY)
-
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network REQUIRED)
-
-add_library(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_srcs})
-target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
+target_link_libraries(stacer-core
+    PUBLIC
+        Qt6::Core
+        Qt6::DBus
+        Qt6::Concurrent
+        KF6::CoreAddons
+        KF6::AuthCore
+        KF6::KIOCore
+)

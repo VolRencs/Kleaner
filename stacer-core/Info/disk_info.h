@@ -1,39 +1,42 @@
-#ifndef DISKINFO_H
-#define DISKINFO_H
+#pragma once
 
-#include <QSet>
-#include <QStorageInfo>
+#include <QElapsedTimer>
+#include <QObject>
+#include <QVariantList>
 
-#include "Utils/command_util.h"
-#include "Utils/file_util.h"
-#include "stacer-core_global.h"
-
-#define PROC_MOUNTS "/proc/mounts"
-
-class Disk;
-
-class STACERCORESHARED_EXPORT DiskInfo
+class DiskInfo : public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QVariantList disks READ disks NOTIFY changed)
+    Q_PROPERTY(qulonglong readBytes READ readBytes NOTIFY changed)
+    Q_PROPERTY(qulonglong writeBytes READ writeBytes NOTIFY changed)
+    Q_PROPERTY(double readRate READ readRate NOTIFY changed)
+    Q_PROPERTY(double writeRate READ writeRate NOTIFY changed)
+
   public:
-    QList<Disk *> getDisks() const;
-    void updateDiskInfo();
-    QList<quint64> getDiskIO() const;
-    QStringList getDiskNames() const;
-    QList<QString> fileSystemTypes();
-    QList<QString> devices();
-    ~DiskInfo();
+    explicit DiskInfo(QObject *parent = nullptr);
+
+    QVariantList disks() const;
+    qulonglong readBytes() const;
+    qulonglong writeBytes() const;
+    double readRate() const;
+    double writeRate() const;
+
+    Q_INVOKABLE void update();
+
+  Q_SIGNALS:
+    void changed();
 
   private:
-    QList<Disk *> disks;
-};
+    QVariantList m_disks;
 
-struct Disk {
-    QString name;
-    QString device;
-    QString fileSystemType;
-    quint64 size;
-    quint64 free;
-    quint64 used;
-};
+    qulonglong m_readBytes = 0;
+    qulonglong m_writeBytes = 0;
+    double m_readRate = 0.0;
+    double m_writeRate = 0.0;
 
-#endif // DISKINFO_H
+    qulonglong m_previousRead = 0;
+    qulonglong m_previousWrite = 0;
+    bool m_hasBaseline = false;
+    QElapsedTimer m_elapsed;
+};

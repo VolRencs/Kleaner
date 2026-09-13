@@ -1,71 +1,87 @@
 #include "memory_info.h"
 
-#include <QRegularExpression>
+#include "Utils/procfs.h"
 
-MemoryInfo::MemoryInfo() :
-    memTotal(0),
-    memFree(0),
-    memUsed(0)
+#include <QHash>
+
+void MemoryInfo::update()
+{
+    const QList<QByteArray> lines = Procfs::lines(QStringLiteral("/proc/meminfo"));
+
+    QHash<QString, qulonglong> values;
+    values.reserve(48);
+
+    for (const QByteArray &line : lines) {
+        const int separator = line.indexOf(':');
+        if (separator < 0) {
+            continue;
+        }
+        const QString key = QString::fromLatin1(line.left(separator));
+        const QList<QByteArray> fields = line.mid(separator + 1).simplified().split(' ');
+        if (fields.isEmpty()) {
+            continue;
+        }
+        bool ok = false;
+        const qulonglong kib = fields.at(0).toULongLong(&ok);
+        if (ok) {
+            values.insert(key, kib * 1024ULL);
+        }
+    }
+
+    m_total = values.value(QStringLiteral("MemTotal"));
+    const qulonglong freeMemory = values.value(QStringLiteral("MemFree"));
+
+    m_available = values.value(QStringLiteral("MemAvailable"));
+    if (m_available == 0) {
+        const qulonglong buffers = values.value(QStringLiteral("Buffers"));
+        const qulonglong cached = values.value(QStringLiteral("Cached")) + values.value(QStringLiteral("SReclaimable")) - values.value(QStringLiteral("Shmem"));
+        m_available = freeMemory + buffers + cached;
+    }
+
+    m_used = m_total > m_available ? m_total - m_available : 0;
+    m_swapTotal = values.value(QStringLiteral("SwapTotal"));
+    const qulonglong swapFree = values.value(QStringLiteral("SwapFree"));
+    m_swapUsed = m_swapTotal > swapFree ? m_swapTotal - swapFree : 0;
+
+    Q_EMIT changed();
+}
+
+MemoryInfo::MemoryInfo(QObject *parent) :
+    QObject(parent)
 {
 }
 
-/* https://access.redhat.com/solutions/406773
- *
- * https://stackoverflow.com/questions/41224738/
- *   Total used memory = MemTotal - MemFree
- *   Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
- *   Buffers (blue) = Buffers
- *   Cached memory (yellow) = Cached + SReclaimable - Shmem
- *   Swap = SwapTotal - SwapFree
- */
-void MemoryInfo::updateMemoryInfo()
+qulonglong MemoryInfo::total() const
 {
-    QStringList lines = FileUtil::readListFromFile(PROC_MEMINFO)
-                            .filter(QRegularExpression("^MemTotal|^MemFree|^Buffers|^Cached|^SwapTotal|^SwapFree|^Shmem|^SReclaimable"));
-    QRegularExpression sep("\\s+");
-
-#define getValue(l) lines.at(l).split(sep).at(1).toLong() << 10;
-    memTotal = getValue(0);
-    memFree = getValue(1);
-    buffers = getValue(2);
-    cached = getValue(3);
-    swapTotal = getValue(4);
-    swapFree = getValue(5);
-    shmem = getValue(6);
-    sreclaimable = getValue(7);
-#undef getValue
-
-    cached = (cached + sreclaimable - shmem);
-    memUsed = (memTotal - (memFree + buffers + cached));
-    swapUsed = (swapTotal - swapFree);
+    return m_total;
 }
 
-quint64 MemoryInfo::getSwapUsed() const
+qulonglong MemoryInfo::used() const
 {
-    return swapUsed;
+    return m_used;
 }
 
-quint64 MemoryInfo::getSwapFree() const
+qulonglong MemoryInfo::available() const
 {
-    return swapFree;
+    return m_available;
 }
 
-quint64 MemoryInfo::getSwapTotal() const
+qulonglong MemoryInfo::swapTotal() const
 {
-    return swapTotal;
+    return m_swapTotal;
 }
 
-quint64 MemoryInfo::getMemUsed() const
+qulonglong MemoryInfo::swapUsed() const
 {
-    return memUsed;
+    return m_swapUsed;
 }
 
-quint64 MemoryInfo::getMemFree() const
+double MemoryInfo::usagePercent() const
 {
-    return memFree;
+    return m_total > 0 ? 100.0 * static_cast<double>(m_used) / static_cast<double>(m_total) : 0.0;
 }
 
-quint64 MemoryInfo::getMemTotal() const
+double MemoryInfo::swapPercent() const
 {
-    return memTotal;
+    return m_swapTotal > 0 ? 100.0 * static_cast<double>(m_swapUsed) / static_cast<double>(m_swapTotal) : 0.0;
 }

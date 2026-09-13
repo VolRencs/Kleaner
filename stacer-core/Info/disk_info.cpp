@@ -1,101 +1,146 @@
 #include "disk_info.h"
 
-#include <QRegularExpression>
+#include "Utils/procfs.h"
 
-QList<Disk *> DiskInfo::getDisks() const
+#include <QDir>
+#include <QFileInfo>
+#include <QSet>
+#include <QStorageInfo>
+
+namespace
 {
-    return disks;
+bool isPseudoFileSystem(const QByteArray &fsType)
+{
+    static const QSet<QByteArray> pseudoFileSystems = {
+        "tmpfs", "devtmpfs", "devpts", "proc", "sysfs", "cgroup", "cgroup2", "securityfs", "debugfs",
+        "tracefs", "configfs", "fusectl", "bpf", "autofs", "mqueue", "hugetlbfs", "ramfs", "pstore",
+        "efivarfs", "overlay", "squashfs", "nsfs", "binfmt_misc", "rpc_pipefs", "fuse.portal",
+        "fuse.gvfsd-fuse"
+    };
+    return pseudoFileSystems.contains(fsType);
 }
 
-void DiskInfo::updateDiskInfo()
+bool isPhysicalBlockDevice(const QString &name)
 {
-    qDeleteAll(disks);
-    disks.clear();
-
-    QList<QStorageInfo> storageInfoList = QStorageInfo::mountedVolumes();
-
-    for (const QStorageInfo &info : storageInfoList) {
-        if (info.isValid()) {
-            Disk *disk = new Disk();
-            disk->name = info.displayName();
-            disk->device = info.device();
-            disk->size = info.bytesTotal();
-            disk->used = info.bytesTotal() - info.bytesFree();
-            disk->free = info.bytesFree();
-            disk->fileSystemType = info.fileSystemType();
-
-            disks << disk;
+    static const QStringList prefixes = {
+        QStringLiteral("loop"), QStringLiteral("ram"), QStringLiteral("zram"),
+        QStringLiteral("sr"), QStringLiteral("fd"), QStringLiteral("dm-")
+    };
+    for (const QString &prefix : prefixes) {
+        if (name.startsWith(prefix)) {
+            return false;
         }
     }
+    return true;
+}
 }
 
-QList<QString> DiskInfo::devices()
+DiskInfo::DiskInfo(QObject *parent) :
+    QObject(parent)
 {
-    QSet<QString> set;
-    for (const QStorageInfo &info : QStorageInfo::mountedVolumes()) {
-        if (info.isValid())
-            set.insert(info.device());
+}
+
+QVariantList DiskInfo::disks() const
+{
+    return m_disks;
+}
+
+qulonglong DiskInfo::readBytes() const
+{
+    return m_readBytes;
+}
+
+qulonglong DiskInfo::writeBytes() const
+{
+    return m_writeBytes;
+}
+
+double DiskInfo::readRate() const
+{
+    return m_readRate;
+}
+
+double DiskInfo::writeRate() const
+{
+    return m_writeRate;
+}
+
+void DiskInfo::update()
+{
+    // Mounted file systems
+    QVariantList diskList;
+
+    const QList<QStorageInfo> volumes = QStorageInfo::mountedVolumes();
+    for (const QStorageInfo &volume : volumes) {
+        if (!volume.isValid() || !volume.isReady() || volume.bytesTotal() <= 0) {
+            continue;
+        }
+        if (volume.device().isEmpty() || isPseudoFileSystem(volume.fileSystemType())) {
+            continue;
+        }
+
+        const QString mountPoint = volume.rootPath();
+        const QString name = mountPoint == QLatin1String("/") ? QStringLiteral("root") : QFileInfo(mountPoint).fileName();
+
+        const qulonglong total = static_cast<qulonglong>(volume.bytesTotal());
+        const qulonglong free = static_cast<qulonglong>(volume.bytesFree());
+        const qulonglong used = total > free ? total - free : 0;
+
+        diskList.append(QVariantMap {
+            { QStringLiteral("name"), name },
+            { QStringLiteral("mountPoint"), mountPoint },
+            { QStringLiteral("device"), QString::fromUtf8(volume.device()) },
+            { QStringLiteral("fileSystemType"), QString::fromUtf8(volume.fileSystemType()) },
+            { QStringLiteral("total"), total },
+            { QStringLiteral("used"), used },
+            { QStringLiteral("free"), free },
+            { QStringLiteral("percent"), total > 0 ? 100.0 * static_cast<double>(used) / static_cast<double>(total) : 0.0 },
+        });
     }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return QList<QString>(set.cbegin(), set.cend());
-#else
-    return set.values();
-#endif
-}
+    m_disks = diskList;
 
-DiskInfo::~DiskInfo()
-{
-    qDeleteAll(disks);
-}
+    // Block device I/O
+    qulonglong sectorsRead = 0;
+    qulonglong sectorsWritten = 0;
 
-QList<QString> DiskInfo::fileSystemTypes()
-{
-    QSet<QString> set;
-    for (const QStorageInfo &info : QStorageInfo::mountedVolumes()) {
-        if (info.isValid())
-            set.insert(info.fileSystemType());
+    const QDir blockDir(QStringLiteral("/sys/block"));
+    const QStringList devices = blockDir.entryList(QDir::Dirs | QDir::NoSymLinks);
+    for (const QString &device : devices) {
+        if (!isPhysicalBlockDevice(device)) {
+            continue;
+        }
+        const QList<QByteArray> fields = Procfs::read(blockDir.filePath(device + QStringLiteral("/stat"))).simplified().split(' ');
+        if (fields.size() < 7) {
+            continue;
+        }
+        sectorsRead += fields.at(2).toULongLong();
+        sectorsWritten += fields.at(6).toULongLong();
     }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return QList<QString>(set.cbegin(), set.cend());
-#else
-    return set.values();
-#endif
-}
+    const qulonglong read = sectorsRead * 512ULL;
+    const qulonglong write = sectorsWritten * 512ULL;
 
-QList<quint64> DiskInfo::getDiskIO() const
-{
-    static QStringList diskNames = getDiskNames();
+    m_readBytes = read;
+    m_writeBytes = write;
 
-    QList<quint64> diskReadWrite;
-    quint64 totalRead = 0;
-    quint64 totalWrite = 0;
-
-    for (const QString &diskName : diskNames) {
-        QStringList diskStat = FileUtil::readStringFromFile(QString("/sys/block/%1/stat").arg(diskName))
-                                   .trimmed()
-                                   .split(QRegularExpression("\\s+"));
-
-        if (diskStat.count() > 7) {
-            totalRead = totalRead + (diskStat.at(2).toLongLong() * 512);
-            totalWrite = totalWrite + (diskStat.at(6).toLongLong() * 512);
+    if (!m_hasBaseline || read < m_previousRead || write < m_previousWrite) {
+        m_previousRead = read;
+        m_previousWrite = write;
+        m_hasBaseline = true;
+        m_elapsed.restart();
+        m_readRate = 0.0;
+        m_writeRate = 0.0;
+    } else {
+        const qint64 elapsedMs = m_elapsed.isValid() ? m_elapsed.elapsed() : 0;
+        if (elapsedMs > 200) {
+            m_readRate = static_cast<double>(read - m_previousRead) * 1000.0 / static_cast<double>(elapsedMs);
+            m_writeRate = static_cast<double>(write - m_previousWrite) * 1000.0 / static_cast<double>(elapsedMs);
+            m_previousRead = read;
+            m_previousWrite = write;
+            m_elapsed.restart();
         }
     }
-    diskReadWrite.append(totalRead);
-    diskReadWrite.append(totalWrite);
 
-    return diskReadWrite;
-}
-
-QStringList DiskInfo::getDiskNames() const
-{
-    QDir blocks("/sys/block");
-    QStringList disks;
-    for (const QFileInfo &entryInfo : blocks.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot)) {
-        if (QFile::exists(QString("%1/device").arg(entryInfo.absoluteFilePath()))) {
-            disks.append(entryInfo.baseName());
-        }
-    }
-    return disks;
+    Q_EMIT changed();
 }

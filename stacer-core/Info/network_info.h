@@ -1,28 +1,47 @@
-#ifndef NETWORK_INFO_H
-#define NETWORK_INFO_H
+#pragma once
 
-#include <QtNetwork/QNetworkInterface>
+#include <QElapsedTimer>
+#include <QObject>
+#include <QString>
 
-#include "Utils/command_util.h"
-#include "Utils/file_util.h"
-#include "stacer-core_global.h"
-
-class STACERCORESHARED_EXPORT NetworkInfo
+class NetworkInfo : public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QString interface READ interface NOTIFY changed)
+    Q_PROPERTY(qulonglong rxBytes READ rxBytes NOTIFY changed)
+    Q_PROPERTY(qulonglong txBytes READ txBytes NOTIFY changed)
+    Q_PROPERTY(double rxRate READ rxRate NOTIFY changed)
+    Q_PROPERTY(double txRate READ txRate NOTIFY changed)
+    Q_PROPERTY(bool connected READ connected NOTIFY changed)
+
   public:
-    NetworkInfo();
+    explicit NetworkInfo(QObject *parent = nullptr);
 
-    QString getDefaultNetworkInterface() const;
-    QList<QNetworkInterface> getAllInterfaces();
+    QString interface() const;
+    qulonglong rxBytes() const;
+    qulonglong txBytes() const;
+    double rxRate() const;
+    double txRate() const;
+    bool connected() const;
 
-    quint64 getRXbytes() const;
-    quint64 getTXbytes() const;
+    Q_INVOKABLE void update();
+
+  Q_SIGNALS:
+    void changed();
 
   private:
-    QString defaultNetworkInterface;
+    QString resolveDefaultInterface() const;
+    QString resolveFallbackInterface() const;
 
-    QString rxPath;
-    QString txPath;
+    QString m_interface;
+    qulonglong m_rxBytes = 0;
+    qulonglong m_txBytes = 0;
+    double m_rxRate = 0.0;
+    double m_txRate = 0.0;
+    bool m_connected = false;
+
+    qulonglong m_previousRx = 0;
+    qulonglong m_previousTx = 0;
+    bool m_hasBaseline = false;
+    QElapsedTimer m_elapsed;
 };
-
-#endif // NETWORK_INFO_H

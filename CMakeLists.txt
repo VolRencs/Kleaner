@@ -1,34 +1,34 @@
-cmake_minimum_required(VERSION 3.16)
-project(Stacer VERSION 1.7.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.21)
 
-# Build with PIC and PIE (default: ON)
-option(CMAKE_POSITION_INDEPENDENT_CODE "Determines whether position independent executables or shared libraries will be created" ON)
+project(stacer VERSION 1.7.0 LANGUAGES CXX)
 
-# Build with LTO (default: OFF)
-option(CMAKE_INTERPROCEDURAL_OPTIMIZATION "If set to true, enables interprocedural optimizations if they are known to be supported by the compiler" OFF)
-
-# Apply PIE flags
-if(POLICY CMP0083)
-  cmake_policy(SET CMP0083 NEW)
-  include(CheckPIESupported)
-  check_pie_supported()
-  set(CMAKE_POLICY_DEFAULT_CMP0083 NEW)
-endif()
-
-set(PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
-
-# Activating MOC and searching for the Qt dependencies
-set(CMAKE_AUTOMOC ON)
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets Charts Svg Concurrent Network REQUIRED)
-
-# Setting the minimum C++ standard and passing the Qt-specific define
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_definitions(-DQT_DEPRECATED_WARNINGS)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_AUTOMOC ON)
 
-# Subprojects
+# KDE CMake infrastructure
+find_package(ECM 6.30 REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+include(KDEInstallDirs)
+include(KDECompilerSettings NO_POLICY_SCOPE)
+
+# Single source of truth for the application identity.
+# The fork will be renamed later; changing these two variables is enough.
+set(STACER_APP_ID "fr.quentium.stacer" CACHE STRING "Application/DBus/policy ID")
+set(STACER_DESKTOP_NAME "stacer" CACHE STRING "Desktop entry base name")
+set(STACER_HELPER_ID "${STACER_APP_ID}")
+
+add_compile_definitions(
+  STACER_APP_ID="${STACER_APP_ID}"
+  STACER_DESKTOP_NAME="${STACER_DESKTOP_NAME}"
+  STACER_HELPER_ID="${STACER_HELPER_ID}"
+)
+
+find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Network DBus)
+find_package(KF6 6.30 REQUIRED COMPONENTS CoreAddons)
+
 add_subdirectory(stacer-core)
 add_subdirectory(stacer)
 
@@ -36,49 +36,22 @@ string(TIMESTAMP TODAY_ISO_8601 "%Y-%m-%d" UTC)
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/desktop/stacer.metainfo.xml.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/desktop/fr.quentium.stacer.metainfo.xml"
+  "${CMAKE_CURRENT_BINARY_DIR}/desktop/${STACER_APP_ID}.metainfo.xml"
   IMMEDIATE @ONLY
 )
 
 install(
-  FILES "${CMAKE_CURRENT_BINARY_DIR}/desktop/fr.quentium.stacer.metainfo.xml"
-  DESTINATION share/metainfo
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/desktop/${STACER_APP_ID}.metainfo.xml"
+  DESTINATION ${KDE_INSTALL_METAINFODIR}
 )
 
 install(
   FILES "${CMAKE_CURRENT_SOURCE_DIR}/desktop/stacer.desktop"
-  DESTINATION share/applications
+  DESTINATION ${KDE_INSTALL_APPDIR}
+  RENAME "${STACER_DESKTOP_NAME}.desktop"
 )
 
 install(
   DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/icons/hicolor"
-  DESTINATION share/icons
+  DESTINATION ${KDE_INSTALL_ICONDIR}
 )
-
-# For Flathub, Stacer is named Acters
-option(FLATHUB_BUILD "Install the app as Acters for Flathub" OFF)
-
-if(FLATHUB_BUILD)
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/desktop/acters.metainfo.xml.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/desktop/fr.quentium.acters.metainfo.xml"
-    IMMEDIATE @ONLY
-  )
-
-  install(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/desktop/fr.quentium.acters.metainfo.xml"
-    DESTINATION share/metainfo
-  )
-
-  install(
-    FILES "${CMAKE_CURRENT_SOURCE_DIR}/desktop/acters.desktop"
-    DESTINATION share/applications
-    RENAME fr.quentium.acters.desktop
-  )
-
-  install(
-    FILES "${CMAKE_CURRENT_SOURCE_DIR}/icons/hicolor/scalable/apps/stacer.svg"
-    DESTINATION share/icons/hicolor/scalable/apps
-    RENAME fr.quentium.acters.svg
-  )
-endif()

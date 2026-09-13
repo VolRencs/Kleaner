@@ -1,198 +1,112 @@
 #include "system_info.h"
 
-#include <QDebug>
-#include <QObject>
+#include "Utils/helpers.h"
+#include "Utils/procfs.h"
+
 #include <QRegularExpression>
+#include <QSysInfo>
 
-SystemInfo::SystemInfo()
+#include <unistd.h>
+
+SystemInfo::SystemInfo(QObject *parent) :
+    QObject(parent)
 {
-    QString unknown(QObject::tr("Unknown"));
-    QString model;
-    QString speed;
+    m_hostname = QSysInfo::machineHostName();
+    m_platform = QSysInfo::prettyProductName();
+    m_kernel = QSysInfo::kernelVersion();
+    m_username = Helpers::userName(getuid());
 
-    try {
-        const QStringList lines = CommandUtil::exec("bash", { "-c", LSCPU_COMMAND }).split('\n');
+    readOsRelease();
+    readCpuModel();
+    update();
+}
 
-        QRegularExpression regexp("\\s+");
-        QString space(" ");
+QString SystemInfo::hostname() const
+{
+    return m_hostname;
+}
 
-        QStringList filterModel = lines.filter(QRegularExpression("^Model name"));
-        QString modelLine = filterModel.isEmpty() ? "error: unknown" : filterModel.first();
+QString SystemInfo::platform() const
+{
+    return m_platform;
+}
 
-        QStringList filterSpeed = lines.filter(QRegularExpression("^CPU max MHz"));
-        if (filterSpeed.isEmpty()) {
-            // fallback to CPU MHz (old lscpu versions)
-            filterSpeed = lines.filter(QRegularExpression("^CPU MHz"));
+QString SystemInfo::distribution() const
+{
+    return m_distribution;
+}
+
+QString SystemInfo::distributionId() const
+{
+    return m_distributionId;
+}
+
+QString SystemInfo::kernel() const
+{
+    return m_kernel;
+}
+
+QString SystemInfo::cpuModel() const
+{
+    return m_cpuModel;
+}
+
+QString SystemInfo::username() const
+{
+    return m_username;
+}
+
+qulonglong SystemInfo::uptimeSeconds() const
+{
+    return m_uptimeSeconds;
+}
+
+void SystemInfo::update()
+{
+    bool ok = false;
+    const quint64 uptime = Procfs::readUInt64(QStringLiteral("/proc/uptime"), &ok);
+    if (ok) {
+        m_uptimeSeconds = uptime;
+        Q_EMIT changed();
+    }
+}
+
+void SystemInfo::readOsRelease()
+{
+    const QList<QByteArray> lines = Procfs::lines(QStringLiteral("/etc/os-release"));
+    for (const QByteArray &line : lines) {
+        const int separator = line.indexOf('=');
+        if (separator < 0) {
+            continue;
         }
-        if (filterSpeed.isEmpty()) {
-            // fallback to /proc/cpuinfo (no frequency in lscpu)
-            filterSpeed = FileUtil::readListFromFile(PROC_CPUINFO)
-                              .filter(QRegularExpression("^cpu MHz"));
+        const QString key = QString::fromLatin1(line.left(separator));
+        QString value = QString::fromUtf8(line.mid(separator + 1)).trimmed();
+        if (value.startsWith(QLatin1Char('"')) && value.endsWith(QLatin1Char('"')) && value.size() >= 2) {
+            value = value.mid(1, value.size() - 2);
         }
-        QString speedLine = filterSpeed.isEmpty() ? "error: unknown" : filterSpeed.first();
 
-        model = modelLine.split(":").last();
-        speed = speedLine.split(":").last().replace(",", ".");
-
-        model = model.contains('@') ? model.split("@").first() : model;
-        speed = !speed.contains("unknown") ? QString::number(speed.toDouble() / 1000.0, 'g', 3).append(" GHz") : speed;
-
-        this->cpuModel = model.trimmed().replace(regexp, space);
-        this->cpuSpeed = speed.trimmed().replace(regexp, space);
-    } catch (const QString &ex) {
-        this->cpuModel = unknown;
-        this->cpuSpeed = unknown;
-    }
-
-    CpuInfo ci;
-    this->cpuCore = QString::number(ci.getCpuPhysicalCoreCount());
-
-    // get username
-    QString name = qgetenv("USER");
-
-    if (name.isEmpty())
-        name = qgetenv("USERNAME");
-
-    try {
-        if (name.isEmpty())
-            name = CommandUtil::exec("whoami").trimmed();
-    } catch (const QString &ex) {
-        qCritical() << ex;
-    }
-
-    this->username = name;
-}
-
-QString SystemInfo::getUsername() const
-{
-    return username;
-}
-
-QString SystemInfo::getHostname() const
-{
-    return QSysInfo::machineHostName();
-}
-
-QStringList SystemInfo::getUserList() const
-{
-    QStringList passwdUsers = FileUtil::readListFromFile("/etc/passwd");
-    QStringList users;
-
-    for (QString &row : passwdUsers) {
-        users.append(row.split(":").at(0));
-    }
-
-    return users;
-}
-
-QStringList SystemInfo::getGroupList() const
-{
-    QStringList groupFile = FileUtil::readListFromFile("/etc/group");
-    QStringList groups;
-
-    for (QString &row : groupFile) {
-        groups.append(row.split(":").at(0));
-    }
-
-    return groups;
-}
-
-QString SystemInfo::getPlatform() const
-{
-    return QString("%1 %2")
-        .arg(QSysInfo::kernelType())
-        .arg(QSysInfo::currentCpuArchitecture());
-}
-
-QString SystemInfo::getDistribution() const
-{
-    return QSysInfo::prettyProductName();
-}
-
-QString SystemInfo::getKernel() const
-{
-    return QSysInfo::kernelVersion();
-}
-
-QString SystemInfo::getCpuModel() const
-{
-    return this->cpuModel;
-}
-
-QString SystemInfo::getCpuSpeed() const
-{
-    return this->cpuSpeed;
-}
-
-QString SystemInfo::getCpuCore() const
-{
-    return this->cpuCore;
-}
-
-QFileInfoList SystemInfo::getCrashReports() const
-{
-    QDir reports("/var/crash");
-
-    return reports.entryInfoList(QDir::Files);
-}
-
-QFileInfoList SystemInfo::getAppLogs() const
-{
-    QDir logs("/var/log");
-
-    // remove only files not directory ex. apache2 (log directory)
-    return logs.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
-}
-
-QFileInfoList SystemInfo::getAppCaches() const
-{
-    QString homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-
-    // Main cache location (only files and folders)
-    QFileInfoList mainCache = QDir(homePath + "/.cache").entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
-
-    // Common cache locations
-    QList cacheLocations = {
-        homePath + "/.npm/_cacache",
-        homePath + "/.bun/install/cache",
-        homePath + "/.m2/repository",
-        homePath + "/.gradle/caches",
-        homePath + "/.cargo/registry",
-        homePath + "/.expo/versions-cache",
-        homePath + "/.expo/native-modules-cache",
-    };
-
-    // Find .config/<folder>/Cache and .config/<folder>/GPUCache
-    QDir configDir(homePath + "/.config");
-    if (configDir.exists()) {
-        QStringList configFolders = configDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-        for (const QString &folder : configFolders) {
-            QString cachePath = configDir.filePath(folder + "/Cache");
-            QString gpuCachePath = configDir.filePath(folder + "/GPUCache");
-            QString codeCachePath = configDir.filePath(folder + "/Code Cache");
-            QString dawnCachePath = configDir.filePath(folder + "/DawnCache");
-            if (QDir(cachePath).exists()) {
-                cacheLocations.append(cachePath);
-            }
-            if (QDir(gpuCachePath).exists()) {
-                cacheLocations.append(gpuCachePath);
-            }
-            if (QDir(codeCachePath).exists()) {
-                cacheLocations.append(codeCachePath);
-            }
-            if (QDir(dawnCachePath).exists()) {
-                cacheLocations.append(dawnCachePath);
-            }
+        if (key == QLatin1String("PRETTY_NAME")) {
+            m_distribution = value;
+        } else if (key == QLatin1String("NAME") && m_distribution.isEmpty()) {
+            m_distribution = value;
+        } else if (key == QLatin1String("ID")) {
+            m_distributionId = value;
         }
     }
+}
 
-    QFileInfoList allCaches = mainCache;
-    for (const QString &location : cacheLocations) {
-        if (QDir(location).exists()) {
-            // allCaches.append(QDir(location).entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot));
-            allCaches.append(QFileInfo(location));
+void SystemInfo::readCpuModel()
+{
+    const QList<QByteArray> lines = Procfs::lines(QStringLiteral("/proc/cpuinfo"));
+    static const QRegularExpression re(QStringLiteral("^(model name|Processor|Hardware|cpu model)\\s*:\\s*(.+)$"),
+                                       QRegularExpression::CaseInsensitiveOption);
+    for (const QByteArray &line : lines) {
+        const QRegularExpressionMatch match = re.match(QString::fromLatin1(line));
+        if (match.hasMatch()) {
+            QString model = match.captured(2).trimmed();
+            model.remove(QRegularExpression(QStringLiteral("\\s*@\\s*[0-9.]+\\s*GHz$")));
+            m_cpuModel = model;
+            return;
         }
     }
-
-    return allCaches;
 }

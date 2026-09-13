@@ -1,41 +1,38 @@
-#ifndef MEMORYINFO_H
-#define MEMORYINFO_H
+#pragma once
 
-#include "Utils/file_util.h"
+#include <QObject>
 
-#include "stacer-core_global.h"
-
-#define PROC_MEMINFO "/proc/meminfo"
-
-class STACERCORESHARED_EXPORT MemoryInfo
+class MemoryInfo : public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(qulonglong total READ total NOTIFY changed)
+    Q_PROPERTY(qulonglong used READ used NOTIFY changed)
+    Q_PROPERTY(qulonglong available READ available NOTIFY changed)
+    Q_PROPERTY(qulonglong swapTotal READ swapTotal NOTIFY changed)
+    Q_PROPERTY(qulonglong swapUsed READ swapUsed NOTIFY changed)
+    Q_PROPERTY(double usagePercent READ usagePercent NOTIFY changed)
+    Q_PROPERTY(double swapPercent READ swapPercent NOTIFY changed)
+
   public:
-    MemoryInfo();
+    explicit MemoryInfo(QObject *parent = nullptr);
 
-    void updateMemoryInfo();
+    qulonglong total() const;
+    qulonglong used() const;
+    qulonglong available() const;
+    qulonglong swapTotal() const;
+    qulonglong swapUsed() const;
+    double usagePercent() const;
+    double swapPercent() const;
 
-    quint64 getMemTotal() const;
-    quint64 getMemFree() const;
-    quint64 getMemUsed() const;
+    Q_INVOKABLE void update();
 
-    quint64 getSwapTotal() const;
-    quint64 getSwapFree() const;
-    quint64 getSwapUsed() const;
+  Q_SIGNALS:
+    void changed();
 
   private:
-    // memory
-    quint64 memTotal;
-    quint64 memFree;
-    quint64 memUsed;
-    quint64 buffers;
-    quint64 cached;
-    quint64 sreclaimable;
-    quint64 shmem;
-
-    // swap
-    quint64 swapTotal;
-    quint64 swapFree;
-    quint64 swapUsed;
+    qulonglong m_total = 0;
+    qulonglong m_used = 0;
+    qulonglong m_available = 0;
+    qulonglong m_swapTotal = 0;
+    qulonglong m_swapUsed = 0;
 };
-
-#endif // MEMORYINFO_H

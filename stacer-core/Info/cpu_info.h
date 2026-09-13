@@ -1,27 +1,49 @@
-#ifndef CPUINFO_H
-#define CPUINFO_H
+#pragma once
 
-#include "Utils/file_util.h"
-#include "stacer-core_global.h"
+#include <QList>
+#include <QObject>
+#include <QVariantList>
 
-// Run command in English language (guarantee same behaviour across languages)
-#define LSCPU_COMMAND "LC_ALL=C lscpu"
-#define PROC_CPUINFO "/proc/cpuinfo"
-#define PROC_LOADAVG "/proc/loadavg"
-#define PROC_STAT "/proc/stat"
-
-class STACERCORESHARED_EXPORT CpuInfo
+class CpuInfo : public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(int coreCount READ coreCount NOTIFY changed)
+    Q_PROPERTY(double usage READ usage NOTIFY changed)
+    Q_PROPERTY(QVariantList coreUsages READ coreUsages NOTIFY changed)
+    Q_PROPERTY(double load1 READ load1 NOTIFY changed)
+    Q_PROPERTY(double load5 READ load5 NOTIFY changed)
+    Q_PROPERTY(double load15 READ load15 NOTIFY changed)
+    Q_PROPERTY(double clock READ clock NOTIFY changed)
+
   public:
-    int getCpuPhysicalCoreCount() const;
-    int getCpuCoreCount() const;
-    QList<int> getCpuPercents() const;
-    QList<double> getLoadAvgs() const;
-    double getAvgClock() const;
-    QList<double> getClocks() const;
+    explicit CpuInfo(QObject *parent = nullptr);
+
+    int coreCount() const;
+    double usage() const;
+    QVariantList coreUsages() const;
+    double load1() const;
+    double load5() const;
+    double load15() const;
+    double clock() const;
+
+    Q_INVOKABLE void update();
+
+  Q_SIGNALS:
+    void changed();
 
   private:
-    int getCpuPercent(const QList<double> &cpuTimes, const int &processor = 0) const;
-};
+    void updateClocks();
+    void updateLoads();
 
-#endif // CPUINFO_H
+    int m_coreCount = 1;
+    double m_usage = 0.0;
+    QList<double> m_coreUsages;
+    double m_load1 = 0.0;
+    double m_load5 = 0.0;
+    double m_load15 = 0.0;
+    double m_clock = 0.0;
+
+    bool m_hasBaseline = false;
+    QList<quint64> m_previousTotals;
+    QList<quint64> m_previousIdles;
+};

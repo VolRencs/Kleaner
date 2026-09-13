@@ -1,44 +1,47 @@
-#ifndef SYSTEMINFO_H
-#define SYSTEMINFO_H
+#pragma once
 
-#include "Info/cpu_info.h"
-#include "Utils/command_util.h"
-#include "Utils/file_util.h"
-#include "Utils/format_util.h"
+#include <QObject>
+#include <QString>
 
-#include "stacer-core_global.h"
-
-// Run command in English language (guarantee same behaviour across languages)
-#define LSCPU_COMMAND "LC_ALL=C lscpu"
-#define PROC_CPUINFO "/proc/cpuinfo"
-
-class STACERCORESHARED_EXPORT SystemInfo
+class SystemInfo : public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QString hostname READ hostname CONSTANT)
+    Q_PROPERTY(QString platform READ platform CONSTANT)
+    Q_PROPERTY(QString distribution READ distribution CONSTANT)
+    Q_PROPERTY(QString distributionId READ distributionId CONSTANT)
+    Q_PROPERTY(QString kernel READ kernel CONSTANT)
+    Q_PROPERTY(QString cpuModel READ cpuModel CONSTANT)
+    Q_PROPERTY(QString username READ username CONSTANT)
+    Q_PROPERTY(qulonglong uptimeSeconds READ uptimeSeconds NOTIFY changed)
+
   public:
-    SystemInfo();
+    explicit SystemInfo(QObject *parent = nullptr);
 
-    QString getHostname() const;
-    QString getPlatform() const;
-    QString getDistribution() const;
-    QString getKernel() const;
-    QString getCpuModel() const;
-    QString getCpuSpeed() const;
-    QString getCpuCore() const;
-    QString getUsername() const;
+    QString hostname() const;
+    QString platform() const;
+    QString distribution() const;
+    QString distributionId() const;
+    QString kernel() const;
+    QString cpuModel() const;
+    QString username() const;
+    qulonglong uptimeSeconds() const;
 
-    QFileInfoList getCrashReports() const;
-    QFileInfoList getAppLogs() const;
-    QFileInfoList getAppCaches() const;
+    Q_INVOKABLE void update();
 
-    QStringList getUserList() const;
-    QStringList getGroupList() const;
+  Q_SIGNALS:
+    void changed();
 
-  private slots:
   private:
-    QString cpuCore;
-    QString cpuModel;
-    QString cpuSpeed;
-    QString username;
-};
+    void readOsRelease();
+    void readCpuModel();
 
-#endif // SYSTEMINFO_H
+    QString m_hostname;
+    QString m_platform;
+    QString m_distribution;
+    QString m_distributionId;
+    QString m_kernel;
+    QString m_cpuModel;
+    QString m_username;
+    qulonglong m_uptimeSeconds = 0;
+};

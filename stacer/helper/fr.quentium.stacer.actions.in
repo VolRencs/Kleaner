@@ -1,0 +1,11 @@
+[fr.quentium.stacer.clean]
+Name=Clean system files
+Description=Remove selected system log, cache and crash report files
+Policy=auth_admin
+Persistence=session
+
+[fr.quentium.stacer.writehosts]
+Name=Write hosts file
+Description=Replace /etc/hosts with new content
+Policy=auth_admin
+Persistence=session

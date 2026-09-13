@@ -1,184 +1,182 @@
 #include "cpu_info.h"
-#include "command_util.h"
 
+#include "Utils/procfs.h"
+
+#include <QDir>
+#include <QFile>
 #include <QRegularExpression>
 
-int CpuInfo::getCpuPhysicalCoreCount() const
+CpuInfo::CpuInfo(QObject *parent) :
+    QObject(parent)
 {
-    static int count = 0;
+}
 
-    if (!count) {
-        QStringList cpuinfo = FileUtil::readListFromFile(PROC_CPUINFO);
+int CpuInfo::coreCount() const
+{
+    return m_coreCount;
+}
 
-        if (!cpuinfo.isEmpty()) {
-            QSet<QPair<int, int>> physicalCoreSet;
-            int physical = 0;
-            int core = 0;
-            for (const QString &line : cpuinfo) {
-                if (line.startsWith("physical id")) {
-                    QStringList fields = line.split(": ");
-                    if (fields.size() > 1)
-                        physical = fields[1].toInt();
-                }
-                if (line.startsWith("core id")) {
-                    QStringList fields = line.split(": ");
-                    if (fields.size() > 1)
-                        core = fields[1].toInt();
-                    // We assume core id appears after physical id
-                    physicalCoreSet.insert(qMakePair(physical, core));
-                }
-            }
-            count = physicalCoreSet.size();
+double CpuInfo::usage() const
+{
+    return m_usage;
+}
+
+QVariantList CpuInfo::coreUsages() const
+{
+    QVariantList list;
+    list.reserve(m_coreUsages.size());
+    for (const double value : m_coreUsages) {
+        list.append(value);
+    }
+    return list;
+}
+
+double CpuInfo::load1() const
+{
+    return m_load1;
+}
+
+double CpuInfo::load5() const
+{
+    return m_load5;
+}
+
+double CpuInfo::load15() const
+{
+    return m_load15;
+}
+
+double CpuInfo::clock() const
+{
+    return m_clock;
+}
+
+void CpuInfo::update()
+{
+    const QList<QByteArray> lines = Procfs::lines(QStringLiteral("/proc/stat"));
+
+    QList<QList<quint64>> current;
+    for (const QByteArray &line : lines) {
+        if (!line.startsWith("cpu")) {
+            continue;
         }
+        const QList<QByteArray> fields = line.simplified().split(' ');
+        if (fields.size() < 5) {
+            continue;
+        }
+        QList<quint64> values;
+        values.reserve(fields.size() - 1);
+        for (int i = 1; i < fields.size(); ++i) {
+            values.append(fields.at(i).toULongLong());
+        }
+        current.append(values);
     }
 
-    return count;
-}
-
-int CpuInfo::getCpuCoreCount() const
-{
-    static quint8 count = 0;
-
-    if (!count) {
-        QStringList cpuinfo = FileUtil::readListFromFile(PROC_CPUINFO);
-
-        if (!cpuinfo.isEmpty())
-            count = cpuinfo.filter(QRegularExpression("^processor")).count();
+    if (current.isEmpty()) {
+        return;
     }
 
-    return count;
-}
+    const int count = current.size();
 
-QList<double> CpuInfo::getLoadAvgs() const
-{
-    QList<double> avgs = { 0, 0, 0 };
-
-    QStringList strListAvgs = FileUtil::readStringFromFile(PROC_LOADAVG).split(QRegularExpression("\\s+"));
-
-    if (strListAvgs.count() > 2) {
-        avgs.clear();
-        avgs << strListAvgs.takeFirst().toDouble();
-        avgs << strListAvgs.takeFirst().toDouble();
-        avgs << strListAvgs.takeFirst().toDouble();
-    }
-
-    return avgs;
-}
-
-double CpuInfo::getAvgClock() const
-{
-    const QStringList lines = CommandUtil::exec("bash", { "-c", LSCPU_COMMAND }).split('\n');
-
-    QStringList clockMHzLines = lines.filter(QRegularExpression("^CPU max MHz"));
-    if (clockMHzLines.isEmpty()) {
-        // fallback to CPU MHz (old lscpu versions)
-        clockMHzLines = lines.filter(QRegularExpression("^CPU MHz"));
-    }
-    if (!clockMHzLines.isEmpty()) {
-        QString clockMHz = clockMHzLines.first().split(":").last();
-        return clockMHz.replace(",", ".").toDouble();
-    } else {
-        // fallback to /proc/cpuinfo (no frequency in lscpu)
-        QStringList lines = FileUtil::readListFromFile(PROC_CPUINFO)
-                                .filter(QRegularExpression("^cpu MHz"));
-        if (!lines.isEmpty()) {
-            double totalClock = 0.0;
-            for (const QString &line : lines) {
-                totalClock += line.split(":").last().toDouble();
+    if (!m_hasBaseline || m_previousTotals.size() != count) {
+        m_previousTotals.clear();
+        m_previousIdles.clear();
+        for (const QList<quint64> &values : current) {
+            quint64 total = 0;
+            for (const quint64 value : values) {
+                total += value;
             }
-            return totalClock / lines.count();
+            m_previousTotals.append(total);
+            m_previousIdles.append(values.value(3) + values.value(4));
+        }
+        m_hasBaseline = true;
+        m_coreCount = qMax(1, count - 1);
+        m_coreUsages = QList<double>(m_coreCount, 0.0);
+        m_usage = 0.0;
+        updateLoads();
+        updateClocks();
+        Q_EMIT changed();
+        return;
+    }
+
+    m_coreUsages.clear();
+    m_coreUsages.reserve(count - 1);
+
+    for (int i = 0; i < count; ++i) {
+        const QList<quint64> &values = current.at(i);
+
+        quint64 total = 0;
+        for (const quint64 value : values) {
+            total += value;
+        }
+        const quint64 idle = values.value(3) + values.value(4);
+
+        const quint64 deltaTotal = total - m_previousTotals.at(i);
+        const quint64 deltaIdle = idle - m_previousIdles.at(i);
+
+        const double percent = deltaTotal > 0 ? 100.0 * static_cast<double>(deltaTotal - deltaIdle) / static_cast<double>(deltaTotal) : 0.0;
+
+        if (i == 0) {
+            m_usage = percent;
         } else {
-            return 0.0;
+            m_coreUsages.append(percent);
         }
+
+        m_previousTotals[i] = total;
+        m_previousIdles[i] = idle;
+    }
+
+    m_coreCount = qMax(1, count - 1);
+
+    updateLoads();
+    updateClocks();
+
+    Q_EMIT changed();
+}
+
+void CpuInfo::updateLoads()
+{
+    const QByteArray content = Procfs::read(QStringLiteral("/proc/loadavg")).simplified();
+    const QList<QByteArray> fields = content.split(' ');
+    if (fields.size() >= 3) {
+        m_load1 = fields.at(0).toDouble();
+        m_load5 = fields.at(1).toDouble();
+        m_load15 = fields.at(2).toDouble();
     }
 }
 
-QList<double> CpuInfo::getClocks() const
+void CpuInfo::updateClocks()
 {
-    QStringList lines = FileUtil::readListFromFile(PROC_CPUINFO)
-                            .filter(QRegularExpression("^cpu MHz"));
+    const QDir cpuDir(QStringLiteral("/sys/devices/system/cpu"));
+    const QStringList entries = cpuDir.entryList({ QStringLiteral("cpu[0-9]*") }, QDir::Dirs | QDir::NoSymLinks);
 
-    QList<double> clocks;
-    for (const QString &line : lines) {
-        clocks.push_back(line.split(":").last().toDouble());
-    }
-    return clocks;
-}
-
-QList<int> CpuInfo::getCpuPercents() const
-{
-    QList<double> cpuTimes;
-
-    QList<int> cpuPercents;
-
-    QStringList times = FileUtil::readListFromFile(PROC_STAT);
-
-    if (!times.isEmpty()) {
-        /*  user nice system idle iowait  irq  softirq steal guest guest_nice
-            cpu  4705 356  584    3699   23    23     0       0     0      0
-            ...
-            cpuN 4705 356  584    3699   23    23     0       0     0      0
-
-            The meanings of the columns are as follows, from left to right:
-                - user: normal processes executing in user mode
-                - nice: niced processes executing in user mode
-                - system: processes executing in kernel mode
-                - idle: twiddling thumbs
-                - iowait: waiting for I/O to complete
-                - irq: servicing interrupts
-                - softirq: servicing softirqs
-                - steal: involuntary wait
-                - guest: running a normal guest
-                - guest_nice: running a niced guest
-        */
-
-        QRegularExpression sep("\\s+");
-        int count = CpuInfo::getCpuCoreCount() + 1;
-        for (int i = 0; i < count; ++i) {
-            QStringList n_times = times.at(i).split(sep);
-            n_times.removeFirst();
-            for (const QString &time : n_times)
-                cpuTimes << time.toDouble();
-
-            cpuPercents << getCpuPercent(cpuTimes, i);
-
-            cpuTimes.clear();
+    double sumKHz = 0.0;
+    int count = 0;
+    for (const QString &entry : entries) {
+        const QString path = cpuDir.filePath(entry + QStringLiteral("/cpufreq/scaling_cur_freq"));
+        bool ok = false;
+        const quint64 khz = Procfs::readUInt64(path, &ok);
+        if (ok && khz > 0) {
+            sumKHz += static_cast<double>(khz);
+            ++count;
         }
     }
 
-    return cpuPercents;
-}
-
-int CpuInfo::getCpuPercent(const QList<double> &cpuTimes, const int &processor) const
-{
-    const int N = getCpuCoreCount() + 1;
-
-    static QVector<double> l_idles(N);
-    static QVector<double> l_totals(N);
-
-    int utilisation = 0;
-
-    if (cpuTimes.count() > 0) {
-
-        double idle = cpuTimes.at(3) + cpuTimes.at(4); // get (idle + iowait)
-        double total = 0.0;
-        for (const double &time : cpuTimes)
-            total += time; // get total time
-
-        double idle_delta = idle - l_idles[processor];
-        double total_delta = total - l_totals[processor];
-
-        if (total_delta)
-            utilisation = 100 * ((total_delta - idle_delta) / total_delta);
-
-        l_idles[processor] = idle;
-        l_totals[processor] = total;
+    if (count > 0) {
+        m_clock = sumKHz / count / 1000.0;
+        return;
     }
 
-    if (utilisation > 100)
-        utilisation = 100;
-    else if (utilisation < 0)
-        utilisation = 0;
+    // Fallback for platforms without cpufreq (mainly x86 /proc/cpuinfo)
+    const QList<QByteArray> lines = Procfs::lines(QStringLiteral("/proc/cpuinfo"));
+    const QRegularExpression re(QStringLiteral("^cpu MHz\\s*:\\s*([0-9.]+)"));
+    for (const QByteArray &line : lines) {
+        const QRegularExpressionMatch match = re.match(QString::fromLatin1(line));
+        if (match.hasMatch()) {
+            m_clock = match.captured(1).toDouble();
+            return;
+        }
+    }
 
-    return utilisation;
+    m_clock = 0.0;
 }
