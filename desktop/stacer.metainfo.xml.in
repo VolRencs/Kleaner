@@ -20,6 +20,7 @@
 
     <description>
         <p>Stacer is an open source system optimizer and application monitor that helps users to manage entire system with different aspects, its an all in one system utility.</p>
+        <p>Built with Qt 6 and Kirigami, the interface is a native Wayland application with live resource graphs, process and systemd service management, startup application control and a system cleaner.</p>
     </description>
 
     <launchable type="desktop-id">fr.quentium.stacer.desktop</launchable>
@@ -48,93 +49,14 @@
     <url type="donation">https://www.paypal.me/QuentiumYT</url>
     <url type="translate">https://crowdin.com/project/stacer</url>
 
-    <screenshots>
-        <screenshot type="default">
-            <caption>The Stacer Dashboard</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-dashboard.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Dashboard on Ubuntu</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-dashboard-ubuntu.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Dashboard on WSL</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-dashboard-wsl.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Startup Apps</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-startup-apps.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer System cleaner</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-system-cleaner.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer System cleaner list</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-system-cleaner-list.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Search</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-search.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Services</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-services.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Processes</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-processes.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Uninstaller</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-uninstaller.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Resources</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-resources.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Resources usage</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-resources-usage.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Resources system</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-resources-system.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Helpers</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-helpers.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer APT Repository Manager</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-apt-repository-manager.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Gnome Settings</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-gnome-settings.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Gnome Settings appearance</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-gnome-settings-appearance.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Settings</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-settings.png</image>
-        </screenshot>
-        <screenshot>
-            <caption>The Stacer Settings feedback</caption>
-            <image>https://raw.githubusercontent.com/QuentiumYT/Stacer/HEAD/screenshots/Screenshot-settings-feedback.png</image>
-        </screenshot>
-    </screenshots>
-
     <provides>
         <binary>stacer</binary>
     </provides>
 
     <releases>
-        <release version="@Stacer_VERSION_MAJOR@.@Stacer_VERSION_MINOR@.@Stacer_VERSION_PATCH@" date="@TODAY_ISO_8601@">
+        <release version="@PROJECT_VERSION@" date="@TODAY_ISO_8601@">
             <description>
-                <p>Latest stable release of Stacer with performance improvements and bug fixes.</p>
+                <p>Complete rewrite on Qt 6 and KDE Frameworks 6 with a Kirigami/QML user interface.</p>
             </description>
         </release>
     </releases>

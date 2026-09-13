@@ -11,4 +11,6 @@ Icon=stacer
 Hidden=false
 Exec=stacer
 Terminal=false
-Categories=Utility;System;Monitor
+Categories=Utility;Monitor;
+Keywords=optimize;monitor;system;services;processes;cleaner;
+StartupNotify=true

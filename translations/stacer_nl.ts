@@ -2,1784 +2,795 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="nl_NL" sourcelanguage="en">
 <context>
-    <name>APTSourceEdit</name>
+    <name>AboutStacerPage</name>
     <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="14"/>
-        <source>APT Repository Edit</source>
-        <translation>APT-pakketbronbewerking</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="38"/>
-        <source>APT Repository</source>
-        <translation>APT-pakketbron</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="48"/>
-        <source>Components</source>
-        <translation>Onderdelen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="55"/>
-        <source>Options</source>
-        <translation>Opties</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="71"/>
-        <source>Cancel</source>
-        <translation>Annuleren</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="87"/>
-        <source>Fields cannot be left blank.</source>
-        <translation>De velden mogen niet leeg zijn. </translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="94"/>
-        <source>URI</source>
-        <translation>URI</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="110"/>
-        <source>Save</source>
-        <translation>Opslaan</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="133"/>
-        <source>Suites</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="152"/>
-        <source>Source</source>
-        <translation>Bron</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_edit.ui" line="177"/>
-        <source>Binary</source>
-        <translation>Binary</translation>
-    </message>
-</context>
-<context>
-    <name>APTSourceManagerPage</name>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.ui" line="188"/>
-        <source>Search...</source>
-        <translation>Zoeken...</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.ui" line="226"/>
-        <source>Edit</source>
-        <translation>Bewerken</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.ui" line="14"/>
-        <source>APT Repository Manager</source>
-        <translation>APT-pakketbronbeheer</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.ui" line="125"/>
-        <source>Not Found APT Repositories</source>
-        <translation>Er zijn geen APT-pakketbronnen gevonden.</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.ui" line="269"/>
-        <source>Delete</source>
-        <translation>Verwijderen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.ui" line="308"/>
-        <source>Enable Source</source>
-        <translation>Broncode</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.ui" line="338"/>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.cpp" line="104"/>
-        <source>Add Repository</source>
-        <translation>Pakketbron toevoegen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.ui" line="371"/>
-        <source>Cancel</source>
-        <translation>Annuleren</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.ui" line="419"/>
-        <source>Select to delete or edit.</source>
-        <translation>Selecteer om te verwijderen of te bewerken.</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.cpp" line="27"/>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.cpp" line="31"/>
-        <source>example %1</source>
-        <translation>voorbeeld %1</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.cpp" line="72"/>
-        <source>APT Repositories (%1)</source>
-        <translation>APT-pakketbronnen (%1)</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.cpp" line="78"/>
-        <source>Save</source>
-        <translation>Opslaan</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_manager_page.cpp" line="84"/>
-        <source>Adding...</source>
+        <location filename="../stacer/qml/pages/AboutStacerPage.qml" line="12"/>
+        <source>Linux System Optimizer and Monitoring</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>APTSourceRepositoryItem</name>
+    <name>Cleaner</name>
     <message>
-        <location filename="../stacer/Pages/AptSourceManager/apt_source_repository_item.cpp" line="35"/>
-        <source>%1 (Source Code)</source>
-        <translation>%1 (broncode)</translation>
+        <location filename="../stacer-core/Cleaner/cleaner.cpp" line="104"/>
+        <source>Trash</source>
+        <translation type="unfinished">Prullenbak</translation>
+    </message>
+    <message>
+        <location filename="../stacer-core/Cleaner/cleaner.cpp" line="110"/>
+        <source>Application Caches</source>
+        <translation type="unfinished">Applicatiecaches</translation>
+    </message>
+    <message>
+        <location filename="../stacer-core/Cleaner/cleaner.cpp" line="134"/>
+        <source>Application Logs</source>
+        <translation type="unfinished">Applicatielogbestanden</translation>
+    </message>
+    <message>
+        <location filename="../stacer-core/Cleaner/cleaner.cpp" line="147"/>
+        <source>Crash Reports</source>
+        <translation type="unfinished">Crashrapporten</translation>
+    </message>
+    <message>
+        <location filename="../stacer-core/Cleaner/cleaner.cpp" line="275"/>
+        <source>Failed to remove %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>App</name>
+    <name>CleanerPage</name>
     <message>
-        <location filename="../stacer/app.ui" line="101"/>
-        <source>Dashboard</source>
-        <translation>Overzicht</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="135"/>
-        <source>Startup Apps</source>
-        <translation>Opstartapplicaties</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="163"/>
+        <location filename="../stacer/qml/pages/CleanerPage.qml" line="10"/>
         <source>System Cleaner</source>
-        <translation>Systeemopschoning</translation>
+        <translation type="unfinished">Systeemopschoning</translation>
     </message>
     <message>
-        <location filename="../stacer/app.ui" line="194"/>
-        <source>Search</source>
-        <translation>Zoeken</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="278"/>
-        <source>Uninstaller</source>
-        <translation>Pakketverwijdering</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="306"/>
-        <source>Resources</source>
-        <translation>Bronnen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="334"/>
-        <source>Helpers</source>
+        <location filename="../stacer/qml/pages/CleanerPage.qml" line="26"/>
+        <source>Removed %1 items.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/app.ui" line="362"/>
-        <source>APT Repository Manager</source>
-        <translation>APT-pakketbronbeheer</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="250"/>
-        <source>Processes</source>
-        <translation>Processen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="222"/>
-        <source>Services</source>
-        <translation>Diensten</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="390"/>
-        <source>Gnome Settings</source>
-        <translation>GNOME-instellingen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="418"/>
-        <source>Settings</source>
-        <translation>Instellingen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.ui" line="459"/>
-        <source>Feedback</source>
-        <translation>Feedback</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.cpp" line="114"/>
-        <location filename="../stacer/app.cpp" line="121"/>
-        <location filename="../stacer/app.cpp" line="179"/>
-        <source>Quit</source>
-        <translation>Afsluiten</translation>
-    </message>
-    <message>
-        <location filename="../stacer/app.cpp" line="116"/>
-        <source>Continue</source>
+        <location filename="../stacer/qml/pages/CleanerPage.qml" line="58"/>
+        <source>Scan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/app.cpp" line="119"/>
-        <source>Don&apos;t ask again.</source>
+        <location filename="../stacer/qml/pages/CleanerPage.qml" line="65"/>
+        <source>Clean (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/app.cpp" line="122"/>
-        <source>Will the program continue to work in the system tray?</source>
+        <location filename="../stacer/qml/pages/CleanerPage.qml" line="83"/>
+        <source>Selected: %1</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>AppearanceSettings</name>
     <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="44"/>
-        <source>Screen Applications</source>
-        <translation>Schermtoepassingen</translation>
+        <location filename="../stacer/qml/pages/CleanerPage.qml" line="92"/>
+        <source>Press Scan to look for removable files.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="74"/>
-        <source>Screen Reader</source>
-        <translation>Schermlezer</translation>
+        <location filename="../stacer/qml/pages/CleanerPage.qml" line="122"/>
+        <source>Collapse</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="100"/>
-        <source>Screen Keyboard</source>
-        <translation>Schermtoetsenbord</translation>
+        <location filename="../stacer/qml/pages/CleanerPage.qml" line="122"/>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="136"/>
-        <source>Background Image Mode</source>
-        <translation>Achtergrondafbeeldingsmodus</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="166"/>
-        <source>Desktop Mode</source>
-        <translation>Bureaubladmodus</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="204"/>
-        <source>Login Mode</source>
-        <translation>Inlogmodus</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="252"/>
-        <source>Icons</source>
-        <translation>Pictogrammen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="282"/>
-        <source>Home Icon</source>
-        <translation>Persoonlijke map</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="308"/>
-        <source>Trash Icon</source>
-        <translation>Prullenbak</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="321"/>
-        <source>Mounted Volumes Icon</source>
-        <translation>Aangekoppelde volumes</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="347"/>
-        <source>Show Desktop Icons</source>
-        <translation>Bureaubladpictogrammen weergeven</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.ui" line="373"/>
-        <source>Network Icon</source>
-        <translation>Netwerk</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.cpp" line="71"/>
-        <source>None</source>
-        <translation>Geen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.cpp" line="71"/>
-        <source>Wallpaper</source>
-        <translation>Achtergrond</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.cpp" line="71"/>
-        <source>Centered</source>
-        <translation>Centreren</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.cpp" line="71"/>
-        <source>Scaled</source>
-        <translation>Schalen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.cpp" line="71"/>
-        <source>Stretched</source>
-        <translation>Uitrekken</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.cpp" line="71"/>
-        <source>Zoom</source>
-        <translation>Vergroten</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/appearance_settings.cpp" line="71"/>
-        <source>Spanned</source>
-        <translation>Opvullen</translation>
+        <location filename="../stacer/qml/pages/CleanerPage.qml" line="143"/>
+        <source>root</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>DashboardPage</name>
     <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.ui" line="20"/>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="10"/>
         <source>Dashboard</source>
         <translation>Overzicht</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.ui" line="156"/>
-        <source>SYSTEM INFO</source>
-        <translation>SYSTEEMINFORMATIE</translation>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="41"/>
+        <source>Memory</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.ui" line="230"/>
-        <source>A new update is now available.</source>
-        <translation>Er zijn updates beschikbaar.</translation>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="50"/>
+        <source>Disk</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.ui" line="246"/>
-        <source>Download</source>
-        <translation>Downloaden</translation>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="65"/>
+        <source>System Information</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="18"/>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="76"/>
+        <source>Hostname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="85"/>
+        <source>Distribution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="94"/>
+        <source>Kernel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="113"/>
+        <source>User</source>
+        <translation type="unfinished">Gebruiker</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="122"/>
+        <source>Uptime</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="141"/>
+        <source>Live</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="152"/>
+        <source>Load average</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="160"/>
+        <source>CPU clock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="168"/>
+        <source>Memory swap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="172"/>
+        <source>No swap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="176"/>
+        <source>Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="180"/>
+        <source>Disconnected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="184"/>
+        <source>Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="192"/>
+        <source>Disk I/O</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="32"/>
+        <location filename="../stacer/qml/pages/DashboardPage.qml" line="103"/>
         <source>CPU</source>
         <translation>CPU (processor)</translation>
     </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="19"/>
-        <source>MEMORY</source>
-        <translation>GEHEUGEN</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="20"/>
-        <source>DISK</source>
-        <translation>SCHIJF</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="21"/>
-        <source>DOWNLOAD</source>
-        <translation>DOWNLOAD</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="22"/>
-        <source>UPLOAD</source>
-        <translation>UPLOAD</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="111"/>
-        <source>Hostname: %1</source>
-        <translation>Hostnaam: %1</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="112"/>
-        <source>Platform: %1</source>
-        <translation>Platform: %1</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="113"/>
-        <source>Distribution: %1</source>
-        <translation>Distributie: %1</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="114"/>
-        <source>Kernel Release: %1</source>
-        <translation>Kernelversie: %1</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="115"/>
-        <source>CPU Model: %1</source>
-        <translation>CPU-model: %1</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="116"/>
-        <source>CPU Core: %1</source>
-        <translation>CPU-kern: %1</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="117"/>
-        <source>CPU Speed: %1</source>
-        <translation>CPU-frequentie: %1</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="135"/>
-        <source>High CPU Usage</source>
-        <translation>Hoog CPU-gebruik</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="136"/>
-        <source>The amount of CPU used is over %1%.</source>
-        <translation>Het CPU-gebruik is meer dan %1%.</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="164"/>
-        <source>High Memory Usage</source>
-        <translation>Hoog geheugengebruik</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="165"/>
-        <source>The amount of memory used is over %1%.</source>
-        <translation>Het geheugengebruik is meer dan %1%.</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="208"/>
-        <source>High Disk Usage</source>
-        <translation>Veel schijfruimtegebruik</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="209"/>
-        <source>The amount of disk used is over %1%.</source>
-        <translation>De gebruikte schijfruimte is meer dan %1%.</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="247"/>
-        <location filename="../stacer/Pages/Dashboard/dashboard_page.cpp" line="251"/>
-        <source>Total: %1</source>
-        <translation>Totaal: %1</translation>
-    </message>
 </context>
 <context>
-    <name>Feedback</name>
+    <name>HostsPage</name>
     <message>
-        <location filename="../stacer/feedback.ui" line="14"/>
-        <source>Feedback</source>
-        <translation>Feedback</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.ui" line="61"/>
-        <source>Name</source>
-        <translation>Naam</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.ui" line="68"/>
-        <source>Email Address</source>
-        <translation>E-mailadres</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.ui" line="97"/>
-        <source>Send</source>
-        <translation>Versturen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.ui" line="120"/>
-        <source>Close</source>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="10"/>
+        <source>Hosts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/feedback.ui" line="54"/>
-        <source>Message</source>
-        <translation>Bericht</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.ui" line="78"/>
-        <source>Send feedback</source>
-        <translation>Feedback versturen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.cpp" line="46"/>
-        <source>Email address is not valid !</source>
-        <translation>Het e-mailadres is ongeldig!</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.cpp" line="51"/>
-        <source>Your message must be at least 5 characters !</source>
-        <translation>Uw bericht moet minimaal 5 tekens bevatten!</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.cpp" line="59"/>
-        <source>Sending...</source>
-        <translation>Bezig met versturen...</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.cpp" line="78"/>
-        <source>&lt;font color=&apos;#2ecc71&apos;&gt;Your feedback has been successfully sent. Thanks!&lt;/font&gt;</source>
-        <translation>&lt;font color=&apos;#2ecc71&apos;&gt;Uw feedback is succesvol verstuurd.&lt;/font&gt;</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.cpp" line="80"/>
-        <location filename="../stacer/feedback.cpp" line="85"/>
-        <source>Something went wrong, try again !</source>
-        <translation>Er is iets misgegaan; probeer het opnieuw!</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.cpp" line="88"/>
-        <source>Save</source>
-        <translation>Opslaan</translation>
-    </message>
-    <message>
-        <location filename="../stacer/feedback.cpp" line="93"/>
-        <source>Fields cannot be left blank !</source>
-        <translation>De velden mogen niet leeg zijn!</translation>
-    </message>
-</context>
-<context>
-    <name>GnomeSettingsPage</name>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/gnome_settings_page.ui" line="14"/>
-        <source>Gnome Settings</source>
-        <translation>GNOME-instellingen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/gnome_settings_page.ui" line="49"/>
-        <source>Unity Settings</source>
-        <translation>Unity-instellingen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/gnome_settings_page.ui" line="81"/>
-        <source>Window Manager</source>
-        <translation>Vensterbeheerder</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/gnome_settings_page.ui" line="110"/>
-        <source>Appearance</source>
-        <translation>Uiterlijk</translation>
-    </message>
-</context>
-<context>
-    <name>HelpersPage</name>
-    <message>
-        <location filename="../stacer/Pages/Helpers/helpers_page.ui" line="14"/>
-        <source>Helpers</source>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="23"/>
+        <source>/etc/hosts saved.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Helpers/helpers_page.ui" line="62"/>
-        <source>Host Manage</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>HostManage</name>
-    <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.ui" line="14"/>
-        <source>Form</source>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="51"/>
+        <source>Add entry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.ui" line="63"/>
-        <source>Save Changes</source>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="62"/>
+        <source>Save changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.ui" line="110"/>
-        <source>New Host</source>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="71"/>
+        <source>Entries: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.ui" line="146"/>
-        <source>IP Address *</source>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="80"/>
+        <source>No host entries found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.ui" line="153"/>
-        <source>Fully Qualified Name *</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.ui" line="160"/>
-        <location filename="../stacer/Pages/Helpers/host_manage.cpp" line="39"/>
-        <source>Aliases</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.ui" line="176"/>
-        <source>Save</source>
-        <translation>Opslaan</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.ui" line="192"/>
-        <source>Cancel</source>
-        <translation>Annuleren</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.cpp" line="26"/>
-        <location filename="../stacer/Pages/Helpers/host_manage.cpp" line="100"/>
-        <source>Hosts (%1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.cpp" line="39"/>
-        <source>IP Address</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.cpp" line="39"/>
-        <source>Full Qualified</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.cpp" line="137"/>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="117"/>
         <source>Edit</source>
-        <translation>Bewerken</translation>
+        <translation type="unfinished">Bewerken</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.cpp" line="141"/>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="129"/>
         <source>Delete</source>
-        <translation>Verwijderen</translation>
+        <translation type="unfinished">Verwijderen</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Helpers/host_manage.cpp" line="149"/>
-        <source>The IP and Fully Qualified fields are required.</source>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="146"/>
+        <source>Edit Host Entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="146"/>
+        <source>Add Host Entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="157"/>
+        <source>IP address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="163"/>
+        <source>Hostnames (space separated)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="172"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/HostsPage.qml" line="178"/>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Main</name>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="46"/>
+        <source>Dashboard</source>
+        <translation type="unfinished">Overzicht</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="52"/>
+        <source>Resources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="58"/>
+        <source>Processes</source>
+        <translation type="unfinished">Processen</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="64"/>
+        <source>Services</source>
+        <translation type="unfinished">Diensten</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="70"/>
+        <source>Startup Apps</source>
+        <translation type="unfinished">Opstartapplicaties</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="76"/>
+        <source>System Cleaner</source>
+        <translation type="unfinished">Systeemopschoning</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="82"/>
+        <source>Hosts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="88"/>
+        <source>Settings</source>
+        <translation type="unfinished">Instellingen</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="94"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="145"/>
+        <source>Quit Stacer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="157"/>
+        <source>Keep Stacer running in the system tray?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="158"/>
+        <source>Do you want to quit Stacer?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="163"/>
+        <source>Do not ask again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="174"/>
+        <source>Quit</source>
+        <translation type="unfinished">Afsluiten</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/Main.qml" line="188"/>
+        <source>Keep in Tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ProcessModel</name>
+    <message>
+        <location filename="../stacer/models/process_model.cpp" line="207"/>
+        <source>Could not terminate process %1. You may not have permission.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ProcessesPage</name>
     <message>
-        <location filename="../stacer/Pages/Processes/processes_page.ui" line="14"/>
-        <location filename="../stacer/Pages/Processes/processes_page.ui" line="55"/>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="10"/>
         <source>Processes</source>
         <translation>Processen</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Processes/processes_page.ui" line="71"/>
-        <source>All Processes</source>
-        <translation>Alle processen</translation>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="55"/>
+        <source>Search processes…</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Processes/processes_page.ui" line="96"/>
-        <source>Search...</source>
-        <translation>Zoeken...</translation>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="60"/>
+        <source>Sort by</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Processes/processes_page.ui" line="217"/>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="69"/>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="149"/>
+        <source>CPU</source>
+        <translation type="unfinished">CPU (processor)</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="70"/>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="155"/>
+        <source>Memory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="71"/>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="134"/>
+        <source>Name</source>
+        <translation type="unfinished">Naam</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="72"/>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="139"/>
+        <source>PID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="81"/>
+        <source>Reverse sort order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="88"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="112"/>
+        <source>Force Kill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="161"/>
+        <source>RSS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="172"/>
+        <source>Command</source>
+        <translation type="unfinished">Opdracht</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="181"/>
+        <source>No processes found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="105"/>
         <source>End Process</source>
         <translation>Proces beëindigen</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="30"/>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="73"/>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="144"/>
         <source>User</source>
         <translation>Gebruiker</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="29"/>
-        <source>Resident Memory</source>
-        <translation>Gebruikersgeheugen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="29"/>
-        <source>%Memory</source>
-        <translation>%Geheugen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="29"/>
-        <source>Virtual Memory</source>
-        <translation>Virtueel geheugen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="30"/>
-        <source>Start Time</source>
-        <translation>Starttijd</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="30"/>
+        <location filename="../stacer/qml/pages/ProcessesPage.qml" line="167"/>
         <source>State</source>
         <translation>Status</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="30"/>
-        <source>Group</source>
-        <translation>Groep</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="31"/>
-        <source>Nice</source>
-        <translation>Nice</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="31"/>
-        <source>CPU Time</source>
-        <translation>CPU-tijd</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="31"/>
-        <source>Session</source>
-        <translation>Sessie</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="31"/>
-        <source>Process</source>
-        <translation>Proces</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="120"/>
-        <source>Processes (%1)</source>
-        <translation>Processen (%1)</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Processes/processes_page.cpp" line="215"/>
-        <source>Refresh (%1)</source>
-        <translation>Ververstijd (%1)</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <location filename="../stacer/Managers/setting_manager.cpp" line="61"/>
-        <source>Dashboard</source>
-        <translation>Overzicht</translation>
     </message>
 </context>
 <context>
     <name>ResourcesPage</name>
     <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="14"/>
-        <source>History of CPU</source>
-        <translation>CPU-geschiedenis</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="15"/>
-        <source>History of CPU Load Averages</source>
-        <translation>Geschiedenis van gemiddelde CPU-laadtijden</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="16"/>
-        <source>History of Disk Read Write</source>
-        <translation>Geschiedenis van schijf - lezen en schrijven</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="17"/>
-        <source>History of Memory</source>
-        <translation>Geschiedenis van geheugen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="18"/>
-        <source>History of Network</source>
-        <translation>Geschiedenis van netwerk</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="107"/>
-        <source>File System</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="123"/>
-        <source>File System Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="143"/>
-        <source>Device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="218"/>
-        <source>Read: %1/s Total: %2</source>
-        <translation>Gelezen: %1/s Totaal: %2</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="223"/>
-        <source>Write: %1/s Total: %2</source>
-        <translation>Geschreven: %1/s Totaal: %2</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="260"/>
-        <source>%1 Minute Average: %2</source>
-        <translation>%1 gemiddeld aantal minuten: %2</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="308"/>
-        <source>Download: %1/s Total: %2</source>
-        <translation>Download: %1/s Totaal: %2</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="313"/>
-        <source>Upload: %1/s  Total: %2</source>
-        <translation>Upload: %1/s  Totaal: %2</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="357"/>
-        <source>Swap: %1 (%2%) %3</source>
-        <translation>Wisselgeheugen: %1 (%2%) %3</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.cpp" line="366"/>
-        <source>Memory: %1 (%2%) %3</source>
-        <translation>Geheugen: %1 (%2%) %3</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Resources/resources_page.ui" line="14"/>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="10"/>
         <source>Resources</source>
         <translation>Systeemgebruik</translation>
     </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="18"/>
+        <source>CPU Usage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="20"/>
+        <source>Usage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="36"/>
+        <source>CPU Load Average</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="39"/>
+        <source>1 min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="39"/>
+        <source>5 min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="39"/>
+        <source>15 min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="69"/>
+        <source>Memory and Swap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="71"/>
+        <source>Memory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="71"/>
+        <source>Swap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="94"/>
+        <source>Disk Read / Write</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="97"/>
+        <source>Read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="97"/>
+        <source>Write</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="120"/>
+        <source>Network Download / Upload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="123"/>
+        <source>Download</source>
+        <translation type="unfinished">Downloaden</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ResourcesPage.qml" line="123"/>
+        <source>Upload</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>SearchPage</name>
+    <name>ServiceBackend</name>
     <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="14"/>
-        <source>Search</source>
-        <translation>Zoeken</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="101"/>
-        <source>Browse...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="113"/>
-        <source>Search...</source>
-        <translation>Zoeken...</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="211"/>
-        <source>Case Insensitive</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="298"/>
-        <source> minute</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="370"/>
-        <source>Search as Root</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="377"/>
-        <source>Owner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="406"/>
-        <source>RegEx</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="483"/>
-        <source>Permissions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="490"/>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="27"/>
-        <source>Size</source>
-        <translation>Grootte</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="514"/>
-        <source>Readable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="530"/>
-        <source>Writable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="546"/>
-        <source>Executable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="555"/>
-        <source>Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="584"/>
-        <source>Empty</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="591"/>
-        <source>File or Folder:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="607"/>
-        <source>Invert</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="650"/>
-        <source>Advanced Search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.ui" line="690"/>
-        <source>BETA version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="25"/>
-        <source>Name</source>
-        <translation>Naam</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="26"/>
-        <source>Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="28"/>
-        <source>User</source>
-        <translation>Gebruiker</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="29"/>
-        <source>Group</source>
-        <translation>Groep</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="30"/>
-        <source>Creation Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="31"/>
-        <source>Last Access</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="32"/>
-        <source>Last Modification</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="33"/>
-        <source>Last Change</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="88"/>
-        <source>Open Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="92"/>
-        <source>Move Trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="96"/>
-        <source>Delete</source>
-        <translation>Verwijderen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="129"/>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="132"/>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="140"/>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="149"/>
-        <source>Choose</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="135"/>
-        <source>All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="136"/>
-        <source>File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="137"/>
-        <source>Directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="138"/>
-        <source>Symbolic Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="141"/>
-        <source>Access</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="142"/>
-        <source>Modify</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="143"/>
-        <source>Change</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="145"/>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="150"/>
-        <source>Smaller (&lt;)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="146"/>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="151"/>
-        <source>Equal (=)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="147"/>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="152"/>
-        <source>Greater (&gt;)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="162"/>
-        <source>Select Directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="168"/>
-        <source>Directory: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="177"/>
-        <source>Advanced Search %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="195"/>
-        <source>Select the search directory.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="293"/>
-        <source>Somethings went wrong, try again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Search/search_page.cpp" line="309"/>
-        <source>%1 files found. Showing %2 of them.</source>
+        <location filename="../stacer-core/Services/service_backend.cpp" line="190"/>
+        <location filename="../stacer-core/Services/service_backend.cpp" line="229"/>
+        <source>systemd is not available on this system.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ServicesPage</name>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.ui" line="14"/>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="10"/>
         <source>Services</source>
         <translation>Diensten</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.ui" line="161"/>
-        <source>Startup at boot ?</source>
-        <translation>Uitvoeren bij systeemopstart?</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="50"/>
+        <source>systemd is not available on this system.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.ui" line="214"/>
-        <source>Running Now ?</source>
-        <translation>Wordt nu uitgevoerd?</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="59"/>
+        <source>Search services…</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.ui" line="268"/>
-        <source>Not Found System Service</source>
-        <translation>De systeemdienst kan niet worden gevonden.</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="66"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.cpp" line="32"/>
-        <source>Running Status</source>
-        <translation>Uitvoerstatus</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="77"/>
+        <source>Service</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.cpp" line="32"/>
-        <source>Running</source>
-        <translation>Wordt uitgevoerd</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="82"/>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.cpp" line="32"/>
-        <source>Not Running</source>
-        <translation>Wordt niet uitgevoerd</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="88"/>
+        <source>Startup</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.cpp" line="33"/>
-        <source>Startup Status</source>
-        <translation>Opstartstatus</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="94"/>
+        <source>State</source>
+        <translation type="unfinished">Status</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.cpp" line="33"/>
-        <source>Enabled</source>
-        <translation>Ingeschakeld</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="104"/>
+        <source>No services found.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.cpp" line="33"/>
-        <source>Disabled</source>
-        <translation>Uitgeschakeld</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="153"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Services/services_page.cpp" line="80"/>
-        <source>System Services (%1)</source>
-        <translation>Systeemdiensten (%1)</translation>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="153"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/ServicesPage.qml" line="160"/>
+        <source>Restart</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="20"/>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="10"/>
         <source>Settings</source>
         <translation>Instellingen</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="97"/>
-        <source>Theme</source>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="23"/>
+        <source>Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="110"/>
-        <source>Memory Percent</source>
-        <translation>Geheugenpercentage</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="173"/>
-        <source>Disk Percent</source>
-        <translation>Schijfpercentage</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="334"/>
-        <source>Font Size Adjustment</source>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="29"/>
+        <source>Page shown on startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="365"/>
-        <source>Adjust font size relative to default (0 = default)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="426"/>
-        <source>App Quit Don&apos;t Ask</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="486"/>
-        <source>Disks</source>
-        <translation>Schijven</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="202"/>
-        <source>Language</source>
-        <translation>Taal</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="215"/>
-        <source>Autostart Stacer</source>
-        <translation>Automatisch opstarten</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="273"/>
-        <source>Alert messages (Show a warning after the specified percentage)</source>
-        <translation>Waarschuwingsmeldingen (laat een waarschuwing zien als het opgegeven percentage bereikt is)</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="499"/>
-        <source>Start Page</source>
-        <translation>Startpagina</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="257"/>
-        <source>CPU Percent</source>
-        <translation>CPU-percentage</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.ui" line="311"/>
-        <source>Donate</source>
-        <translation>Doneren</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="84"/>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="39"/>
         <source>Dashboard</source>
         <translation>Overzicht</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="84"/>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="43"/>
         <source>Startup Apps</source>
         <translation>Opstartapplicaties</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="84"/>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="44"/>
         <source>System Cleaner</source>
         <translation>Systeemopschoning</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="84"/>
-        <source>Search</source>
-        <translation>Zoeken</translation>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="45"/>
+        <source>Hosts</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="84"/>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="89"/>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="54"/>
+        <source>When closing the window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="64"/>
+        <source>Ask every time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="65"/>
+        <source>Keep running in the tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="66"/>
+        <source>Quit</source>
+        <translation type="unfinished">Afsluiten</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="83"/>
+        <source>System Tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="88"/>
+        <source>Use the system tray icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="42"/>
         <source>Services</source>
         <translation>Diensten</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="85"/>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="90"/>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="41"/>
         <source>Processes</source>
         <translation>Processen</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="85"/>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="91"/>
-        <source>Uninstaller</source>
-        <translation>Pakketverwijdering</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="85"/>
+        <location filename="../stacer/qml/pages/SettingsPage.qml" line="40"/>
         <source>Resources</source>
         <translation>Systeemgebruik</translation>
     </message>
-    <message>
-        <location filename="../stacer/Pages/Settings/settings_page.cpp" line="85"/>
-        <source>Helpers</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
-    <name>StartupApp</name>
+    <name>StartupAppModel</name>
     <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app.ui" line="128"/>
-        <source>Edit App</source>
-        <translation>App bewerken</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app.ui" line="150"/>
-        <source>Delete App</source>
-        <translation>App verwijderen</translation>
-    </message>
-</context>
-<context>
-    <name>StartupAppEdit</name>
-    <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app_edit.ui" line="20"/>
-        <source>Startup App</source>
-        <translation>Opstartapplicatie</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app_edit.ui" line="95"/>
-        <source>Save</source>
-        <translation>Opslaan</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app_edit.ui" line="44"/>
-        <source>Fields cannot be left blank.</source>
-        <translation>De velden mogen niet leeg zijn. </translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app_edit.ui" line="65"/>
-        <source>App Comment</source>
-        <translation>Commentaar</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app_edit.ui" line="51"/>
-        <source>App Name</source>
-        <translation>Naam</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app_edit.ui" line="58"/>
-        <source>Generic Name</source>
+        <location filename="../stacer/models/startup_app_model.cpp" line="86"/>
+        <source>Could not change the startup entry.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app_edit.ui" line="72"/>
-        <source>App Icon</source>
+        <location filename="../stacer/models/startup_app_model.cpp" line="97"/>
+        <source>Could not save the startup entry.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app_edit.ui" line="79"/>
-        <source>Command</source>
-        <translation>Opdracht</translation>
+        <location filename="../stacer/models/startup_app_model.cpp" line="107"/>
+        <source>Could not create the startup entry.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/StartupApps/startup_app_edit.ui" line="108"/>
-        <source>Application</source>
-        <translation>Applicatie</translation>
+        <location filename="../stacer/models/startup_app_model.cpp" line="126"/>
+        <source>Could not remove the startup entry.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StartupAppsPage</name>
     <message>
-        <location filename="../stacer/Pages/StartupApps/startup_apps_page.ui" line="201"/>
-        <source>Not Found Startup Apps</source>
-        <translation>Er zijn geen opstartapplicaties gevonden.</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/StartupApps/startup_apps_page.ui" line="14"/>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="10"/>
         <source>Startup Apps</source>
         <translation>Opstartapplicaties</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/StartupApps/startup_apps_page.ui" line="101"/>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="52"/>
+        <source>Search startup apps…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="58"/>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="72"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="81"/>
+        <source>No startup applications found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="129"/>
+        <source>System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="142"/>
+        <source>Edit</source>
+        <translation type="unfinished">Bewerken</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="157"/>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="170"/>
         <source>Add Startup App</source>
         <translation>Applicatie toevoegen</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/StartupApps/startup_apps_page.cpp" line="67"/>
-        <source>Startup Apps are disabled.</source>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="170"/>
+        <source>Edit Startup App</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/StartupApps/startup_apps_page.cpp" line="127"/>
-        <source>Startup Applications (%1)</source>
-        <translation>Opstartapplicaties (%1)</translation>
-    </message>
-</context>
-<context>
-    <name>SystemCleanerPage</name>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="14"/>
-        <source>System Cleaner</source>
-        <translation>Systeemopschoning</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="66"/>
-        <source>Crash Reports</source>
-        <translation>Crashrapporten</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="180"/>
-        <source>Application Logs</source>
-        <translation>Applicatielogbestanden</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="218"/>
-        <source>Application Caches</source>
-        <translation>Applicatiecaches</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="366"/>
-        <source>Trash</source>
-        <translation>Prullenbak</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="404"/>
-        <source>Package Caches</source>
-        <translation>Pakketcaches</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="493"/>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="638"/>
-        <source>Select all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="651"/>
-        <source> Back</source>
-        <translation> Terug</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="759"/>
-        <source>Sort by: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="773"/>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="782"/>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="181"/>
         <source>Name</source>
-        <translation>Naam</translation>
+        <translation type="unfinished">Naam</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.cpp" line="35"/>
-        <source>File Name</source>
-        <translation>Bestandsnaam</translation>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="187"/>
+        <source>Command</source>
+        <translation type="unfinished">Opdracht</translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.cpp" line="182"/>
-        <source>Total size: %1</source>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="193"/>
+        <source>Comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="791"/>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.ui" line="800"/>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.cpp" line="35"/>
-        <source>Size</source>
-        <translation>Grootte</translation>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="199"/>
+        <source>Icon name</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/SystemCleaner/system_cleaner_page.cpp" line="295"/>
-        <source>%1 size files cleaned.</source>
-        <translation>%1 bestanden opgeschoond.</translation>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="208"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
+    </message>
+    <message>
+        <location filename="../stacer/qml/pages/StartupAppsPage.qml" line="214"/>
+        <source>Save</source>
+        <translation type="unfinished">Opslaan</translation>
     </message>
 </context>
 <context>
-    <name>UninstallerPage</name>
+    <name>Tray</name>
     <message>
-        <location filename="../stacer/Pages/Uninstaller/uninstallerpage.ui" line="14"/>
-        <source>Uninstaller</source>
-        <translation>Pakketverwijdering</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Uninstaller/uninstallerpage.ui" line="371"/>
-        <source>System Packages</source>
+        <location filename="../stacer/tray.cpp" line="23"/>
+        <source>Linux System Optimizer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Uninstaller/uninstallerpage.ui" line="393"/>
-        <source>Snap Packages</source>
+        <location filename="../stacer/tray.cpp" line="27"/>
+        <source>Show Stacer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../stacer/Pages/Uninstaller/uninstallerpage.ui" line="442"/>
-        <source>Search...</source>
-        <translation>Zoeken...</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Uninstaller/uninstallerpage.ui" line="108"/>
-        <location filename="../stacer/Pages/Uninstaller/uninstallerpage.ui" line="231"/>
-        <source>Not Found Installed Packages</source>
-        <translation>Geen geïnstalleerde pakketten gevonden.</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Uninstaller/uninstallerpage.ui" line="340"/>
-        <source>Uninstall Selected</source>
-        <translation>Geselecteerde pakketten verwijderen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Uninstaller/uninstaller_page.cpp" line="102"/>
-        <source>Packages (%1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Uninstaller/uninstaller_page.cpp" line="107"/>
-        <source>Snap Packages (%1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/Uninstaller/uninstaller_page.cpp" line="208"/>
-        <location filename="../stacer/Pages/Uninstaller/uninstaller_page.cpp" line="215"/>
-        <source>Uninstall Selected (%1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UnitySettings</name>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="65"/>
-        <source>Applications</source>
-        <translation>Applicaties</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="108"/>
-        <source>Show &quot;Recently Used&quot; applications</source>
-        <translation>&quot;Recent gebruikt&quot; weergeven</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="134"/>
-        <source>Enable search of your files</source>
-        <translation>Naar bestanden zoeken</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="160"/>
-        <source>Show &quot;More Suggestions&quot;</source>
-        <translation>&quot;Meer suggesties&quot; weergeven</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="186"/>
-        <source>Search</source>
-        <translation>Zoeken</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="196"/>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="683"/>
-        <source>General</source>
-        <translation>Algemeen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="229"/>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="660"/>
-        <source>Transparency Level</source>
-        <translation>Doorzichtigheidsniveau</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="280"/>
-        <source>Behaviour</source>
-        <translation>Gedrag</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="323"/>
-        <source>Auto Hide</source>
-        <translation>Automatisch verbergen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="339"/>
-        <source>Left Side</source>
-        <translation>Linkerzijde</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="380"/>
-        <source>Minimize applications with clicking</source>
-        <translation>Applicaties minimaliseren met enkele klik</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="396"/>
-        <source>Top-Left Corner</source>
-        <translation>Linkerbovenhoek</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="412"/>
-        <source>Reveal Sensitivity</source>
-        <translation>Opduikgevoeligheid</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="438"/>
-        <source>Reveal Location</source>
-        <translation>Opduiklocatie</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="464"/>
-        <source>Launcher</source>
-        <translation>Starter</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="474"/>
-        <source>Appearance</source>
-        <translation>Uiterlijk</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="507"/>
-        <source>Left</source>
-        <translation>Links</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="526"/>
-        <source>Bottom</source>
-        <translation>Onderaan</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="542"/>
-        <source>Visibility</source>
-        <translation>Zichtbaarheid</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="558"/>
-        <source>Primary Desktop</source>
-        <translation>Huidige bureaublad</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="612"/>
-        <source>Icon size</source>
-        <translation>Pictogramgrootte</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="628"/>
-        <source>All Desktops</source>
-        <translation>Alle bureaubladen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="644"/>
-        <source>Position</source>
-        <translation>Locatie</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="726"/>
-        <source>Search online sources</source>
-        <translation>Online bronnen doorzoeken</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="752"/>
-        <source>Background Blur</source>
-        <translation>Achtergrondvervaging</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="778"/>
-        <source>Panel</source>
-        <translation>Paneel</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="801"/>
-        <source>Indicators</source>
-        <translation>Indicators</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="840"/>
-        <source>Date</source>
-        <translation>Datum</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="862"/>
-        <source>Calendar</source>
-        <translation>Kalender</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="875"/>
-        <source>Date &amp; Time</source>
-        <translation>Datum en tijd</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="888"/>
-        <source>24-Hour Time</source>
-        <translation>24 uurstijd</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="910"/>
-        <source>Weekday</source>
-        <translation>Weekdag</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="923"/>
-        <source>Include</source>
-        <translation>Extra informatie:</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="945"/>
-        <source>Seconds</source>
-        <translation>Seconden</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="958"/>
-        <source>Volume</source>
-        <translation>Volume</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/unity_settings.ui" line="971"/>
-        <source>Show my name</source>
-        <translation>Mijn naam weergeven</translation>
-    </message>
-</context>
-<context>
-    <name>WindowManagerSettings</name>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="90"/>
-        <source>General</source>
-        <translation>Algemeen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="100"/>
-        <source>Titlebar Actions</source>
-        <translation>Titelbalkacties</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="155"/>
-        <source>Right click</source>
-        <translation>Rechtermuisknop</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="168"/>
-        <source>Double click</source>
-        <translation>Dubbelklikken</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="181"/>
-        <source>Middle click</source>
-        <translation>Middelste muisknop</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="257"/>
-        <source>Additional</source>
-        <translation>Extra</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="267"/>
-        <source>Workspace Settings</source>
-        <translation>Werkbladinstellingen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="310"/>
-        <source>Vertical workspaces</source>
-        <translation>Aantal verticale werkbladen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="333"/>
-        <source>Workspace switcher</source>
-        <translation>Werkbladwisselaar</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="356"/>
-        <source>Horizontal workspaces</source>
-        <translation>Aantal horizontale werkbladen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="379"/>
-        <source>Focus Behaviour</source>
-        <translation>Focusgedrag</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="409"/>
-        <source>Focus mode</source>
-        <translation>Focusmodus</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="460"/>
-        <source>Raise on click</source>
-        <translation>Klikken brengt actief venster naar voorgrond</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="483"/>
-        <source>Hardware Acceleration</source>
-        <translation>Hardwareversnelling</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.ui" line="538"/>
-        <source>Text quality</source>
-        <translation>Tekstkwaliteit</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="64"/>
-        <source>Fast</source>
-        <translation>Snel</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="64"/>
-        <source>Good</source>
-        <translation>Goed</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="64"/>
-        <source>Best</source>
-        <translation>Beste</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="66"/>
-        <source>Click</source>
-        <translation>Klik</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="66"/>
-        <source>Sloppy</source>
-        <translation>Slordig</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="66"/>
-        <source>Mouse</source>
-        <translation>Muis</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="78"/>
-        <source>Toggle Shade</source>
-        <translation>Oprollen/Uitrollen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="78"/>
-        <source>Maximize</source>
-        <translation>Maximaliseren</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="78"/>
-        <source>Maximize Horizontally</source>
-        <translation>Horizontaal maximaliseren</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="78"/>
-        <source>Maximize Vertically</source>
-        <translation>Verticaal maximaliseren</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="78"/>
-        <source>Minimize</source>
-        <translation>Minimaliseren</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="78"/>
-        <source>None</source>
-        <translation>Niets</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="78"/>
-        <source>Lower</source>
-        <translation>Verlagen</translation>
-    </message>
-    <message>
-        <location filename="../stacer/Pages/GnomeSettings/window_manager_settings.cpp" line="78"/>
-        <source>Menu</source>
-        <translation>Menu</translation>
+        <location filename="../stacer/tray.cpp" line="32"/>
+        <source>Quit</source>
+        <translation type="unfinished">Afsluiten</translation>
     </message>
 </context>
 </TS>

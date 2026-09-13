@@ -176,7 +176,7 @@ void Cleaner::scan()
     Q_EMIT scanningChanged();
 
     QPointer<Cleaner> guard(this);
-    QtConcurrent::run([guard] {
+    (void)QtConcurrent::run([guard] {
         if (!guard) {
             return;
         }

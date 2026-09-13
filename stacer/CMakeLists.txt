@@ -57,6 +57,7 @@ file(GLOB STACER_TS_FILES "${CMAKE_SOURCE_DIR}/translations/*.ts")
 
 qt_add_translations(stacer
     TS_FILES ${STACER_TS_FILES}
+    LUPDATE_OPTIONS -no-obsolete
     QM_FILES_OUTPUT_VARIABLE STACER_QM_FILES
 )
 
