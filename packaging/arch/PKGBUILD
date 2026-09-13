@@ -1,15 +1,15 @@
-# Maintainer: Stacer fork maintainers
+# Maintainer: Kleaner maintainers
 #
 # Development PKGBUILD: builds the local checkout two directories above.
 # When the fork is published, replace the build() source with the repository
 # URL and drop the local-path handling, for example:
-#   source=("$pkgname::git+https://example.org/stacer.git")
+#   source=("$pkgname::git+https://example.org/kleaner.git")
 #   pkgver() { cd "$pkgname"; git describe --long --tags --abbrev=7 | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'; }
 
-pkgname=stacer-git
+pkgname=kleaner-git
 pkgver=1.7.0
 pkgrel=1
-pkgdesc="Linux System Optimizer and Monitoring (Qt 6 / Kirigami rewrite)"
+pkgdesc="Linux System Optimizer and Monitoring (Qt 6 / Kirigami rewrite of Stacer)"
 arch=('x86_64' 'aarch64')
 url="https://github.com/QuentiumYT/Stacer"
 license=('GPL-3.0-only')
@@ -30,8 +30,7 @@ depends=(
 )
 makedepends=('cmake' 'ninja' 'extra-cmake-modules' 'qt6-tools')
 optdepends=('breeze-icons: icon theme for the KDE desktop')
-provides=('stacer')
-conflicts=('stacer' 'stacer-bin')
+provides=('kleaner')
 options=('!lto')
 
 build() {

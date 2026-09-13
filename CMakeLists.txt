@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(stacer VERSION 1.7.0 LANGUAGES CXX)
+project(kleaner VERSION 1.7.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,40 +17,40 @@ include(KDECompilerSettings NO_POLICY_SCOPE)
 include(CTest)
 
 # Single source of truth for the application identity.
-# The fork will be renamed later; changing these two variables is enough.
-set(STACER_APP_ID "fr.quentium.stacer" CACHE STRING "Application/DBus/policy ID")
-set(STACER_DESKTOP_NAME "stacer" CACHE STRING "Desktop entry base name")
-set(STACER_HELPER_ID "${STACER_APP_ID}")
+# Changing these two variables renames the application everywhere.
+set(KLEANER_APP_ID "fr.quentium.kleaner" CACHE STRING "Application/DBus/policy ID")
+set(KLEANER_DESKTOP_NAME "kleaner" CACHE STRING "Desktop entry base name")
+set(KLEANER_HELPER_ID "${KLEANER_APP_ID}")
 
 add_compile_definitions(
-  STACER_APP_ID="${STACER_APP_ID}"
-  STACER_DESKTOP_NAME="${STACER_DESKTOP_NAME}"
-  STACER_HELPER_ID="${STACER_HELPER_ID}"
+  KLEANER_APP_ID="${KLEANER_APP_ID}"
+  KLEANER_DESKTOP_NAME="${KLEANER_DESKTOP_NAME}"
+  KLEANER_HELPER_ID="${KLEANER_HELPER_ID}"
 )
 
 find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Network DBus)
 find_package(KF6 6.30 REQUIRED COMPONENTS CoreAddons)
 
-add_subdirectory(stacer-core)
-add_subdirectory(stacer)
+add_subdirectory(kleaner-core)
+add_subdirectory(kleaner)
 
 string(TIMESTAMP TODAY_ISO_8601 "%Y-%m-%d" UTC)
 
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/desktop/stacer.metainfo.xml.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/desktop/${STACER_APP_ID}.metainfo.xml"
+  "${CMAKE_CURRENT_SOURCE_DIR}/desktop/kleaner.metainfo.xml.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/desktop/${KLEANER_APP_ID}.metainfo.xml"
   IMMEDIATE @ONLY
 )
 
 install(
-  FILES "${CMAKE_CURRENT_BINARY_DIR}/desktop/${STACER_APP_ID}.metainfo.xml"
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/desktop/${KLEANER_APP_ID}.metainfo.xml"
   DESTINATION ${KDE_INSTALL_METAINFODIR}
 )
 
 install(
-  FILES "${CMAKE_CURRENT_SOURCE_DIR}/desktop/stacer.desktop"
+  FILES "${CMAKE_CURRENT_SOURCE_DIR}/desktop/kleaner.desktop"
   DESTINATION ${KDE_INSTALL_APPDIR}
-  RENAME "${STACER_DESKTOP_NAME}.desktop"
+  RENAME "${KLEANER_DESKTOP_NAME}.desktop"
 )
 
 install(

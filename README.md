@@ -1,13 +1,12 @@
-# Stacer
+# Kleaner
 
 Linux System Optimizer and Monitoring — a Qt 6 / KDE Frameworks 6 fork with a
 Kirigami (QML) user interface.
 
-> This is a fork of [QuentiumYT/Stacer](https://github.com/QuentiumYT/Stacer)
+> Kleaner is a fork of [QuentiumYT/Stacer](https://github.com/QuentiumYT/Stacer)
 > that is being rewritten around Qt 6.11, KDE Frameworks 6 and Wayland.
 > The project is currently packaged for Arch Linux only. Other distributions
-> will follow later. The application name and identifier will change in a
-> future release.
+> will follow later.
 
 ## Features
 
@@ -51,18 +50,18 @@ cmake --build build -j $(nproc)
 sudo cmake --install build
 ```
 
-Run: `stacer`
+Run: `kleaner`
 
 ## Requirements
 
-- systemd (services page and `systemctl` integration via D-Bus)
+- systemd (services page via D-Bus)
 - polkit agent (privileged cleaner and `/etc/hosts` writes)
 - `qqc2-desktop-style` and an icon theme (`breeze-icons` recommended)
 
 ## Configuration
 
-Settings are stored in `~/.config/stacerrc` (KConfig). Translations are
-installed to `/usr/share/stacer/translations` and loaded according to the
+Settings are stored in `~/.config/kleanerrc` (KConfig). Translations are
+installed to `/usr/share/kleaner/translations` and loaded according to the
 system locale.
 
 ## Development
@@ -70,7 +69,7 @@ system locale.
 ```bash
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
 cmake --build build -j $(nproc)
-./build/stacer/stacer
+./build/kleaner/kleaner
 ```
 
 Translation catalogs live in `translations/` and can be refreshed with the
@@ -83,4 +82,5 @@ cmake --build build --target release_translations
 
 ## License
 
-GPL-3.0. See [LICENSE](LICENSE).
+GPL-3.0. See [LICENSE](LICENSE). Kleaner is a fork of Stacer by Quentin
+Lienhardt.
