@@ -1,0 +1,25 @@
+id: fr.quentium.stacer
+runtime: org.kde.Platform
+runtime-version: '6.10'
+sdk: org.kde.Sdk
+command: stacer
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  # Need to access user autostart for Startup Apps tab to be useful
+  - --filesystem=xdg-config/autostart
+  # Need to access user cache for System Cleaner tab to be useful
+  - --filesystem=home
+  # Need to access system cache for System Cleaner tab to be useful
+  - --filesystem=/var/cache
+  - --filesystem=/var/crash
+  - --filesystem=/var/log
+
+modules:
+  - name: stacer
+    buildsystem: cmake-ninja
+    sources:
+      - type: dir
+        path: ..

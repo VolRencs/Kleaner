@@ -1,0 +1,17 @@
+---
+Language: Cpp
+# BasedOnStyle: WebKit
+ColumnLimit: 0
+IndentWidth: 4
+PointerAlignment: Right
+BreakBeforeBraces: Custom
+BreakConstructorInitializers: AfterColon
+BraceWrapping:
+  AfterClass: true
+  AfterFunction: true
+AlignTrailingComments: false
+SpaceBeforeCpp11BracedList: true
+Cpp11BracedListStyle: false
+IndentCaseLabels: true
+NamespaceIndentation: All
+FixNamespaceComments: false

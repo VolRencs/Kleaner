@@ -1,0 +1,27 @@
+#ifndef FILEUTIL_H
+#define FILEUTIL_H
+
+#include <QDir>
+#include <QDirIterator>
+#include <QFile>
+#include <QSharedPointer>
+#include <QStandardPaths>
+#include <QTextStream>
+
+#include "stacer-core_global.h"
+
+class STACERCORESHARED_EXPORT FileUtil
+{
+  public:
+    static QString readStringFromFile(const QString &path, const QIODevice::OpenMode &mode = QIODevice::ReadOnly);
+    static QStringList readListFromFile(const QString &path, const QIODevice::OpenMode &mode = QIODevice::ReadOnly);
+
+    static bool writeFile(const QString &path, const QString &content, const QIODevice::OpenMode &mode = QIODevice::WriteOnly | QIODevice::Truncate);
+    static QStringList directoryList(const QString &path);
+    static quint64 getFileSize(const QString &path);
+
+  private:
+    FileUtil() = default;
+};
+
+#endif // FILEUTIL_H
