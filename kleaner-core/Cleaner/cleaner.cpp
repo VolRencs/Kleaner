@@ -358,12 +358,14 @@ void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QS
         job->start();
     }
 
-    state->remaining += userPaths.size();
     if (emptyTrash) {
         ++state->remaining;
     }
 
     if (!userPaths.isEmpty()) {
+        // The whole batch is a single task: the worker reports once when done.
+        ++state->remaining;
+
         // User-owned paths can be large; delete them off the GUI thread.
         const QPointer<Cleaner> guard(this);
         (void)QtConcurrent::run([guard, state, userPaths, userPathSizes] {

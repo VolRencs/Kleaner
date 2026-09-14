@@ -66,6 +66,8 @@ jobs:
 
       - name: Lint QML
         run: |
+          # Arch installs qt6-declarative's tools outside PATH.
+          export PATH="/usr/lib/qt6/bin:$PATH"
           find kleaner/qml -name '*.qml' -print0 | xargs -0 qmllint -I kleaner/qml -I build/kleaner
 
       - name: Check C++ formatting

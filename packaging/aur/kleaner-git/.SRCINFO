@@ -1,6 +1,6 @@
 pkgbase = kleaner-git
 	pkgdesc = Linux System Optimizer and Monitoring (Qt 6 / KDE Frameworks 6)
-	pkgver = 1.2.1
+	pkgver = 1.2.2
 	pkgrel = 1
 	url = https://volrencs.github.io/Kleaner/
 	arch = x86_64

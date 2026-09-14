@@ -63,6 +63,11 @@
     </provides>
 
     <releases>
+        <release version="1.2.2" date="2026-09-14">
+            <description>
+                <p>Fixed the system cleaner getting stuck on "Cleaning…" when several user-owned paths, such as application caches, were selected at once.</p>
+            </description>
+        </release>
         <release version="1.2.1" date="2026-09-14">
             <description>
                 <p>English can now be selected explicitly in the language selector; it is the source language and previously was only reachable through the system locale fallback.</p>

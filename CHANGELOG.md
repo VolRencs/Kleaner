@@ -2,6 +2,13 @@
 
 All notable changes to Kleaner are documented in this file.
 
+## 1.2.2 — 2026-09-14
+
+- Fixed the system cleaner getting stuck on "Cleaning…" when more than one
+  user-owned path was selected (for example application caches): the completion
+  counter was incremented per path but decremented once for the whole batch, so
+  the finished signal never arrived.
+
 ## 1.2.1 — 2026-09-14
 
 - Fixed the interface language selector not offering English explicitly:

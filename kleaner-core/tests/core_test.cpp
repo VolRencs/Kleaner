@@ -39,6 +39,7 @@ class CoreTest : public QObject
     void hostsLoadsSystemFile();
 
     void cleanerComputesDirectorySize();
+    void cleanerEmitsCleanedForMultipleUserPaths();
 };
 
 void CoreTest::procfsReadsUInt64()
@@ -154,6 +155,39 @@ void CoreTest::cleanerComputesDirectorySize()
     nested.close();
 
     QCOMPARE(Cleaner::directorySize(dir.path()), 1100ULL);
+}
+
+void CoreTest::cleanerEmitsCleanedForMultipleUserPaths()
+{
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+
+    QStringList paths;
+    QVariantMap sizes;
+    for (int i = 0; i < 3; ++i) {
+        const QString path = dir.filePath(QStringLiteral("file%1.log").arg(i));
+        QFile file(path);
+        QVERIFY(file.open(QIODevice::WriteOnly));
+        file.write(QByteArray(100, 'x'));
+        file.close();
+        paths.append(path);
+        sizes.insert(path, QVariant::fromValue<qulonglong>(100));
+    }
+
+    Cleaner cleaner;
+    QSignalSpy spy(&cleaner, &Cleaner::cleaned);
+    cleaner.clean(paths, sizes, {}, false);
+
+    // The completion signal must arrive once for the whole batch, no matter
+    // how many user-owned paths were selected.
+    QVERIFY(spy.wait(5000));
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spy.first().at(0).toInt(), 3);
+    QCOMPARE(spy.first().at(1).toULongLong(), 300ULL);
+    QVERIFY(spy.first().at(2).toString().isEmpty());
+    for (const QString &path : paths) {
+        QVERIFY(!QFile::exists(path));
+    }
 }
 
 QTEST_GUILESS_MAIN(CoreTest)

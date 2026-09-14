@@ -1,6 +1,6 @@
 pkgbase = kleaner
 	pkgdesc = Linux System Optimizer and Monitoring (Qt 6 / KDE Frameworks 6)
-	pkgver = 1.2.1
+	pkgver = 1.2.2
 	pkgrel = 1
 	url = https://volrencs.github.io/Kleaner/
 	arch = x86_64
@@ -24,7 +24,7 @@ pkgbase = kleaner
 	optdepends = breeze-icons: icon theme for the KDE desktop
 	conflicts = kleaner-git
 	options = !lto
-	source = kleaner-1.2.1.tar.gz::https://github.com/VolRencs/Kleaner/archive/refs/tags/v1.2.1.tar.gz
-	sha256sums = e03532e8220d6cd38f259840921f7c2ed99baf3a975f4f16f1716939f900ec46
+	source = kleaner-1.2.2.tar.gz::https://github.com/VolRencs/Kleaner/archive/refs/tags/v1.2.2.tar.gz
+	sha256sums = SKIP
 
 pkgname = kleaner
