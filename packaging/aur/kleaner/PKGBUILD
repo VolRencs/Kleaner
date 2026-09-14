@@ -1,6 +1,6 @@
 # Maintainer: VolRen <VolRencs@proton.me>
 pkgname=kleaner
-pkgver=1.3.0
+pkgver=1.3.1
 pkgrel=1
 pkgdesc="Linux System Optimizer and Monitoring"
 arch=('x86_64' 'aarch64')
@@ -23,7 +23,7 @@ optdepends=('breeze-icons: icon theme for the KDE desktop')
 conflicts=('kleaner-git')
 options=('!lto')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/VolRencs/Kleaner/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('1d8b225b5fd8b31f6bba07c426352ccb6a90a1afc85f47538d4751f82c994190')
+sha256sums=('4221177bb5cb8a3bf6224da875785996c55db6d43970f5da2346786c5997fcd5')
 
 build() {
     cmake -S "Kleaner-$pkgver" -B build -G Ninja \
