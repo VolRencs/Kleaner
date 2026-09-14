@@ -84,6 +84,24 @@ QVariantList Settings::availableLanguages() const
     QVariantList languages;
     QSet<QString> seen;
 
+    const auto appendLanguage = [&languages, &seen](const QString &code) {
+        if (code.isEmpty() || seen.contains(code)) {
+            return;
+        }
+        seen.insert(code);
+
+        const QLocale locale(QString(code).replace(QLatin1Char('-'), QLatin1Char('_')));
+        QString name = locale.nativeLanguageName();
+        if (name.isEmpty()) {
+            name = QLocale::languageToString(locale.language());
+        }
+        if (name.isEmpty()) {
+            name = code;
+        }
+        const QString displayName = name.left(1).toUpper() + name.mid(1);
+        languages.append(QVariantMap { { QStringLiteral("code"), code }, { QStringLiteral("name"), displayName } });
+    };
+
     const QStringList directories = translationDirectories();
     for (const QString &directory : directories) {
         const QDir dir(directory);
@@ -92,24 +110,13 @@ QVariantList Settings::availableLanguages() const
             QString code = file;
             code.remove(QStringLiteral("kleaner_"));
             code.chop(3);
-
-            if (code.isEmpty() || seen.contains(code)) {
-                continue;
-            }
-            seen.insert(code);
-
-            const QLocale locale(QString(code).replace(QLatin1Char('-'), QLatin1Char('_')));
-            QString name = locale.nativeLanguageName();
-            if (name.isEmpty()) {
-                name = QLocale::languageToString(locale.language());
-            }
-            if (name.isEmpty()) {
-                name = code;
-            }
-            const QString displayName = name.left(1).toUpper() + name.mid(1);
-            languages.append(QVariantMap { { QStringLiteral("code"), code }, { QStringLiteral("name"), displayName } });
+            appendLanguage(code);
         }
     }
+
+    // English is the source language and ships no translation catalog, but it
+    // must still be selectable when the system locale is something else.
+    appendLanguage(QStringLiteral("en"));
 
     std::sort(languages.begin(), languages.end(), [](const QVariant &a, const QVariant &b) {
         return a.toMap().value(QStringLiteral("name")).toString().localeAwareCompare(b.toMap().value(QStringLiteral("name")).toString()) < 0;

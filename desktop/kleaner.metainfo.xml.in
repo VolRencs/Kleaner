@@ -63,6 +63,11 @@
     </provides>
 
     <releases>
+        <release version="1.2.1" date="2026-09-14">
+            <description>
+                <p>English can now be selected explicitly in the language selector; it is the source language and previously was only reachable through the system locale fallback.</p>
+            </description>
+        </release>
         <release version="1.2.0" date="2026-09-14">
             <description>
                 <p>Disk I/O and network monitoring now report real values, the hosts editor and the privileged cleaner are safer, and user cleanup no longer freezes the window. The interface received KDE-style rounded list highlighting, spinning refresh buttons, a more compact resource legend and unique colours for CPU cores.</p>

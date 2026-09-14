@@ -2,6 +2,12 @@
 
 All notable changes to Kleaner are documented in this file.
 
+## 1.2.1 — 2026-09-14
+
+- Fixed the interface language selector not offering English explicitly:
+  English is the source language and was previously only reachable through the
+  system locale fallback.
+
 ## 1.2.0 — 2026-09-14
 
 - Fixed disk I/O rates being stuck at zero: `/sys/block` entries are symlinks

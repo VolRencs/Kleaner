@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(kleaner
-    VERSION 1.2.0
+    VERSION 1.2.1
     DESCRIPTION "Linux System Optimizer and Monitoring"
     HOMEPAGE_URL "https://volrencs.github.io/Kleaner/"
     LANGUAGES CXX
