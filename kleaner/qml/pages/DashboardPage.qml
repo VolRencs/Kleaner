@@ -20,14 +20,11 @@ Item {
 
     readonly property bool wide: width > 820
 
-    Controls.ScrollView {
+    AppScrollView {
         id: scroll
 
         anchors.fill: parent
         anchors.margins: Design.pagePadding
-        clip: true
-        Controls.ScrollBar.horizontal.policy: Controls.ScrollBar.AlwaysOff
-        Controls.ScrollBar.vertical: AppScrollBar {}
 
         ColumnLayout {
             width: scroll.availableWidth

@@ -8,16 +8,21 @@ import QtQuick.Layouts
 Item {
     id: page
 
-    readonly property bool wide: width > 900
+    // Distinct colour per core, cycling through the application palette.
+    readonly property var coreColors: [
+        Design.accent, Design.positive, Design.violet,
+        Design.cyan, Design.orange, Design.warning
+    ]
 
-    Controls.ScrollView {
+    function coreColor(index) {
+        return page.coreColors[index % page.coreColors.length];
+    }
+
+    AppScrollView {
         id: scroll
 
         anchors.fill: parent
         anchors.margins: Design.pagePadding
-        clip: true
-        Controls.ScrollBar.horizontal.policy: Controls.ScrollBar.AlwaysOff
-        Controls.ScrollBar.vertical: AppScrollBar {}
 
         ColumnLayout {
             width: scroll.availableWidth
@@ -29,70 +34,70 @@ Item {
                 subtitle: qsTr("60-second history of CPU, memory, disk and network activity")
             }
 
-            GridLayout {
+            ChartCard {
                 Layout.fillWidth: true
-                columns: page.wide ? 2 : 1
-                columnSpacing: Design.space16
-                rowSpacing: Design.space16
-
-                ChartCard {
-                    Layout.fillWidth: true
-                    Layout.columnSpan: page.wide ? 2 : 1
-                    Layout.preferredHeight: 280
-                    title: qsTr("CPU Usage")
-                    valueText: Format.percent(Cpu.usage)
-                    yMax: 100
-                    names: [qsTr("Usage")]
-                    seriesColors: [Design.accent]
-                    valueSources: [History.cpuUsage]
+                title: qsTr("CPU Usage")
+                yMax: 100
+                fillStrength: 0.14
+                lineWidth: 1.5
+                headerValues: History.cpuUsage
+                valueFormatter: function(value) { return Format.percent(value); }
+                series: {
+                    const cores = [];
+                    for (let i = 0; i < History.cpuCores.length; ++i) {
+                        cores.push({
+                            name: qsTr("Core %1").arg(i),
+                            color: page.coreColor(i),
+                            values: History.cpuCores[i]
+                        });
+                    }
+                    return cores;
                 }
+            }
 
-                ChartCard {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 240
-                    title: qsTr("CPU Load Average")
-                    valueText: Cpu.load1.toFixed(2)
-                    automaticYRange: true
-                    yMax: Math.max(1, Cpu.load1 * 1.2)
-                    names: [qsTr("1 min"), qsTr("5 min"), qsTr("15 min")]
-                    seriesColors: [Design.accent, Design.positive, Design.warning]
-                    valueSources: [History.load1, History.load5, History.load15]
-                }
+            ChartCard {
+                Layout.fillWidth: true
+                title: qsTr("CPU Load Average")
+                automaticYRange: true
+                valueFormatter: function(value) { return value.toFixed(2); }
+                series: [
+                    { name: qsTr("1 min"), color: Design.accent, values: History.load1 },
+                    { name: qsTr("5 min"), color: Design.positive, values: History.load5 },
+                    { name: qsTr("15 min"), color: Design.warning, values: History.load15 }
+                ]
+            }
 
-                ChartCard {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 240
-                    title: qsTr("Memory and Swap")
-                    valueText: Format.percent(Memory.usagePercent)
-                    yMax: 100
-                    names: [qsTr("Memory"), qsTr("Swap")]
-                    seriesColors: [Design.violet, Design.cyan]
-                    valueSources: [History.memoryUsage, History.swapUsage]
-                }
+            ChartCard {
+                Layout.fillWidth: true
+                title: qsTr("Memory and Swap")
+                yMax: 100
+                valueFormatter: function(value) { return Format.percent(value); }
+                series: [
+                    { name: qsTr("Memory"), color: Design.violet, values: History.memoryUsage },
+                    { name: qsTr("Swap"), color: Design.cyan, values: History.swapUsage }
+                ]
+            }
 
-                ChartCard {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 240
-                    title: qsTr("Disk Read / Write")
-                    valueText: "R " + Format.bytes(Disks.readRate) + "/s"
-                    automaticYRange: true
-                    yMax: Math.max(1, Disks.readRate * 1.2, Disks.writeRate * 1.2)
-                    names: [qsTr("Read"), qsTr("Write")]
-                    seriesColors: [Design.cyan, Design.orange]
-                    valueSources: [History.diskRead, History.diskWrite]
-                }
+            ChartCard {
+                Layout.fillWidth: true
+                title: qsTr("Disk Read / Write")
+                automaticYRange: true
+                valueFormatter: function(value) { return Format.bytes(value) + "/s"; }
+                series: [
+                    { name: qsTr("Read"), color: Design.cyan, values: History.diskRead },
+                    { name: qsTr("Write"), color: Design.orange, values: History.diskWrite }
+                ]
+            }
 
-                ChartCard {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 240
-                    title: qsTr("Network Download / Upload")
-                    valueText: "↓ " + Format.bytes(Network.rxRate) + "/s"
-                    automaticYRange: true
-                    yMax: Math.max(1, Network.rxRate * 1.2, Network.txRate * 1.2)
-                    names: [qsTr("Download"), qsTr("Upload")]
-                    seriesColors: [Design.positive, Design.accent]
-                    valueSources: [History.networkRx, History.networkTx]
-                }
+            ChartCard {
+                Layout.fillWidth: true
+                title: qsTr("Network Download / Upload")
+                automaticYRange: true
+                valueFormatter: function(value) { return Format.bytes(value) + "/s"; }
+                series: [
+                    { name: qsTr("Download"), color: Design.positive, values: History.networkRx },
+                    { name: qsTr("Upload"), color: Design.accent, values: History.networkTx }
+                ]
             }
         }
     }

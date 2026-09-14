@@ -8,14 +8,11 @@ import QtQuick.Layouts
 Item {
     id: page
 
-    Controls.ScrollView {
+    AppScrollView {
         id: scroll
 
         anchors.fill: parent
         anchors.margins: Design.pagePadding
-        clip: true
-        Controls.ScrollBar.horizontal.policy: Controls.ScrollBar.AlwaysOff
-        Controls.ScrollBar.vertical: AppScrollBar {}
 
         ColumnLayout {
             width: scroll.availableWidth
@@ -91,8 +88,11 @@ Item {
                             id: closeBehaviorCombo
                             Layout.preferredWidth: 220
                             textRole: "text"
-                            valueRole: "value"
-                            model: {
+
+                            // Built from JavaScript, so valueRole/indexOfValue cannot be
+                            // used here: the item values come back as JS values and never
+                            // compare equal. Resolve the index manually instead.
+                            property var options: {
                                 const items = [
                                     { text: qsTr("Ask every time"), value: "ask" },
                                     { text: qsTr("Quit"), value: "quit" }
@@ -102,8 +102,17 @@ Item {
                                 }
                                 return items;
                             }
-                            Component.onCompleted: currentIndex = Math.max(0, indexOfValue(Settings.closeBehavior))
-                            onActivated: Settings.closeBehavior = currentValue
+
+                            model: options
+                            currentIndex: {
+                                for (let i = 0; i < options.length; ++i) {
+                                    if (options[i].value === Settings.closeBehavior) {
+                                        return i;
+                                    }
+                                }
+                                return 0;
+                            }
+                            onActivated: Settings.closeBehavior = options[currentIndex].value
                         }
                     }
 
@@ -150,8 +159,10 @@ Item {
                             id: languageCombo
                             Layout.preferredWidth: 220
                             textRole: "text"
-                            valueRole: "value"
-                            model: {
+
+                            // See closeBehaviorCombo: the list is assembled in JavaScript,
+                            // so the current entry has to be matched by hand.
+                            property var options: {
                                 const items = [{ text: qsTr("System language"), value: "" }];
                                 const languages = Settings.availableLanguages();
                                 for (let i = 0; i < languages.length; ++i) {
@@ -159,8 +170,17 @@ Item {
                                 }
                                 return items;
                             }
-                            currentIndex: Math.max(0, indexOfValue(Settings.language))
-                            onActivated: Settings.language = currentValue
+
+                            model: options
+                            currentIndex: {
+                                for (let i = 0; i < options.length; ++i) {
+                                    if (options[i].value === Settings.language) {
+                                        return i;
+                                    }
+                                }
+                                return 0;
+                            }
+                            onActivated: Settings.language = options[currentIndex].value
                         }
                     }
                 }

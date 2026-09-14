@@ -85,7 +85,11 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
-    app.setApplicationName(QStringLiteral(KLEANER_DESKTOP_NAME));
+    // KDBusService derives its bus name as reversed organizationDomain + applicationName,
+    // which must result in org.volren.kleaner to match the desktop id and the D-Bus
+    // session service file used for activation from the application menu.
+    app.setOrganizationDomain(QStringLiteral("volren.org"));
+    app.setApplicationName(QStringLiteral("kleaner"));
     app.setApplicationDisplayName(QStringLiteral("Kleaner"));
     app.setApplicationVersion(QStringLiteral(KLEANER_VERSION));
     app.setDesktopFileName(QStringLiteral(KLEANER_DESKTOP_NAME));

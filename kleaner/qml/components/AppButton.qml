@@ -66,25 +66,37 @@ Controls.Button {
         return root.hovered ? Design.borderStrong : Design.border;
     }
 
-    contentItem: RowLayout {
-        spacing: root.spacing
+    contentItem: Item {
+        implicitWidth: contentRow.implicitWidth
+        implicitHeight: contentRow.implicitHeight
 
-        Kirigami.Icon {
-            Layout.alignment: Qt.AlignVCenter
-            visible: root.display !== Controls.AbstractButton.TextOnly && root.icon.name.length > 0
-            implicitWidth: root.icon.width
-            implicitHeight: root.icon.height
-            source: root.icon.name
-            color: root.foregroundColor
-        }
+        RowLayout {
+            id: contentRow
 
-        Controls.Label {
-            Layout.alignment: Qt.AlignVCenter
-            visible: root.display !== Controls.AbstractButton.IconOnly && root.text.length > 0
-            text: root.text
-            color: root.foregroundColor
-            font: root.font
-            elide: Text.ElideRight
+            // Anchored instead of filling: the platform style stretches the
+            // content item to the whole button, which would left-align the row
+            // and push icon-only buttons off-center.
+            anchors.centerIn: parent
+            width: Math.min(contentRow.implicitWidth, parent.width)
+            spacing: root.spacing
+
+            Kirigami.Icon {
+                Layout.alignment: Qt.AlignVCenter
+                visible: root.display !== Controls.AbstractButton.TextOnly && root.icon.name.length > 0
+                implicitWidth: root.icon.width
+                implicitHeight: root.icon.height
+                source: root.icon.name
+                color: root.foregroundColor
+            }
+
+            Controls.Label {
+                Layout.alignment: Qt.AlignVCenter
+                visible: root.display !== Controls.AbstractButton.IconOnly && root.text.length > 0
+                text: root.text
+                color: root.foregroundColor
+                font: root.font
+                elide: Text.ElideRight
+            }
         }
     }
 

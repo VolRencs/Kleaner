@@ -140,4 +140,5 @@ void Hosts::save()
             Q_EMIT saved(true, {});
         }
     });
+    job->start();
 }

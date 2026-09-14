@@ -140,7 +140,9 @@ void ProcessModel::setPaused(bool paused)
 
 void ProcessModel::update()
 {
-    fetchProcesses(false, false);
+    // The automatic refresh re-sorts as well, so the busiest processes keep
+    // moving to the top just like in a system monitor.
+    fetchProcesses(true, false);
 }
 
 void ProcessModel::refresh()
@@ -193,8 +195,7 @@ void ProcessModel::applyFilterAndSort(bool reorder)
         }
     }
 
-    // Keep the view stable: equal values keep their previous relative order, so
-    // idle processes do not jump around on every refresh.
+    // Stable sorting keeps equal values in their previous relative order.
     std::stable_sort(filtered.begin(), filtered.end(), [this](const Process &a, const Process &b) {
         int comparison = 0;
         switch (m_sortBy) {
@@ -254,8 +255,8 @@ void ProcessModel::applyFilterAndSort(bool reorder)
         }
     }
 
-    // Move rows into their sorted positions. Automatic refresh keeps the
-    // current order so the view and its scrollbar stay perfectly still.
+    // Move rows into their sorted positions; the scroll offset is kept by the
+    // view, only the order of the processes changes.
     if (reorder) {
         for (int target = 0; target < filtered.size(); ++target) {
             const int pid = filtered.at(target).pid;

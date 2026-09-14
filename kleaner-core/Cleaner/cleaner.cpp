@@ -5,6 +5,7 @@
 
 #include "Utils/procfs.h"
 
+#include <QDateTime>
 #include <QDir>
 #include <QDirIterator>
 #include <QFile>
@@ -45,14 +46,14 @@ QVariantList entriesForTargets(const QStringList &targets, bool root)
             continue;
         }
 
-        // The systemd journal is vacuumed through journalctl, not deleted by hand.
+        // The systemd journal is rotated and vacuumed through journalctl.
         if (target.startsWith(QLatin1String("journal:"))) {
-            const qulonglong journalSize = Cleaner::directorySize(QStringLiteral("/var/log/journal"));
-            constexpr qulonglong vacuumLimit = 50ULL * 1024 * 1024;
+            const qulonglong journalSize = Cleaner::directorySize(QStringLiteral("/var/log/journal"))
+                                          + Cleaner::directorySize(QStringLiteral("/run/log/journal"));
             entries.append(QVariantMap {
                 { QStringLiteral("title"), Cleaner::tr("Systemd Journal") },
                 { QStringLiteral("path"), target },
-                { QStringLiteral("size"), journalSize > vacuumLimit ? journalSize - vacuumLimit : 0 },
+                { QStringLiteral("size"), journalSize },
                 { QStringLiteral("root"), true },
             });
             continue;
@@ -157,6 +158,33 @@ QVariantList Cleaner::buildCategories()
         }
     }
 
+    // Temporary files (root owned or leftovers from dead sessions)
+    CleanCategory temporary;
+    temporary.id = QStringLiteral("tmp");
+    temporary.title = tr("Temporary Files");
+    temporary.root = true;
+    {
+        const QDateTime now = QDateTime::currentDateTime();
+        const QDir tmpDir(QStringLiteral("/tmp"));
+        const QFileInfoList tmpEntries = tmpDir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::System);
+        for (const QFileInfo &entry : tmpEntries) {
+            const QString name = entry.fileName();
+            // Session sockets and per-service private directories must survive.
+            if (name.startsWith(QLatin1String("systemd-private-"))
+                || name == QLatin1String("snap-private-tmp")
+                || name == QLatin1String(".X11-unix") || name == QLatin1String(".ICE-unix")
+                || name == QLatin1String(".font-unix") || name == QLatin1String(".Test-unix")
+                || name == QLatin1String(".XIM-unix")) {
+                continue;
+            }
+            // Files touched within the last hour are most likely still in use.
+            if (entry.lastModified().secsTo(now) < 3600) {
+                continue;
+            }
+            temporary.targets.append(entry.filePath());
+        }
+    }
+
     // System logs (root owned)
     CleanCategory logs;
     logs.id = QStringLiteral("logs");
@@ -219,6 +247,7 @@ QVariantList Cleaner::buildCategories()
     return {
         buildCategory(trash),
         buildCategory(caches),
+        buildCategory(temporary),
         buildCategory(logs),
         buildCategory(packages),
         buildCategory(orphans),
@@ -249,24 +278,24 @@ void Cleaner::scan()
     });
 }
 
-void Cleaner::clean(const QStringList &paths, const QStringList &orphanPackages, bool vacuumJournal)
+void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QStringList &orphanPackages, bool vacuumJournal)
 {
     if (paths.isEmpty() && orphanPackages.isEmpty() && !vacuumJournal) {
-        Q_EMIT cleaned(0, {});
+        Q_EMIT cleaned(0, 0, {});
         return;
     }
 
     const QString trash = trashDirectory();
     QStringList userPaths;
     QStringList rootPaths;
+    qulonglong trashSize = 0;
     bool emptyTrash = false;
-    int count = 0;
 
     for (const QString &path : paths) {
         const QString cleanedPath = QDir::cleanPath(path);
         if (cleanedPath.startsWith(trash + QLatin1Char('/'))) {
             emptyTrash = true;
-            ++count;
+            trashSize += sizes.value(cleanedPath).toULongLong();
             continue;
         }
 
@@ -278,66 +307,46 @@ void Cleaner::clean(const QStringList &paths, const QStringList &orphanPackages,
         } else {
             rootPaths.append(cleanedPath);
         }
-        ++count;
     }
 
     struct CleanState {
         int remaining = 0;
         int count = 0;
+        qulonglong freed = 0;
         QString error;
     };
     auto state = QSharedPointer<CleanState>::create();
-    state->count = count;
 
     const auto finish = [this, state](const QString &error) {
         if (!error.isEmpty() && state->error.isEmpty()) {
             state->error = error;
         }
         if (--state->remaining == 0) {
-            Q_EMIT cleaned(state->error.isEmpty() ? state->count : 0, state->error);
+            Q_EMIT cleaned(state->error.isEmpty() ? state->count : 0, state->freed, state->error);
         }
     };
 
-    if (!rootPaths.isEmpty()) {
+    // Every root-owned part of the cleanup (files, orphan packages, journal) is
+    // bundled into one privileged action so the user authenticates only once.
+    const bool privilegedWork = !rootPaths.isEmpty() || !orphanPackages.isEmpty() || vacuumJournal;
+    if (privilegedWork) {
         ++state->remaining;
 
         KAuth::Action action(QStringLiteral(KLEANER_APP_ID ".clean"));
         action.setHelperId(QStringLiteral(KLEANER_HELPER_ID));
         action.addArgument(QStringLiteral("paths"), rootPaths);
-
-        KAuth::ExecuteJob *job = action.execute();
-        connect(job, &KJob::result, this, [finish](KJob *kjob) {
-            finish(kjob->error() != KJob::NoError ? kjob->errorString() : QString());
-        });
-    }
-
-    if (!orphanPackages.isEmpty()) {
-        ++state->remaining;
-
-        KAuth::Action action(QStringLiteral(KLEANER_APP_ID ".removeorphans"));
-        action.setHelperId(QStringLiteral(KLEANER_HELPER_ID));
-        action.addArgument(QStringLiteral("packages"), orphanPackages);
+        action.addArgument(QStringLiteral("orphanPackages"), orphanPackages);
+        action.addArgument(QStringLiteral("vacuumJournal"), vacuumJournal);
 
         KAuth::ExecuteJob *job = action.execute();
         connect(job, &KJob::result, this, [finish, state, job](KJob *kjob) {
             if (kjob->error() == KJob::NoError) {
                 state->count += job->data().value(QStringLiteral("removed")).toInt();
+                state->freed += job->data().value(QStringLiteral("freed")).toULongLong();
             }
             finish(kjob->error() != KJob::NoError ? kjob->errorString() : QString());
         });
-    }
-
-    if (vacuumJournal) {
-        ++state->remaining;
-        ++state->count;
-
-        KAuth::Action action(QStringLiteral(KLEANER_APP_ID ".vacuumjournal"));
-        action.setHelperId(QStringLiteral(KLEANER_HELPER_ID));
-
-        KAuth::ExecuteJob *job = action.execute();
-        connect(job, &KJob::result, this, [finish](KJob *kjob) {
-            finish(kjob->error() != KJob::NoError ? kjob->errorString() : QString());
-        });
+        job->start();
     }
 
     state->remaining += userPaths.size();
@@ -346,7 +355,7 @@ void Cleaner::clean(const QStringList &paths, const QStringList &orphanPackages,
     }
 
     if (state->remaining == 0) {
-        Q_EMIT cleaned(count, {});
+        Q_EMIT cleaned(0, 0, {});
         return;
     }
 
@@ -358,12 +367,20 @@ void Cleaner::clean(const QStringList &paths, const QStringList &orphanPackages,
         } else {
             success = QFile::remove(path);
         }
+        if (success) {
+            ++state->count;
+            state->freed += sizes.value(path).toULongLong();
+        }
         finish(success ? QString() : tr("Failed to remove %1").arg(path));
     }
 
     if (emptyTrash) {
         KIO::EmptyTrashJob *job = KIO::emptyTrash();
-        connect(job, &KJob::result, this, [finish](KJob *kjob) {
+        connect(job, &KJob::result, this, [finish, state, trashSize](KJob *kjob) {
+            if (kjob->error() == KJob::NoError) {
+                ++state->count;
+                state->freed += trashSize;
+            }
             finish(kjob->error() != KJob::NoError ? kjob->errorString() : QString());
         });
     }

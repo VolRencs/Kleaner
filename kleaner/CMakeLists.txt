@@ -54,6 +54,7 @@ qt_add_qml_module(kleaner
         qml/components/AppDialog.qml
         qml/components/AppDialogFooter.qml
         qml/components/AppScrollBar.qml
+        qml/components/AppScrollView.qml
         qml/components/AppSearchField.qml
         qml/components/AppSpinner.qml
         qml/components/AppSwitch.qml

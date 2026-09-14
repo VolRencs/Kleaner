@@ -11,14 +11,11 @@ Item {
     readonly property string projectUrl: "https://volrencs.github.io/Kleaner/"
     readonly property string issuesUrl: "https://github.com/VolRencs/Kleaner/issues"
 
-    Controls.ScrollView {
+    AppScrollView {
         id: scroll
 
         anchors.fill: parent
         anchors.margins: Design.pagePadding
-        clip: true
-        Controls.ScrollBar.horizontal.policy: Controls.ScrollBar.AlwaysOff
-        Controls.ScrollBar.vertical: AppScrollBar {}
 
         ColumnLayout {
             width: scroll.availableWidth

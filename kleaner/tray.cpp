@@ -28,6 +28,7 @@ Tray::Tray(QObject *parent) :
     m_item->setIconByPixmap(icon);
     m_item->setTitle(QStringLiteral("Kleaner"));
     m_item->setToolTip(QStringLiteral("kleaner"), QStringLiteral("Kleaner"), tr("Linux System Optimizer"));
+    m_item->setStandardActionsEnabled(false);
     m_item->setStatus(KStatusNotifierItem::Active);
 
     auto *menu = new QMenu();

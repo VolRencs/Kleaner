@@ -13,8 +13,12 @@ class CleanerModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(bool scanning READ scanning NOTIFY scanningChanged)
+    Q_PROPERTY(bool cleaning READ cleaning NOTIFY cleaningChanged)
     Q_PROPERTY(qulonglong checkedSize READ checkedSize NOTIFY checkedSizeChanged)
     Q_PROPERTY(bool hasCheckedItems READ hasCheckedItems NOTIFY hasCheckedItemsChanged)
+    Q_PROPERTY(qulonglong lastFreedBytes READ lastFreedBytes NOTIFY lastResultChanged)
+    Q_PROPERTY(int lastRemovedCount READ lastRemovedCount NOTIFY lastResultChanged)
+    Q_PROPERTY(QString lastError READ lastError NOTIFY lastResultChanged)
 
   public:
     enum Roles {
@@ -36,8 +40,12 @@ class CleanerModel : public QAbstractListModel
     QHash<int, QByteArray> roleNames() const override;
 
     bool scanning() const;
+    bool cleaning() const;
     qulonglong checkedSize() const;
     bool hasCheckedItems() const;
+    qulonglong lastFreedBytes() const;
+    int lastRemovedCount() const;
+    QString lastError() const;
 
     Q_INVOKABLE void scan();
     Q_INVOKABLE void toggleExpand(int row);
@@ -46,10 +54,12 @@ class CleanerModel : public QAbstractListModel
 
   Q_SIGNALS:
     void scanningChanged();
+    void cleaningChanged();
     void checkedSizeChanged();
     void hasCheckedItemsChanged();
+    void lastResultChanged();
     void scanFinished();
-    void cleanFinished(bool ok, const QString &message, int count);
+    void cleanFinished(bool ok, const QString &message, int count, qulonglong freedBytes);
 
   private:
     struct Category {
@@ -83,5 +93,9 @@ class CleanerModel : public QAbstractListModel
     QVector<Row> m_rows;
     QSet<QString> m_checkedPaths;
     qulonglong m_checkedSize = 0;
+    qulonglong m_lastFreedBytes = 0;
     bool m_hasCheckedItems = false;
+    bool m_cleaning = false;
+    int m_lastRemovedCount = 0;
+    QString m_lastError;
 };

@@ -12,28 +12,6 @@ Item {
 
     Component.onCompleted: Cleaner.scan()
 
-    Connections {
-        target: Cleaner
-
-        function onCleanFinished(ok, message, count) {
-            inlineMessage.type = ok ? Kirigami.MessageType.Positive : Kirigami.MessageType.Error;
-            inlineMessage.text = ok
-                ? qsTr("Removed %1 items.").arg(count)
-                : message;
-            inlineMessage.visible = true;
-            hideMessageTimer.restart();
-            if (ok) {
-                Cleaner.scan();
-            }
-        }
-    }
-
-    Timer {
-        id: hideMessageTimer
-        interval: 6000
-        onTriggered: inlineMessage.visible = false
-    }
-
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: Design.pagePadding
@@ -43,12 +21,6 @@ Item {
             Layout.fillWidth: true
             title: qsTr("System Cleaner")
             subtitle: qsTr("Remove caches, logs and other files you no longer need")
-        }
-
-        Kirigami.InlineMessage {
-            id: inlineMessage
-            Layout.fillWidth: true
-            visible: false
         }
 
         AppCard {
@@ -130,7 +102,7 @@ Item {
                     Layout.alignment: Qt.AlignVCenter
                     text: qsTr("Scan")
                     icon.name: "search"
-                    enabled: !Cleaner.scanning
+                    enabled: !Cleaner.scanning && !Cleaner.cleaning
                     onClicked: Cleaner.scan()
                 }
 
@@ -139,7 +111,7 @@ Item {
                     text: qsTr("Clean")
                     icon.name: "edit-delete"
                     highlighted: true
-                    enabled: !Cleaner.scanning && Cleaner.hasCheckedItems
+                    enabled: !Cleaner.scanning && !Cleaner.cleaning && Cleaner.hasCheckedItems
                     onClicked: Cleaner.clean()
                 }
             }
@@ -251,6 +223,39 @@ Item {
                             }
                         }
                     }
+                }
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Design.space8
+            visible: Cleaner.cleaning || Cleaner.lastError.length > 0
+                     || Cleaner.lastRemovedCount > 0 || Cleaner.lastFreedBytes > 0
+
+            Kirigami.Icon {
+                Layout.alignment: Qt.AlignVCenter
+                implicitWidth: 16
+                implicitHeight: 16
+                source: Cleaner.cleaning ? "edit-clear"
+                      : Cleaner.lastError.length > 0 ? "dialog-error"
+                                                     : "dialog-ok-apply"
+                color: Cleaner.lastError.length > 0 ? Design.negative : Design.positive
+            }
+
+            Controls.Label {
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                color: Cleaner.lastError.length > 0 ? Design.negative : Design.textMuted
+                font.pointSize: Design.smallFontSize
+                text: {
+                    if (Cleaner.cleaning) {
+                        return qsTr("Cleaning…");
+                    }
+                    if (Cleaner.lastError.length > 0) {
+                        return Cleaner.lastError;
+                    }
+                    return qsTr("Freed %1 · %2 items removed").arg(Format.bytes(Cleaner.lastFreedBytes)).arg(Cleaner.lastRemovedCount);
                 }
             }
         }

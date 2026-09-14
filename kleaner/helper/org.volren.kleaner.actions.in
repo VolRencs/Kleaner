@@ -1,23 +1,11 @@
 [org.volren.kleaner.clean]
 Name=Clean system files
-Description=Remove selected system log cache and crash report files
+Description=Remove selected system files, orphan packages and vacuum the systemd journal
 Policy=auth_admin
 Persistence=session
 
 [org.volren.kleaner.writehosts]
 Name=Write hosts file
 Description=Replace the hosts file with new content
-Policy=auth_admin
-Persistence=session
-
-[org.volren.kleaner.removeorphans]
-Name=Remove orphan packages
-Description=Remove packages that were installed as dependencies and are no longer required
-Policy=auth_admin
-Persistence=session
-
-[org.volren.kleaner.vacuumjournal]
-Name=Vacuum systemd journal
-Description=Shrink the systemd journal log to 50 MB
 Policy=auth_admin
 Persistence=session

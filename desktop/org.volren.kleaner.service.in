@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=@KLEANER_APP_ID@
+Exec=@KDE_INSTALL_FULL_BINDIR@/kleaner

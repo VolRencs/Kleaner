@@ -23,6 +23,13 @@ Controls.ComboBox {
         font: root.font
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
+
+        // qqc2-desktop-style attaches a MobileCursor to contentItem and expects
+        // these members; a plain Label does not provide them.
+        readonly property int selectionStart: 0
+        function positionToRectangle(position) {
+            return Qt.rect(0, 0, 0, 0);
+        }
     }
 
     indicator: Kirigami.Icon {

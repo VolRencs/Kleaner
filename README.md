@@ -26,8 +26,8 @@ The project targets **Arch Linux** only.
 
 - **Dashboard** — live CPU, memory and disk gauges, system information, storage
   usage and live metrics.
-- **Resources** — rolling 60-second history charts for CPU usage, load average,
-  memory/swap, disk I/O and network throughput.
+- **Resources** — rolling 60-second history charts for CPU usage (total and
+  per core), load average, memory/swap, disk I/O and network throughput.
 - **Processes** — sortable and filterable process list (CPU, memory, RSS,
   state, …) with terminate and force-kill actions. The list updates every two
   seconds without stealing your scroll position.
@@ -35,10 +35,11 @@ The project targets **Arch Linux** only.
   disable through polkit, and click-to-sort column headers.
 - **Startup Apps** — XDG autostart entries, including system entries from
   `/etc/xdg/autostart` (user overrides are created on demand).
-- **System Cleaner** — trash, application caches, system logs, the systemd
-  journal, the pacman package cache, orphan packages and crash reports.
-  Selections are remembered between sessions. Privileged cleanup runs through a
-  KAuth helper with an allowlist.
+- **System Cleaner** — trash, application caches, temporary files (`/tmp`),
+  system logs, the systemd journal (rotated and vacuumed completely), the pacman
+  package cache, orphan packages and crash reports. Selections are remembered
+  between sessions. Privileged cleanup runs through a KAuth helper with an
+  allowlist.
 - **Hosts** — view and edit `/etc/hosts` with a KAuth helper writing the file
   atomically.
 - **Translations** — the interface is fully translated into Russian and

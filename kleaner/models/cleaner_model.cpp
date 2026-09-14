@@ -64,12 +64,21 @@ CleanerModel::CleanerModel(QObject *parent) :
         updateCheckedSize();
         Q_EMIT scanFinished();
     });
-    connect(&m_cleaner, &Cleaner::cleaned, this, [this](int count, const QString &error) {
+    connect(&m_cleaner, &Cleaner::cleaned, this, [this](int count, qulonglong freedBytes, const QString &error) {
+        m_cleaning = false;
+        Q_EMIT cleaningChanged();
+        m_lastFreedBytes = freedBytes;
+        m_lastRemovedCount = count;
+        m_lastError = error;
+        Q_EMIT lastResultChanged();
         if (error.isEmpty()) {
             m_checkedPaths.clear();
             saveSelection();
         }
-        Q_EMIT cleanFinished(error.isEmpty(), error, count);
+        Q_EMIT cleanFinished(error.isEmpty(), error, count, freedBytes);
+        if (error.isEmpty()) {
+            scan();
+        }
     });
 }
 
@@ -142,6 +151,26 @@ bool CleanerModel::scanning() const
     return m_cleaner.scanning();
 }
 
+bool CleanerModel::cleaning() const
+{
+    return m_cleaning;
+}
+
+qulonglong CleanerModel::lastFreedBytes() const
+{
+    return m_lastFreedBytes;
+}
+
+int CleanerModel::lastRemovedCount() const
+{
+    return m_lastRemovedCount;
+}
+
+QString CleanerModel::lastError() const
+{
+    return m_lastError;
+}
+
 qulonglong CleanerModel::checkedSize() const
 {
     return m_checkedSize;
@@ -177,10 +206,12 @@ void CleanerModel::toggleExpand(int row)
             endRemoveRows();
         }
         category.expanded = false;
+        Q_EMIT dataChanged(index(row), index(row), { ExpandedRole });
         return;
     }
 
     category.expanded = true;
+    Q_EMIT dataChanged(index(row), index(row), { ExpandedRole });
     if (entryCount == 0) {
         return;
     }
@@ -239,11 +270,16 @@ void CleanerModel::setChecked(int row, bool checked)
 
 void CleanerModel::clean()
 {
+    if (m_cleaning) {
+        return;
+    }
+
     QStringList paths;
     QStringList orphanPackages;
+    QVariantMap sizes;
     bool vacuumJournal = false;
 
-    const auto collect = [&paths, &orphanPackages, &vacuumJournal](const CleanerModel::Category::Entry &entry) {
+    const auto collect = [&paths, &orphanPackages, &sizes, &vacuumJournal](const CleanerModel::Category::Entry &entry) {
         if (entry.path.startsWith(QLatin1String("journal:"))) {
             vacuumJournal = true;
         } else if (entry.path.startsWith(QLatin1String("pkg:"))) {
@@ -253,6 +289,7 @@ void CleanerModel::clean()
             }
         } else {
             paths.append(entry.path);
+            sizes.insert(entry.path, QVariant::fromValue<qulonglong>(entry.size));
         }
     };
 
@@ -274,7 +311,9 @@ void CleanerModel::clean()
         }
     }
 
-    m_cleaner.clean(paths, orphanPackages, vacuumJournal);
+    m_cleaning = true;
+    Q_EMIT cleaningChanged();
+    m_cleaner.clean(paths, sizes, orphanPackages, vacuumJournal);
 }
 
 void CleanerModel::rebuild()

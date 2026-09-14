@@ -17,14 +17,16 @@ class Cleaner : public QObject
     bool scanning() const;
 
     Q_INVOKABLE void scan();
-    Q_INVOKABLE void clean(const QStringList &paths, const QStringList &orphanPackages = {}, bool vacuumJournal = false);
+    // sizes maps an entry path to the size measured during the last scan, so the
+    // freed amount is reported without rescanning the file system here.
+    Q_INVOKABLE void clean(const QStringList &paths, const QVariantMap &sizes = {}, const QStringList &orphanPackages = {}, bool vacuumJournal = false);
 
     static qulonglong directorySize(const QString &path);
 
   Q_SIGNALS:
     void scanningChanged();
     void scanned(const QVariantList &categories);
-    void cleaned(int count, const QString &error);
+    void cleaned(int count, qulonglong freedBytes, const QString &error);
 
   private:
     static QVariantList buildCategories();
