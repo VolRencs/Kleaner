@@ -1,8 +1,8 @@
 # Maintainer: VolRen <VolRencs@proton.me>
 pkgname=kleaner-git
-pkgver=1.2.2
+pkgver=1.3.0
 pkgrel=1
-pkgdesc="Linux System Optimizer and Monitoring (Qt 6 / KDE Frameworks 6)"
+pkgdesc="Linux System Optimizer and Monitoring"
 arch=('x86_64' 'aarch64')
 url="https://volrencs.github.io/Kleaner/"
 license=('GPL-3.0-only')
