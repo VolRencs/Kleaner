@@ -1,24 +1,28 @@
-<p align="center">
-  <img src="kleaner/resources/Kleaner-logo.svg" alt="Kleaner" width="360">
-</p>
-
 # Kleaner
 
+<div align="center">
+
+<img src="kleaner/resources/Kleaner-logo.svg" alt="Kleaner" width="360">
+
+**Linux system optimizer and monitoring application with a modern dark interface — Qt 6, KDE Frameworks 6 and Wayland.**
+
 [![build](https://github.com/VolRencs/Kleaner/actions/workflows/build.yml/badge.svg)](https://github.com/VolRencs/Kleaner/actions/workflows/build.yml)
-[![License](https://img.shields.io/badge/license-GPL--3.0--only-blue.svg)](LICENSE)
-[![Qt](https://img.shields.io/badge/Qt-6.11%2B-green.svg)](https://www.qt.io/)
-[![KDE Frameworks](https://img.shields.io/badge/KDE%20Frameworks-6.30%2B-blue.svg)](https://kde.org/)
+[![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](LICENSE)
+[![Qt](https://img.shields.io/badge/Qt-6.11%2B-green?style=flat-square)](https://www.qt.io/)
+[![KDE Frameworks](https://img.shields.io/badge/KDE%20Frameworks-6.30%2B-blue?style=flat-square)](https://kde.org/)
 
 [Website](https://volrencs.github.io/Kleaner/) ·
 [Releases](https://github.com/VolRencs/Kleaner/releases) ·
 [Changelog](CHANGELOG.md) ·
 [Report an issue](https://github.com/VolRencs/Kleaner/issues)
 
-Kleaner is a Linux system optimizer and monitoring application with a modern
-dark interface. It is a fork of [Stacer](https://github.com/QuentiumYT/Stacer)
-rewritten around Qt 6, KDE Frameworks 6 and Wayland.
+</div>
 
-The project targets **Arch Linux** only.
+---
+
+Kleaner is a fork of [Stacer](https://github.com/QuentiumYT/Stacer) rewritten
+around Qt 6, KDE Frameworks 6 and Wayland. The project targets **Arch Linux**
+only.
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
@@ -112,6 +116,17 @@ cmake --build build --target update_translations
 cmake --build build --target release_translations
 ```
 
+## Dependencies
+
+| Component | Purpose |
+|---|---|
+| Qt 6 (Base, Declarative, SVG, Tools) | application framework and QML runtime |
+| Kirigami | adaptive UI framework |
+| KDE Frameworks 6 (KCoreAddons, KConfig, KDBusAddons, KStatusNotifierItem, KIO) | settings, D-Bus, tray, file utilities |
+| KAuth | privileged helper (polkit) |
+| extra-cmake-modules, CMake, Ninja, base-devel | build toolchain |
+| breeze-icons | recommended icon theme |
+
 ## Contributing
 
 Bug reports and merge requests are welcome at
@@ -119,11 +134,10 @@ Bug reports and merge requests are welcome at
 Please run `ctest` before submitting changes and keep the QML style consistent
 with the existing `Design` palette and `App*` controls.
 
-## Credits
+## License and attribution
+
+Licensed under **GPL-3.0** — see [`LICENSE`](LICENSE).
+Copyright (C) 2026 VolRen.
 
 Kleaner is a fork of [Stacer](https://github.com/QuentiumYT/Stacer) by Quentin
-Lienhardt. The current application is developed by VolRen.
-
-## License
-
-GPL-3.0-only. See [LICENSE](LICENSE).
+Lienhardt.
