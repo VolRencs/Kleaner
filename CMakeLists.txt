@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.21)
 
-project(kleaner VERSION 1.0.0 LANGUAGES CXX)
+project(kleaner VERSION 1.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -52,6 +52,18 @@ install(
 install(
   FILES "${CMAKE_CURRENT_SOURCE_DIR}/desktop/org.volren.kleaner.desktop"
   DESTINATION ${KDE_INSTALL_APPDIR}
+)
+
+# Session D-Bus activation, required by DBusActivatable=true in the desktop entry
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/desktop/${KLEANER_APP_ID}.service.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/desktop/${KLEANER_APP_ID}.service"
+  IMMEDIATE @ONLY
+)
+
+install(
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/desktop/${KLEANER_APP_ID}.service"
+  DESTINATION ${KDE_INSTALL_DBUSSERVICEDIR}
 )
 
 install(

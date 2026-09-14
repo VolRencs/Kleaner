@@ -1,0 +1,67 @@
+name: Bug report
+description: Something does not work as expected
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Kleaner targets **Arch Linux**
+        with a Wayland session, so please include the versions below.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear and concise description of the bug.
+      placeholder: When I open … the application …
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Click …
+        3. See …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Kleaner version
+      description: Shown on the About page, or run `pacman -Q kleaner`
+      placeholder: "1.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      value: |
+        - OS: Arch Linux
+        - Session: Wayland, Plasma 6.x
+        - Qt: `pacman -Q qt6-base`
+        - KDE Frameworks: `pacman -Q kirigami`
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and screenshots
+      description: Run `kleaner` from a terminal and paste any relevant output.
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched the existing issues and this is not a duplicate
+          required: true

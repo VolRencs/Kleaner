@@ -2,6 +2,31 @@
 
 All notable changes to Kleaner are documented in this file.
 
+## 1.1.0 — 2026-09-14
+
+- Resources: per-core CPU history on a single chart with translucent gradient
+  areas, live min/avg/max statistics and a legend with current values.
+  Hovering a legend entry highlights the corresponding series.
+- System Cleaner: the whole privileged cleanup (files, orphan packages and the
+  systemd journal) now runs as one KAuth action, so a single password prompt is
+  shown. The journal is rotated and vacuumed completely.
+- System Cleaner: new temporary files (`/tmp`) category that skips session
+  sockets, per-service private directories and files touched within the last
+  hour.
+- System Cleaner: the exact freed size and the number of removed items are
+  reported in a summary at the bottom of the page.
+- Processes: the automatic two-second refresh re-sorts the list, so the busiest
+  processes move to the top; the scroll offset and the selected process are
+  still preserved.
+- Fixed privileged cleanup and hosts saving that never ran because the KAuth
+  jobs were not started.
+- Fixed the interface language and close-behaviour selectors falling back to
+  the first entry after a restart.
+- Fixed launching from the application menu by registering the correct D-Bus
+  name, and the duplicate "Quit" entry in the tray menu.
+- Scrollbars are thin themed overlays on the window edge that no longer reserve
+  layout space, and buttons centre their contents.
+
 ## 1.0.0 — 2026-09-14
 
 First release of Kleaner as an independent project.

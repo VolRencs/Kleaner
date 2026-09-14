@@ -65,7 +65,12 @@
     </provides>
 
     <releases>
-        <release version="@PROJECT_VERSION@" date="2026-09-14">
+        <release version="1.1.0" date="2026-09-14">
+            <description>
+                <p>Resources now show per-core CPU history on a single translucent chart with live statistics and hover highlighting. The system cleaner performs the whole privileged cleanup with one authentication prompt, includes temporary files and vacuums the journal completely, and reports the exact freed size. Language and close-behaviour selectors, the tray menu and launching from the application menu were fixed.</p>
+            </description>
+        </release>
+        <release version="1.0.0" date="2026-09-14">
             <description>
                 <p>First release of Kleaner: a complete rewrite of the Stacer interface on Qt 6 and KDE Frameworks 6 with a modern dark UI, service management, startup entries, a system cleaner with pacman/journal support and full Russian and Ukrainian translations.</p>
             </description>

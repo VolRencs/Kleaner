@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Website
+    url: https://volrencs.github.io/Kleaner/
+    about: Features, screenshots and installation instructions
+  - name: Releases
+    url: https://github.com/VolRencs/Kleaner/releases
+    about: Download the latest version and read the changelog
