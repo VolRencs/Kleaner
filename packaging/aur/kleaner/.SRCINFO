@@ -25,6 +25,6 @@ pkgbase = kleaner
 	conflicts = kleaner-git
 	options = !lto
 	source = kleaner-1.2.1.tar.gz::https://github.com/VolRencs/Kleaner/archive/refs/tags/v1.2.1.tar.gz
-	sha256sums = SKIP
+	sha256sums = e03532e8220d6cd38f259840921f7c2ed99baf3a975f4f16f1716939f900ec46
 
 pkgname = kleaner
