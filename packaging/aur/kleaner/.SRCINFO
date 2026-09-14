@@ -10,6 +10,7 @@ pkgbase = kleaner
 	makedepends = ninja
 	makedepends = extra-cmake-modules
 	makedepends = qt6-tools
+	makedepends = wayland-protocols
 	depends = qt6-base
 	depends = qt6-declarative
 	depends = qt6-svg

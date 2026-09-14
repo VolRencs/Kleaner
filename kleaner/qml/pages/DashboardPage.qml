@@ -281,10 +281,15 @@ Kirigami.ScrollablePage {
                 }
 
                 Repeater {
-                    model: Disks.disks
+                    // A stable count keeps the delegates alive while the disk
+                    // values change, so the usage bars animate instead of being
+                    // recreated (and flashing from zero) on every tick.
+                    model: Disks.disks.length
 
                     delegate: ColumnLayout {
-                        required property var modelData
+                        required property int index
+
+                        readonly property var disk: index < Disks.disks.length ? Disks.disks[index] : null
 
                         Layout.fillWidth: true
                         spacing: Design.space8
@@ -294,14 +299,14 @@ Kirigami.ScrollablePage {
                             spacing: Design.space12
 
                             Controls.Label {
-                                text: modelData.name === "root" ? "/" : modelData.mountPoint
+                                text: disk ? (disk.name === "root" ? "/" : disk.mountPoint) : ""
                                 color: Design.text
                                 font.weight: Font.DemiBold
                             }
 
                             Badge {
                                 Layout.alignment: Qt.AlignVCenter
-                                text: modelData.fileSystemType
+                                text: disk ? disk.fileSystemType : ""
                                 badgeColor: Design.textMuted
                             }
 
@@ -310,7 +315,7 @@ Kirigami.ScrollablePage {
                             }
 
                             Controls.Label {
-                                text: Format.bytes(modelData.used) + " / " + Format.bytes(modelData.total)
+                                text: disk ? Format.bytes(disk.used) + " / " + Format.bytes(disk.total) : ""
                                 color: Design.textMuted
                                 font.pointSize: Design.smallFontSize
                             }
@@ -318,10 +323,10 @@ Kirigami.ScrollablePage {
                             Controls.Label {
                                 Layout.preferredWidth: 56
                                 horizontalAlignment: Text.AlignRight
-                                text: Format.percent(modelData.percent)
-                                color: modelData.percent > 90 ? Design.negative
-                                : modelData.percent > 75 ? Design.warning
-                                : Design.text
+                                text: disk ? Format.percent(disk.percent) : ""
+                                color: disk && disk.percent > 90 ? Design.negative
+                                       : disk && disk.percent > 75 ? Design.warning
+                                                                   : Design.text
                                 font.weight: Font.DemiBold
                             }
                         }
@@ -333,12 +338,12 @@ Kirigami.ScrollablePage {
                             color: Design.track
 
                             Rectangle {
-                                width: parent.width * Math.min(1, modelData.percent / 100)
+                                width: parent.width * Math.min(1, (disk ? disk.percent : 0) / 100)
                                 height: parent.height
                                 radius: 3
-                                color: modelData.percent > 90 ? Design.negative
-                                : modelData.percent > 75 ? Design.warning
-                                : Design.accent
+                                color: disk && disk.percent > 90 ? Design.negative
+                                       : disk && disk.percent > 75 ? Design.warning
+                                                                   : Design.accent
 
                                 Behavior on width {
                                     NumberAnimation {

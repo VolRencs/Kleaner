@@ -39,6 +39,9 @@ set_source_files_properties(qml/Design.qml qml/History.qml PROPERTIES QT_QML_SIN
 qt_add_qml_module(kleaner
     URI Kleaner
     VERSION 1.0
+    # Arch packages use a shared Qt; the QML plugins are found at runtime and
+    # Kirigami does not export link targets for its optional QML plugins.
+    NO_IMPORT_SCAN
     QML_FILES
         qml/Main.qml
         qml/Design.qml

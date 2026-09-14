@@ -2,6 +2,15 @@
 
 All notable changes to Kleaner are documented in this file.
 
+## 1.3.1 — 2026-09-14
+
+- Fixed the storage usage bars on the dashboard flickering: the disk list no
+  longer rebuilds its delegate items on every monitoring tick, so the bars now
+  animate smoothly from their current value instead of resetting to zero and
+  growing again.
+- Build cleanup: disabled the QML import scan (the QML plugins are loaded at
+  runtime) and declared `wayland-protocols` as a build dependency.
+
 ## 1.3.0 — 2026-09-14
 
 The interface was rebuilt on top of the Kirigami application framework and the

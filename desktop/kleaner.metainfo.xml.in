@@ -63,6 +63,11 @@
     </provides>
 
     <releases>
+        <release version="1.3.1" date="2026-09-14">
+            <description>
+                <p>Fixed the storage usage bars on the dashboard flickering: the disk list no longer rebuilds its delegate items on every monitoring tick, so the bars animate smoothly from their current value. The build no longer scans QML imports for plugins (they are loaded at runtime), and wayland-protocols is now a declared build dependency.</p>
+            </description>
+        </release>
         <release version="1.3.0" date="2026-09-14">
             <description>
                 <p>The interface was rebuilt on the Kirigami application framework and now uses one consistent, style-independent look: a permanent sidebar with state-preserving pages, a single dark palette, styled inline messages and confirmation dialogs, placeholder messages for empty views, tonal primary buttons, a Kirigami busy indicator on the refresh buttons, KDE System Monitor-style translucent chart fills, remembered window size, page titles, Ctrl+F search, and updated Russian and Ukrainian translations.</p>

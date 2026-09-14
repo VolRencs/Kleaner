@@ -18,7 +18,7 @@ depends=(
     'kio'
     'kauth'
 )
-makedepends=('cmake' 'ninja' 'extra-cmake-modules' 'qt6-tools')
+makedepends=('cmake' 'ninja' 'extra-cmake-modules' 'qt6-tools' 'wayland-protocols')
 optdepends=('breeze-icons: icon theme for the KDE desktop')
 provides=('kleaner')
 conflicts=('kleaner')
