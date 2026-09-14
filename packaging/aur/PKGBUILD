@@ -1,0 +1,44 @@
+# Maintainer: VolRen <VolRencs@proton.me>
+pkgname=kleaner
+pkgver=1.1.0
+pkgrel=1
+pkgdesc="Linux System Optimizer and Monitoring (Qt 6 / KDE Frameworks 6)"
+arch=('x86_64' 'aarch64')
+url="https://volrencs.github.io/Kleaner/"
+license=('GPL-3.0-only')
+depends=(
+    'qt6-base'
+    'qt6-declarative'
+    'qt6-svg'
+    'qt6-wayland'
+    'kirigami'
+    'kquickcharts'
+    'kcoreaddons'
+    'kconfig'
+    'kdbusaddons'
+    'kstatusnotifieritem'
+    'kio'
+    'kauth'
+    'qqc2-desktop-style'
+)
+makedepends=('cmake' 'ninja' 'extra-cmake-modules' 'qt6-tools')
+optdepends=('breeze-icons: icon theme for the KDE desktop')
+conflicts=('kleaner-git')
+options=('!lto')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/VolRencs/Kleaner/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('c23b7ec9030ba67710f27bfa0422ca20c8ce2c33a8265762be3e55826cda076b')
+
+build() {
+    cmake -S "Kleaner-$pkgver" -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr
+    cmake --build build
+}
+
+check() {
+    ctest --test-dir build --output-on-failure
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}
