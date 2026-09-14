@@ -63,6 +63,11 @@
     </provides>
 
     <releases>
+        <release version="1.3.2" date="2026-09-14">
+            <description>
+                <p>Fixed the process list scrolling away while it refreshes: the list now uses a TableView, which keeps the viewport exactly where the user scrolled while the rows are re-sorted live every two seconds, the same approach the KDE System Monitor process tab uses. The services and startup applications lists now use the same TableView based view. The window title no longer repeats the application name. Internal cleanup removed unused data fields, map entries and QML members. The configure step no longer warns about optional Qt plugin dependencies that Kleaner never uses.</p>
+            </description>
+        </release>
         <release version="1.3.1" date="2026-09-14">
             <description>
                 <p>Fixed the storage usage bars on the dashboard flickering: the disk list no longer rebuilds its delegate items on every monitoring tick, so the bars animate smoothly from their current value. The build no longer scans QML imports for plugins (they are loaded at runtime), and wayland-protocols is now a declared build dependency.</p>

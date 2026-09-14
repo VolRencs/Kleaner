@@ -6,8 +6,6 @@ import QtQuick.Controls as Controls
 import Kleaner
 
 Controls.Pane {
-    id: root
-
     padding: Design.cardPadding
 
     background: Rectangle {

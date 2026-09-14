@@ -89,7 +89,7 @@ Kirigami.Page {
 
             Badge {
                 Layout.alignment: Qt.AlignVCenter
-                text: qsTr("%1 processes").arg(processList.count)
+                text: qsTr("%1 processes").arg(processList.rows)
                 badgeColor: Design.textMuted
             }
         }
@@ -249,7 +249,7 @@ Kirigami.Page {
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    visible: processList.count === 0
+                    visible: processList.rows === 0
 
                     Kirigami.PlaceholderMessage {
                         anchors.centerIn: parent
@@ -262,15 +262,25 @@ Kirigami.Page {
                     }
                 }
 
-                ListView {
+                // TableView instead of ListView: when the model reorders rows
+                // for the live sorting, ListView shifts its content origin and
+                // scrolls away, while TableView keeps the viewport where the
+                // user left it. This is the same approach KDE System Monitor's
+                // process tab uses.
+                TableView {
                     id: processList
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    visible: count > 0
+                    visible: rows > 0
                     clip: true
                     model: Processes
                     boundsBehavior: Flickable.StopAtBounds
+                    reuseItems: true
+
+                    columnWidthProvider: function(column) {
+                        return processList.width;
+                    }
 
                     Controls.ScrollBar.vertical: AppScrollBar {}
 
@@ -286,8 +296,7 @@ Kirigami.Page {
                         required property real rss
                         required property string cmd
 
-                        width: processList.width
-                        height: Design.rowHeightCompact
+                        implicitHeight: Design.rowHeightCompact
                         leftPadding: Design.space16
                         rightPadding: Design.space16
                         topPadding: 0

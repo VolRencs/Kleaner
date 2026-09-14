@@ -129,7 +129,6 @@ void ServiceBackend::handleListUnitFiles(QDBusPendingCallWatcher *watcher, quint
             QVariantMap service = m_pendingServices.at(i).toMap();
             if (service.value(QStringLiteral("unit")).toString() == unit) {
                 service.insert(QStringLiteral("enabled"), state == QLatin1String("enabled") || state == QLatin1String("enabled-runtime"));
-                service.insert(QStringLiteral("unitFileState"), state);
                 m_pendingServices[i] = service;
                 found = true;
                 break;
@@ -146,7 +145,6 @@ void ServiceBackend::handleListUnitFiles(QDBusPendingCallWatcher *watcher, quint
             { QStringLiteral("enabled"), state == QLatin1String("enabled") || state == QLatin1String("enabled-runtime") },
             { QStringLiteral("active"), false },
             { QStringLiteral("activeState"), QStringLiteral("inactive") },
-            { QStringLiteral("unitFileState"), state },
         });
     }
     array.endArray();
@@ -221,7 +219,6 @@ void ServiceBackend::handleListUnits(QDBusPendingCallWatcher *watcher, quint64 g
                 { QStringLiteral("enabled"), false },
                 { QStringLiteral("active"), activeState == QLatin1String("active") || activeState == QLatin1String("activating") },
                 { QStringLiteral("activeState"), activeState },
-                { QStringLiteral("unitFileState"), QString() },
             });
         }
     }

@@ -32,7 +32,6 @@ CleanerModel::CleanerModel(QObject *parent) :
             const QVariantMap categoryMap = variant.toMap();
 
             Category category;
-            category.id = categoryMap.value(QStringLiteral("id")).toString();
             category.title = categoryMap.value(QStringLiteral("title")).toString();
             category.size = categoryMap.value(QStringLiteral("size")).toULongLong();
 

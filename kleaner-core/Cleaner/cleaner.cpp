@@ -3,8 +3,6 @@
 
 #include "cleaner.h"
 
-#include "Utils/procfs.h"
-
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
@@ -25,7 +23,6 @@
 namespace
 {
 struct CleanCategory {
-    QString id;
     QString title;
     QStringList targets;
     bool root = false;
@@ -83,7 +80,6 @@ QVariantMap buildCategory(const CleanCategory &category)
     }
 
     return QVariantMap {
-        { QStringLiteral("id"), category.id },
         { QStringLiteral("title"), category.title },
         { QStringLiteral("size"), total },
         { QStringLiteral("entries"), entries },
@@ -131,13 +127,11 @@ QVariantList Cleaner::buildCategories()
 
     // Trash
     CleanCategory trash;
-    trash.id = QStringLiteral("trash");
     trash.title = tr("Trash");
     trash.targets = { trashDirectory() + QStringLiteral("/files"), trashDirectory() + QStringLiteral("/info") };
 
     // Application caches (user writable)
     CleanCategory caches;
-    caches.id = QStringLiteral("caches");
     caches.title = tr("Application Caches");
 
     const QString genericCache = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation);
@@ -161,7 +155,6 @@ QVariantList Cleaner::buildCategories()
 
     // Temporary files (root owned or leftovers from dead sessions)
     CleanCategory temporary;
-    temporary.id = QStringLiteral("tmp");
     temporary.title = tr("Temporary Files");
     temporary.root = true;
     {
@@ -188,7 +181,6 @@ QVariantList Cleaner::buildCategories()
 
     // System logs (root owned)
     CleanCategory logs;
-    logs.id = QStringLiteral("logs");
     logs.title = tr("System Logs");
     logs.root = true;
     const QDir logDir(QStringLiteral("/var/log"));
@@ -206,7 +198,6 @@ QVariantList Cleaner::buildCategories()
 
     // Pacman package cache (root owned)
     CleanCategory packages;
-    packages.id = QStringLiteral("pacman");
     packages.title = tr("Pacman Package Cache");
     packages.root = true;
     const QDir packageDir(QStringLiteral("/var/cache/pacman/pkg"));
@@ -217,7 +208,6 @@ QVariantList Cleaner::buildCategories()
 
     // Orphan packages (removed with pacman through the privileged helper)
     CleanCategory orphans;
-    orphans.id = QStringLiteral("orphans");
     orphans.title = tr("Orphan Packages");
     QProcess pacmanQuery;
     pacmanQuery.start(QStringLiteral("pacman"), { QStringLiteral("-Qtdq") });
@@ -230,7 +220,6 @@ QVariantList Cleaner::buildCategories()
 
     // Crash reports (root owned)
     CleanCategory crash;
-    crash.id = QStringLiteral("crash");
     crash.title = tr("Crash Reports");
     crash.root = true;
     const QStringList crashDirs = {

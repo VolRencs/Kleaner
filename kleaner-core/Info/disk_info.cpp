@@ -82,11 +82,9 @@ void DiskInfo::update()
         diskList.append(QVariantMap {
             { QStringLiteral("name"), name },
             { QStringLiteral("mountPoint"), mountPoint },
-            { QStringLiteral("device"), QString::fromUtf8(volume.device()) },
             { QStringLiteral("fileSystemType"), QString::fromUtf8(volume.fileSystemType()) },
             { QStringLiteral("total"), total },
             { QStringLiteral("used"), used },
-            { QStringLiteral("free"), free },
             { QStringLiteral("percent"), total > 0 ? 100.0 * static_cast<double>(used) / static_cast<double>(total) : 0.0 },
         });
     }

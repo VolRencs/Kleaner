@@ -60,7 +60,6 @@ class CleanerModel : public QAbstractListModel
 
   private:
     struct Category {
-        QString id;
         QString title;
         qulonglong size = 0;
         bool expanded = false;

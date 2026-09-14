@@ -5,8 +5,6 @@
 
 #include <QFile>
 
-#include <limits>
-
 namespace Procfs
 {
 

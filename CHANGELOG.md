@@ -2,6 +2,23 @@
 
 All notable changes to Kleaner are documented in this file.
 
+## 1.3.2 — 2026-09-14
+
+- Fixed the process list scrolling away while it refreshes: the list now uses
+  a `TableView`, which keeps the viewport exactly where the user scrolled while
+  the rows are re-sorted live every two seconds. This is the same approach the
+  KDE System Monitor process tab uses; the previous `ListView` shifted its
+  content origin on every row move.
+- The services and startup applications lists were moved to the same
+  `TableView` based view, so all updating lists behave consistently.
+- Fixed the window title repeating the application name (for example
+  “Kleaner — Resources — Kleaner”): the title now contains only the page name,
+  and the platform appends the application name as usual.
+- Internal cleanup: removed unused data fields, map entries and QML members.
+- Build cleanup: Qt's automatic plugin package inclusion is disabled, so the
+  configure step no longer warns about optional Vulkan, SerialPort, Quick3D and
+  Wayland dependencies that Kleaner never uses.
+
 ## 1.3.1 — 2026-09-14
 
 - Fixed the storage usage bars on the dashboard flickering: the disk list no

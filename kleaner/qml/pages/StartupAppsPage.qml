@@ -40,7 +40,7 @@ Kirigami.Page {
 
             Badge {
                 Layout.alignment: Qt.AlignVCenter
-                text: qsTr("%1 entries").arg(startupList.count)
+                text: qsTr("%1 entries").arg(startupList.rows)
                 badgeColor: Design.textMuted
             }
 
@@ -89,7 +89,7 @@ Kirigami.Page {
                 Kirigami.PlaceholderMessage {
                     anchors.centerIn: parent
                     width: Math.min(implicitWidth, parent.width - Design.space20 * 2)
-                    visible: startupList.count === 0
+                    visible: startupList.rows === 0
                     icon.name: "system-run"
                     text: qsTr("No startup applications found")
                     explanation: StartupApps.filter.length > 0
@@ -97,21 +97,26 @@ Kirigami.Page {
                                  : qsTr("Applications that launch on login will appear here.")
                 }
 
-                ListView {
+                TableView {
                     id: startupList
 
                     anchors.fill: parent
-                    visible: count > 0
+                    visible: rows > 0
                     clip: true
                     model: StartupApps
                     boundsBehavior: Flickable.StopAtBounds
+                    reuseItems: true
+
+                    columnWidthProvider: function(column) {
+                        return startupList.width;
+                    }
 
                     Controls.ScrollBar.vertical: AppScrollBar {}
 
                     delegate: Controls.ItemDelegate {
                         id: delegate
 
-                        required property int index
+                        required property int row
                         required property string name
                         required property string comment
                         required property string exec
@@ -119,8 +124,7 @@ Kirigami.Page {
                         required property bool autostart
                         required property bool system
 
-                        width: startupList.width
-                        height: Design.rowHeightLarge
+                        implicitHeight: Design.rowHeightLarge
                         leftPadding: Design.space16
                         rightPadding: Design.space16
                         topPadding: 0
@@ -200,7 +204,7 @@ Kirigami.Page {
 
                                     anchors.centerIn: parent
                                     checked: delegate.autostart
-                                    onClicked: StartupApps.setEnabled(delegate.index, checked)
+                                    onClicked: StartupApps.setEnabled(delegate.row, checked)
 
                                     Binding {
                                         target: autostartSwitch
@@ -222,7 +226,7 @@ Kirigami.Page {
                                     execField.text = delegate.exec;
                                     commentField.text = delegate.comment;
                                     iconField.text = delegate.iconName;
-                                    editDialog.editingRow = delegate.index;
+                                    editDialog.editingRow = delegate.row;
                                     editDialog.open();
                                 }
                             }
@@ -234,7 +238,7 @@ Kirigami.Page {
                                 icon.name: "edit-delete"
                                 text: qsTr("Remove")
                                 onClicked: {
-                                    removeDialog.pendingIndex = delegate.index;
+                                    removeDialog.pendingIndex = delegate.row;
                                     removeDialog.pendingName = delegate.name;
                                     removeDialog.open();
                                 }

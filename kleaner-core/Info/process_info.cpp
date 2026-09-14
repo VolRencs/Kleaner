@@ -10,7 +10,6 @@
 #include <QMutexLocker>
 
 #include <csignal>
-#include <unistd.h>
 
 ProcessInfo::ProcessInfo(QObject *parent) :
     QObject(parent)

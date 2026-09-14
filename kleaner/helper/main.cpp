@@ -351,7 +351,6 @@ ActionReply KleanerHelper::writehosts(const QVariantMap &args)
     }
 
     ActionReply reply;
-    reply.setData(QVariantMap { { QStringLiteral("written"), content.size() } });
     return reply;
 }
 

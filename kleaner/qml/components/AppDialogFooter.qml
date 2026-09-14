@@ -6,10 +6,7 @@ import QtQuick.Layouts
 import Kleaner
 
 Item {
-    id: root
-
     default property alias content: row.data
-    property alias spacing: row.spacing
 
     implicitHeight: row.implicitHeight + Design.space20
 

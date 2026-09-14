@@ -52,7 +52,7 @@ Kirigami.Page {
             Badge {
                 Layout.alignment: Qt.AlignVCenter
                 visible: Services.available
-                text: qsTr("%1 units").arg(serviceList.count)
+                text: qsTr("%1 units").arg(serviceList.rows)
                 badgeColor: Design.textMuted
             }
         }
@@ -149,7 +149,7 @@ Kirigami.Page {
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    visible: serviceList.count === 0
+                    visible: serviceList.rows === 0
 
                     Kirigami.PlaceholderMessage {
                         anchors.centerIn: parent
@@ -165,30 +165,34 @@ Kirigami.Page {
                     }
                 }
 
-                ListView {
+                TableView {
                     id: serviceList
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    visible: count > 0
+                    visible: rows > 0
                     clip: true
                     model: Services
                     boundsBehavior: Flickable.StopAtBounds
+                    reuseItems: true
+
+                    columnWidthProvider: function(column) {
+                        return serviceList.width;
+                    }
 
                     Controls.ScrollBar.vertical: AppScrollBar {}
 
                     delegate: Controls.ItemDelegate {
                         id: delegate
 
-                        required property int index
+                        required property int row
                         required property string name
                         required property string description
                         required property bool autostart
                         required property bool active
                         required property string activeState
 
-                        width: serviceList.width
-                        height: Design.rowHeightComfortable
+                        implicitHeight: Design.rowHeightComfortable
                         leftPadding: Design.space16
                         rightPadding: Design.space16
                         topPadding: 0
@@ -278,7 +282,7 @@ Kirigami.Page {
 
                                     anchors.centerIn: parent
                                     checked: delegate.autostart
-                                    onClicked: Services.setEnabled(delegate.index, checked)
+                                    onClicked: Services.setEnabled(delegate.row, checked)
 
                                     Binding {
                                         target: autostartSwitch
@@ -299,7 +303,7 @@ Kirigami.Page {
                                     display: Controls.AbstractButton.IconOnly
                                     icon.name: delegate.active ? "media-playback-stop" : "media-playback-start"
                                     text: delegate.active ? qsTr("Stop") : qsTr("Start")
-                                    onClicked: delegate.active ? Services.stop(delegate.index) : Services.start(delegate.index)
+                                    onClicked: delegate.active ? Services.stop(delegate.row) : Services.start(delegate.row)
                                 }
 
                                 AppButton {
@@ -307,7 +311,7 @@ Kirigami.Page {
                                     display: Controls.AbstractButton.IconOnly
                                     icon.name: "view-refresh"
                                     text: qsTr("Restart")
-                                    onClicked: Services.restart(delegate.index)
+                                    onClicked: Services.restart(delegate.row)
                                 }
                             }
                         }

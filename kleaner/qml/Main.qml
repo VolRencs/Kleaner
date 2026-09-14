@@ -14,7 +14,7 @@ Kirigami.ApplicationWindow {
     id: root
 
     title: root.pageTitles[root.currentPage] !== undefined
-           ? "Kleaner — " + root.pageTitles[root.currentPage]
+           ? root.pageTitles[root.currentPage]
            : "Kleaner"
     visible: true
     width: 1240

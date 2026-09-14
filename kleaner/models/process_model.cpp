@@ -28,6 +28,7 @@ ProcessModel::ProcessModel(QObject *parent) :
             m_loading = false;
             Q_EMIT loadingChanged();
         }
+        // Re-sorts as well, so the busiest processes keep moving to the top.
         applyFilterAndSort();
     });
 }
@@ -260,8 +261,8 @@ void ProcessModel::applyFilterAndSort()
         }
     }
 
-    // Move rows into their sorted positions; the scroll offset is kept by the
-    // view, only the order of the processes changes.
+    // Move rows into their sorted positions; the TableView keeps its viewport
+    // stable while rows are moved, only the order of the processes changes.
     for (int target = 0; target < filtered.size(); ++target) {
         const int pid = filtered.at(target).pid;
         int source = target;

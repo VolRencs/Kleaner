@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(kleaner
-    VERSION 1.3.1
+    VERSION 1.3.2
     DESCRIPTION "Linux System Optimizer and Monitoring"
     HOMEPAGE_URL "https://volrencs.github.io/Kleaner/"
     LANGUAGES CXX
@@ -22,6 +22,13 @@ include(KDEInstallDirs)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDECMakeSettings)
 include(KDEClangFormat)
+
+# The Qt plugin packages pull in optional dependencies Kleaner never uses
+# (Vulkan headers, SerialPort, Quick3D, Wayland XML...). Distributions skip this
+# automatic plugin inclusion; the plugins themselves are loaded at runtime
+# from the Qt installation.
+set(QT_SKIP_AUTO_PLUGIN_INCLUSION ON)
+set(QT_SKIP_AUTO_QML_PLUGIN_INCLUSION ON)
 
 find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick QuickControls2 DBus)
 find_package(KF6 6.30 REQUIRED COMPONENTS CoreAddons)
