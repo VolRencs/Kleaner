@@ -77,8 +77,12 @@ jobs:
 
       - name: Check PKGBUILD metadata
         run: |
+          # makepkg refuses to run in a directory it cannot write to, so check
+          # a copy owned by the unprivileged builder user.
           useradd -m builder
-          for dir in packaging/aur/*/; do
+          cp -r packaging /tmp/pkgcheck
+          chown -R builder:builder /tmp/pkgcheck
+          for dir in /tmp/pkgcheck/aur/*/; do
             (cd "$dir" && su builder -c "makepkg --printsrcinfo" | diff -u .SRCINFO -)
           done
 
