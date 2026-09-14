@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kleaner — оптимизатор и монитор системы Linux</title>
+<meta name="description" content="Kleaner — современный оптимизатор и монитор системы Linux на Qt 6 и KDE Frameworks 6: ресурсы, процессы, службы systemd, автозапуск, очистка системы и редактор hosts.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0f1115">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://volrencs.github.io/Kleaner/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kleaner">
+<meta property="og:url" content="https://volrencs.github.io/Kleaner/">
+<meta property="og:title" content="Kleaner — оптимизатор и монитор системы Linux">
+<meta property="og:description" content="Мониторинг ресурсов, службы systemd, автозапуск, очистка системы и редактор hosts — в одном тёмном приложении для Arch Linux.">
+<meta property="og:image" content="https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/dashboard.png">
+<meta property="og:image:alt" content="Kleaner dashboard">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kleaner — Linux System Optimizer">
+<meta name="twitter:description" content="Live resource monitoring, systemd services, startup apps, system cleaner and hosts editor for Arch Linux.">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/dashboard.png">
+<link rel="stylesheet" href="style.css?v=5">
+<link rel="icon" href="https://raw.githubusercontent.com/VolRencs/Kleaner/main/kleaner/resources/kleaner-circle.svg" type="image/svg+xml">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Kleaner",
+  "description": "Оптимизатор и монитор системы Linux на Qt 6 и KDE Frameworks 6: мониторинг ресурсов, управление процессами и службами systemd, автозапуск, очистка системы и редактор /etc/hosts.",
+  "url": "https://volrencs.github.io/Kleaner/",
+  "downloadUrl": "https://github.com/VolRencs/Kleaner",
+  "codeRepository": "https://github.com/VolRencs/Kleaner",
+  "applicationCategory": "SystemApplication",
+  "operatingSystem": "Arch Linux",
+  "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+  "image": "https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/dashboard.png",
+  "author": {"@type": "Person", "name": "VolRen"},
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+}
+</script>
+</head>
+<body>
+<header class="nav">
+  <div class="container nav-inner">
+    <button type="button" class="logo" data-scroll-top aria-label="Наверх / To top">
+      <img src="https://raw.githubusercontent.com/VolRencs/Kleaner/main/kleaner/resources/Kleaner-logo.svg" alt="Kleaner" class="logo-banner">
+    </button>
+    <div class="nav-right">
+      <div class="langseg" role="group" aria-label="Language / Язык"><button type="button" data-lang="ru" class="on">RU</button><button type="button" data-lang="en">EN</button></div>
+      <a href="https://github.com/VolRencs/Kleaner" target="_blank" rel="noopener" class="gh" aria-label="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-left">
+      <h1 data-i18n="hero.title" data-i18n-html>Мониторинг, службы и очистка <span class="blue">в одном приложении.</span></h1>
+      <p class="desc" data-i18n="hero.desc">Kleaner показывает загрузку CPU, памяти, дисков и сети, управляет службами systemd и автозапуском, очищает кэши и журналы. Приложение собрано на Qt 6 и KDE Frameworks 6 для Arch Linux.</p>
+      <div class="btns">
+        <a class="btn primary" href="https://github.com/VolRencs/Kleaner#installation"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4"/><path d="M5 19h14"/></svg> <b data-i18n="hero.install">Установка</b><small data-i18n="hero.forArch">для Arch Linux</small></a>
+        <a class="btn outline" href="https://github.com/VolRencs/Kleaner" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span data-i18n="hero.github">Исходный код</span></a>
+      </div>
+      <p class="release"><span data-i18n="hero.release">Последний релиз:</span> <span data-kleaner-version>v1.0.0</span> &nbsp;•&nbsp; Qt 6.11+ &nbsp;•&nbsp; KDE Frameworks 6.30+</p>
+    </div>
+    <div class="hero-right">
+      <div class="laptop">
+        <div class="laptop-screen">
+          <img src="screenshots/dashboard.png" alt="Kleaner — обзор системы" width="1240" height="800" loading="eager" fetchpriority="high">
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="container">
+    <h2 data-i18n="feat.title">Возможности</h2>
+    <p class="sub" data-i18n="feat.sub">Девять страниц: мониторинг, процессы, службы, автозапуск, очистка, hosts и настройки.</p>
+    <div class="grid8">
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l4-4"/><path d="M3 19h18"/></svg></div><h3 data-i18n="f1t">Мониторинг системы</h3><p data-i18n="f1d">CPU, память, диск и сеть с обновлением раз в секунду.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l4-6 4 3 5-8 3 4"/><path d="M4 21h16"/></svg></div><h3 data-i18n="f2t">История метрик</h3><p data-i18n="f2d">Графики за 60 секунд по нагрузке, памяти, диску и сети.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg></div><h3 data-i18n="f3t">Процессы</h3><p data-i18n="f3d">Сортировка по столбцам, поиск по имени, пользователю и PID, завершение через SIGTERM и SIGKILL.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></div><h3 data-i18n="f4t">Службы systemd</h3><p data-i18n="f4d">Запуск, остановка, перезапуск и автозапуск юнитов через D-Bus и polkit.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div><h3 data-i18n="f5t">Автозапуск</h3><p data-i18n="f5d">Записи из ~/.config/autostart и /etc/xdg/autostart: включение, отключение и правка.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg></div><h3 data-i18n="f6t">Очистка системы</h3><p data-i18n="f6d">Корзина, кэши, /var/log, systemd journal, кэш pacman и пакеты-сироты.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 4 5.6 4 9s-1.5 6.6-4 9c-2.5-2.4-4-5.6-4-9s1.5-6.6 4-9z"/></svg></div><h3 data-i18n="f7t">/etc/hosts</h3><p data-i18n="f7d">Таблица записей с проверкой IPv4/IPv6 и атомарной записью через KAuth.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9c0-.5-.4-1-1-1h-3a2 2 0 0 1-2-2V4c0-.6-.4-1-1-1z"/></svg></div><h3 data-i18n="f8t">Языки и оформление</h3><p data-i18n="f8d">Русский и украинский интерфейс, смена языка без перезапуска, тёмная тема.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGES GALLERY -->
+<section class="pages">
+  <div class="container">
+    <p class="eyebrow" data-i18n="gal.eyebrow">СТРАНИЦЫ</p>
+    <h2 data-i18n="gal.title">Страницы приложения</h2>
+    <p class="sub" data-i18n="gal.sub">Скриншоты из обычной сессии: интерфейс и элементы управления.</p>
+
+    <div class="page-row">
+      <div class="page-media">
+        <div class="laptop"><div class="laptop-screen"><img src="screenshots/dashboard.png" alt="Dashboard" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+      </div>
+      <div class="page-text">
+        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l4-4"/><path d="M3 19h18"/></svg></div>
+        <h3 data-i18n="dash.t">Обзор</h3>
+        <p data-i18n="dash.d">Три кольцевых индикатора (CPU, память, корневой раздел) и таблица характеристик: хост, дистрибутив, ядро, модель CPU, пользователь и время работы. Ниже — накопители с занятым местом.</p>
+        <ul class="page-points">
+          <li data-i18n="dash.a">Кольцевые индикаторы: CPU, память, корневой раздел</li>
+          <li data-i18n="dash.b">Характеристики: хост, дистрибутив, ядро, CPU, пользователь, uptime</li>
+          <li data-i18n="dash.c">Накопители: точка монтирования, файловая система, занято/всего</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-row reverse">
+      <div class="page-media">
+        <div class="laptop"><div class="laptop-screen"><img src="screenshots/resources.png" alt="Resources" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+      </div>
+      <div class="page-text">
+        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l4-6 4 3 5-8 3 4"/><path d="M4 21h16"/></svg></div>
+        <h3 data-i18n="res.t">Ресурсы</h3>
+        <p data-i18n="res.d">Пять графиков с историей за 60 секунд. Данные накапливаются, пока приложение запущено, и не сбрасываются при переходе между страницами.</p>
+        <ul class="page-points">
+          <li data-i18n="res.a">CPU: загрузка и средняя нагрузка за 1/5/15 минут</li>
+          <li data-i18n="res.b">Память и swap</li>
+          <li data-i18n="res.c">Диск: чтение и запись; сеть: приём и передача</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-row">
+      <div class="page-media">
+        <div class="laptop"><div class="laptop-screen"><img src="screenshots/processes.png" alt="Processes" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+      </div>
+      <div class="page-text">
+        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg></div>
+        <h3 data-i18n="proc.t">Процессы</h3>
+        <p data-i18n="proc.d">Таблица процессов: сортировка щелчком по столбцу, поиск по имени, пользователю и PID. Список обновляется раз в 2 секунды, позиция прокрутки и выделенная строка сохраняются.</p>
+        <ul class="page-points">
+          <li data-i18n="proc.a">Столбцы: имя, PID, пользователь, CPU, память, RSS, состояние, команда</li>
+          <li data-i18n="proc.b">Завершение (SIGTERM) и принудительное завершение (SIGKILL)</li>
+          <li data-i18n="proc.c">Обновление по кнопке или автоматически раз в 2 секунды</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-row reverse">
+      <div class="page-media">
+        <div class="laptop"><div class="laptop-screen"><img src="screenshots/services.png" alt="Services" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+      </div>
+      <div class="page-text">
+        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></div>
+        <h3 data-i18n="svc.t">Службы</h3>
+        <p data-i18n="svc.d">Юниты systemd с описанием, состоянием и переключателем автозапуска. Запуск, остановка и перезапуск идут через D-Bus; пароль запрашивает polkit.</p>
+        <ul class="page-points">
+          <li data-i18n="svc.a">Запуск, остановка и перезапуск юнитов</li>
+          <li data-i18n="svc.b">Включение и отключение автозапуска (enable/disable)</li>
+          <li data-i18n="svc.c">Сортировка по имени, состоянию и автозапуску</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-row">
+      <div class="page-media">
+        <div class="laptop"><div class="laptop-screen"><img src="screenshots/startup.png" alt="Startup Apps" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+      </div>
+      <div class="page-text">
+        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        <h3 data-i18n="start.t">Автозапуск</h3>
+        <p data-i18n="start.d">Записи из ~/.config/autostart и /etc/xdg/autostart. Системные записи при отключении копируются в пользовательский каталог.</p>
+        <ul class="page-points">
+          <li data-i18n="start.a">Включение и отключение записей</li>
+          <li data-i18n="start.b">Добавление, редактирование и удаление .desktop</li>
+          <li data-i18n="start.c">Поля: имя, команда, комментарий, значок</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-row reverse">
+      <div class="page-media">
+        <div class="laptop"><div class="laptop-screen"><img src="screenshots/cleaner.png" alt="System Cleaner" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+      </div>
+      <div class="page-text">
+        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg></div>
+        <h3 data-i18n="clean.t">Очистка системы</h3>
+        <p data-i18n="clean.d">Шесть категорий с подсчётом размера. Отмечаете нужные пункты — приложение показывает итоговый объём и удаляет выбранное; выбор сохраняется между запусками.</p>
+        <ul class="page-points">
+          <li data-i18n="clean.a">Корзина, кэши приложений, отчёты о сбоях</li>
+          <li data-i18n="clean.b">Системные журналы и обрезка systemd journal до 50 МБ</li>
+          <li data-i18n="clean.c">Кэш pacman и удаление пакетов-сирот</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-row">
+      <div class="page-media">
+        <div class="laptop"><div class="laptop-screen"><img src="screenshots/hosts.png" alt="Hosts" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+      </div>
+      <div class="page-text">
+        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 4 5.6 4 9s-1.5 6.6-4 9c-2.5-2.4-4-5.6-4-9s1.5-6.6 4-9z"/></svg></div>
+        <h3 data-i18n="hosts.t">Хосты</h3>
+        <p data-i18n="hosts.d">Записи /etc/hosts в виде таблицы: адрес и имена хостов. Перед сохранением проверяются IPv4/IPv6 и имена, запись выполняется через KAuth.</p>
+        <ul class="page-points">
+          <li data-i18n="hosts.a">Просмотр, добавление, правка и удаление записей</li>
+          <li data-i18n="hosts.b">Проверка IPv4/IPv6 и имён хостов</li>
+          <li data-i18n="hosts.c">Сохранение через KAuth с подтверждением</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-row reverse">
+      <div class="page-media">
+        <div class="laptop"><div class="laptop-screen"><img src="screenshots/settings.png" alt="Settings" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+      </div>
+      <div class="page-text">
+        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"/><circle cx="16" cy="8" r="2"/><circle cx="8" cy="16" r="2"/></svg></div>
+        <h3 data-i18n="set.t">Настройки</h3>
+        <p data-i18n="set.d">Стартовая страница, поведение при закрытии (спросить, свернуть в трей, выйти), значок в трее и язык интерфейса. Настройки хранятся в ~/.config/kleanerrc.</p>
+        <ul class="page-points">
+          <li data-i18n="set.a">Стартовая страница приложения</li>
+          <li data-i18n="set.b">Поведение при закрытии и значок в трее</li>
+          <li data-i18n="set.c">Язык интерфейса: системный, русский, украинский и другие</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="page-row">
+      <div class="page-media">
+        <div class="laptop"><div class="laptop-screen"><img src="screenshots/about.png" alt="About" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+      </div>
+      <div class="page-text">
+        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg></div>
+        <h3 data-i18n="about.t">О программе</h3>
+        <p data-i18n="about.d">Версия, лицензия, автор и ссылки: сайт, репозиторий и трекер.</p>
+        <ul class="page-points">
+          <li data-i18n="about.a">Версия и лицензия GPL-3.0</li>
+          <li data-i18n="about.b">Ссылки на сайт, GitHub и трекер</li>
+          <li data-i18n="about.c">Stacer указан как исходный проект</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UNDER THE HOOD -->
+<section class="showcase">
+  <div class="container show-grid">
+    <div class="show-text">
+      <p class="eyebrow" data-i18n="show.eyebrow">ТЕХНИЧЕСКИЕ ДЕТАЛИ</p>
+      <h2 data-i18n="show.title" data-i18n-html>Qt 6, KDE Frameworks 6 <span class="blue">и Wayland.</span></h2>
+      <p class="desc" data-i18n="show.desc">Интерфейс — Qt Quick Controls с собственным тёмным стилем. Службы и процессы работают через системный D-Bus, очистка и /etc/hosts — через KAuth-helper с подтверждением polkit.</p>
+      <ul class="checks">
+        <li data-i18n="c1">Одно окно и один процесс, без встроенного терминала</li>
+        <li data-i18n="c2">Systemd — через D-Bus, файловые операции — через KAuth</li>
+        <li data-i18n="c3">Arch Linux: сборка через PKGBUILD или CMake</li>
+      </ul>
+      <p class="fmts"><span class="fmts-lbl" data-i18n="show.tech">Технологии:</span> <span class="fmt">Qt 6</span><span class="fmt">KDE Frameworks 6</span><span class="fmt">QML</span><span class="fmt">KAuth</span><span class="fmt">systemd</span><span class="fmt">Wayland</span></p>
+    </div>
+    <div class="show-art" aria-hidden="true">
+      <svg viewBox="0 0 420 340" width="100%" height="auto" fill="none" role="presentation">
+        <defs>
+          <linearGradient id="artScreen" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#63c9f7"/><stop offset="0.55" stop-color="#3daee9"/><stop offset="1" stop-color="#1f6fd0"/>
+          </linearGradient>
+          <linearGradient id="artGlow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3daee9" stop-opacity="0.35"/><stop offset="1" stop-color="#3daee9" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx="210" cy="318" rx="150" ry="16" fill="url(#artGlow)"/>
+        <rect x="66" y="52" width="288" height="196" rx="16" fill="#1a1f28" stroke="#323c4c" stroke-width="2"/>
+        <rect x="82" y="68" width="256" height="164" rx="8" fill="#0f1115" stroke="#232a35"/>
+        <circle cx="210" cy="60" r="3" fill="#3a4453"/>
+        <path d="M36 262h348l-22 26H58z" fill="#232a35" stroke="#323c4c" stroke-width="2" stroke-linejoin="round"/>
+        <rect x="162" y="262" width="96" height="9" rx="4.5" fill="#161a21" stroke="#323c4c"/>
+        <circle cx="130" cy="118" r="30" fill="none" stroke="#232a35" stroke-width="10"/>
+        <path d="M130 88a30 30 0 0 1 26 45" stroke="url(#artScreen)" stroke-width="10" stroke-linecap="round"/>
+        <rect x="182" y="94" width="130" height="10" rx="5" fill="#232a35"/>
+        <rect x="182" y="112" width="96" height="10" rx="5" fill="#1c212b"/>
+        <circle cx="130" cy="190" r="24" fill="none" stroke="#232a35" stroke-width="9"/>
+        <path d="M130 166a24 24 0 0 1 21 35" stroke="#a78bfa" stroke-width="9" stroke-linecap="round"/>
+        <rect x="182" y="170" width="110" height="10" rx="5" fill="#232a35"/>
+        <rect x="182" y="188" width="140" height="10" rx="5" fill="#1c212b"/>
+        <rect x="88" y="222" width="60" height="8" rx="4" fill="#1c212b"/>
+        <rect x="158" y="222" width="90" height="8" rx="4" fill="#1c212b"/>
+        <rect x="258" y="222" width="48" height="8" rx="4" fill="#1c212b"/>
+      </svg>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container foot-top center">
+    <div>
+      <button type="button" class="logo sm" data-scroll-top aria-label="Наверх / To top">
+        <img src="https://raw.githubusercontent.com/VolRencs/Kleaner/main/kleaner/resources/Kleaner-logo.svg" alt="Kleaner" class="logo-banner">
+      </button>
+    </div>
+    <div class="fres">
+      <a href="https://github.com/VolRencs/Kleaner/releases" target="_blank" rel="noopener" data-i18n="foot.rel">Релизы</a>
+      <a href="https://github.com/VolRencs/Kleaner" target="_blank" rel="noopener" data-i18n="foot.src">Исходный код</a>
+      <a href="https://github.com/VolRencs/Kleaner/issues" target="_blank" rel="noopener" data-i18n="foot.iss">Сообщить об ошибке</a>
+    </div>
+  </div>
+  <div class="container foot-bot">
+    <p>© 2026 VolRen.</p>
+    <p class="muted small" data-i18n="foot.right" data-i18n-html>Открытый код &nbsp;•&nbsp; Лицензия GPL-3.0 &nbsp;•&nbsp; Форк Stacer</p>
+  </div>
+</footer>
+
+<script src="script.js?v=5"></script>
+</body>
+</html>

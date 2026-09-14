@@ -32,8 +32,11 @@ jobs:
       - name: Test
         run: ctest --test-dir build --output-on-failure
 
+      - name: Install
+        run: DESTDIR="$PWD/pkgdir" cmake --install build
+
       - name: Validate desktop entry
         run: desktop-file-validate desktop/org.volren.kleaner.desktop
 
       - name: Validate AppStream metadata
-        run: appstreamcli validate build/desktop/org.volren.kleaner.metainfo.xml
+        run: appstreamcli validate --no-net build/desktop/org.volren.kleaner.metainfo.xml

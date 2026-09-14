@@ -1,8 +1,18 @@
+<p align="center">
+  <img src="kleaner/resources/Kleaner-logo.svg" alt="Kleaner" width="360">
+</p>
+
 # Kleaner
 
+[![build](https://github.com/VolRencs/Kleaner/actions/workflows/build.yml/badge.svg)](https://github.com/VolRencs/Kleaner/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/license-GPL--3.0--only-blue.svg)](LICENSE)
 [![Qt](https://img.shields.io/badge/Qt-6.11%2B-green.svg)](https://www.qt.io/)
 [![KDE Frameworks](https://img.shields.io/badge/KDE%20Frameworks-6.30%2B-blue.svg)](https://kde.org/)
+
+[Website](https://volrencs.github.io/Kleaner/) ·
+[Releases](https://github.com/VolRencs/Kleaner/releases) ·
+[Changelog](CHANGELOG.md) ·
+[Report an issue](https://github.com/VolRencs/Kleaner/issues)
 
 Kleaner is a Linux system optimizer and monitoring application with a modern
 dark interface. It is a fork of [Stacer](https://github.com/QuentiumYT/Stacer)
@@ -43,7 +53,7 @@ The project targets **Arch Linux** only.
 
 ## Installation
 
-### From the AUR
+### Arch Linux package (PKGBUILD)
 
 The packaging files live in `packaging/arch`:
 

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://volrencs.github.io/Kleaner/sitemap.xml

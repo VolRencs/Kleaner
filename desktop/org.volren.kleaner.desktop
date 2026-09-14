@@ -11,6 +11,6 @@ Icon=org.volren.kleaner
 Exec=kleaner
 DBusActivatable=true
 Terminal=false
-Categories=Utility;System;Monitor;
+Categories=System;Monitor;
 Keywords=optimize;monitor;system;services;processes;cleaner;
 StartupNotify=true

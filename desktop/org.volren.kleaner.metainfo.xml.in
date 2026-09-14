@@ -17,8 +17,8 @@
     <translation type="qt">kleaner</translation>
 
     <description>
-        <p>Kleaner is an open source system optimizer and application monitor that helps users to manage entire system with different aspects, its an all in one system utility.</p>
-        <p>Built with Qt 6 and KDE Frameworks 6, the interface is a native Wayland application with live resource graphs, process and systemd service management, startup application control and a system cleaner. It is a fork of Stacer.</p>
+        <p>Kleaner is a system optimizer and monitor for Arch Linux. It shows live CPU, memory, disk and network usage, manages processes and systemd services, controls startup applications, cleans caches and logs, and edits /etc/hosts.</p>
+        <p>Built with Qt 6 and KDE Frameworks 6, it runs as a native Wayland application with a dark interface. Kleaner is a fork of Stacer.</p>
     </description>
 
     <launchable type="desktop-id">org.volren.kleaner.desktop</launchable>
@@ -26,12 +26,11 @@
     <icon type="stock">org.volren.kleaner</icon>
 
     <branding>
-        <color type="primary" scheme_preference="light">#025ff9</color>
-        <color type="primary" scheme_preference="dark">#075fbb</color>
+        <color type="primary" scheme_preference="light">#1a7fb5</color>
+        <color type="primary" scheme_preference="dark">#3daee9</color>
     </branding>
 
     <categories>
-        <category>Utility</category>
         <category>System</category>
         <category>Monitor</category>
     </categories>
