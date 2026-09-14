@@ -3,11 +3,30 @@
 
 #include "startup_app_model.h"
 
+#include <QtConcurrent>
+
 StartupAppModel::StartupAppModel(QObject *parent) :
     QAbstractListModel(parent)
 {
     connect(&m_apps, &StartupApps::changed, this, &StartupAppModel::reload);
+    connect(&m_watcher, &QFutureWatcher<QVariantList>::finished, this, [this] {
+        m_all = m_watcher.result();
+        m_loading = false;
+        Q_EMIT loadingChanged();
+        applyFilter();
+        if (m_reloadPending) {
+            m_reloadPending = false;
+            reload();
+        }
+    });
     reload();
+}
+
+StartupAppModel::~StartupAppModel()
+{
+    // The worker captures this, so it must not outlive the model.
+    m_watcher.cancel();
+    m_watcher.waitForFinished();
 }
 
 int StartupAppModel::rowCount(const QModelIndex &parent) const
@@ -45,19 +64,25 @@ QVariant StartupAppModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> StartupAppModel::roleNames() const
 {
-    return {
+    static const QHash<int, QByteArray> roles = {
         { NameRole, "name" },
         { CommentRole, "comment" },
         { ExecRole, "exec" },
-        { IconRole, "icon" },
-        { EnabledRole, "enabled" },
+        { IconRole, "iconName" },
+        { EnabledRole, "autostart" },
         { SystemRole, "system" },
     };
+    return roles;
 }
 
 QString StartupAppModel::filter() const
 {
     return m_filter;
+}
+
+bool StartupAppModel::loading() const
+{
+    return m_loading;
 }
 
 void StartupAppModel::setFilter(const QString &filter)
@@ -72,8 +97,16 @@ void StartupAppModel::setFilter(const QString &filter)
 
 void StartupAppModel::reload()
 {
-    m_all = m_apps.load();
-    applyFilter();
+    if (m_loading) {
+        m_reloadPending = true;
+        return;
+    }
+
+    m_loading = true;
+    Q_EMIT loadingChanged();
+    m_watcher.setFuture(QtConcurrent::run([this] {
+        return m_apps.load();
+    }));
 }
 
 void StartupAppModel::setEnabled(int row, bool enabled)

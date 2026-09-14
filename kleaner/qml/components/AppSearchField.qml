@@ -5,6 +5,7 @@ import QtQuick
 import QtQuick.Controls as Controls
 
 import org.kde.kirigami as Kirigami
+import Kleaner
 
 Controls.TextField {
     id: root

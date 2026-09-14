@@ -4,6 +4,9 @@
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
+import Kleaner
+
+pragma ComponentBehavior: Bound
 
 Item {
     id: page
@@ -131,7 +134,7 @@ Item {
 
             GridLayout {
                 Layout.fillWidth: true
-                columns: page.width > 900 ? 2 : 1
+                columns: page.wide ? 2 : 1
                 columnSpacing: Design.space16
                 rowSpacing: Design.space16
 
@@ -281,6 +284,8 @@ Item {
                         model: Disks.disks
 
                         delegate: ColumnLayout {
+                            required property var modelData
+
                             Layout.fillWidth: true
                             spacing: Design.space8
 

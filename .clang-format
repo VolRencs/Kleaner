@@ -1,6 +1,7 @@
 ---
 Language: Cpp
-# BasedOnStyle: WebKit
+BasedOnStyle: LLVM
+Standard: c++20
 ColumnLimit: 0
 IndentWidth: 4
 PointerAlignment: Right

@@ -4,8 +4,8 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <QList>
 #include <QSet>
-#include <QVariantList>
 
 #include "Cleaner/cleaner.h"
 
@@ -31,7 +31,6 @@ class CleanerModel : public QAbstractListModel
         RootRole,
         IsCategoryRole,
     };
-    Q_ENUM(Roles)
 
     explicit CleanerModel(QObject *parent = nullptr);
 
@@ -58,8 +57,6 @@ class CleanerModel : public QAbstractListModel
     void checkedSizeChanged();
     void hasCheckedItemsChanged();
     void lastResultChanged();
-    void scanFinished();
-    void cleanFinished(bool ok, const QString &message, int count, qulonglong freedBytes);
 
   private:
     struct Category {
@@ -75,7 +72,7 @@ class CleanerModel : public QAbstractListModel
             bool root = false;
             bool checked = false;
         };
-        QVector<Entry> entries;
+        QList<Entry> entries;
     };
 
     struct Row {
@@ -89,8 +86,8 @@ class CleanerModel : public QAbstractListModel
     void saveSelection();
 
     Cleaner m_cleaner;
-    QVector<Category> m_categories;
-    QVector<Row> m_rows;
+    QList<Category> m_categories;
+    QList<Row> m_rows;
     QSet<QString> m_checkedPaths;
     qulonglong m_checkedSize = 0;
     qulonglong m_lastFreedBytes = 0;

@@ -5,6 +5,7 @@
 
 #include "Utils/procfs.h"
 
+#include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
 #include <QDirIterator>
@@ -288,6 +289,7 @@ void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QS
     const QString trash = trashDirectory();
     QStringList userPaths;
     QStringList rootPaths;
+    QHash<QString, qulonglong> userPathSizes;
     qulonglong trashSize = 0;
     bool emptyTrash = false;
 
@@ -304,6 +306,11 @@ void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QS
         const bool writable = (info.exists() ? info.isWritable() : parentInfo.isWritable()) && parentInfo.isWritable();
         if (writable) {
             userPaths.append(cleanedPath);
+            qulonglong size = sizes.value(cleanedPath).toULongLong();
+            if (size == 0) {
+                size = sizes.value(path).toULongLong();
+            }
+            userPathSizes.insert(cleanedPath, size);
         } else {
             rootPaths.append(cleanedPath);
         }
@@ -322,7 +329,7 @@ void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QS
             state->error = error;
         }
         if (--state->remaining == 0) {
-            Q_EMIT cleaned(state->error.isEmpty() ? state->count : 0, state->freed, state->error);
+            Q_EMIT cleaned(state->count, state->freed, state->error);
         }
     };
 
@@ -340,9 +347,11 @@ void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QS
 
         KAuth::ExecuteJob *job = action.execute();
         connect(job, &KJob::result, this, [finish, state, job](KJob *kjob) {
-            if (kjob->error() == KJob::NoError) {
-                state->count += job->data().value(QStringLiteral("removed")).toInt();
-                state->freed += job->data().value(QStringLiteral("freed")).toULongLong();
+            // Partial results are reported even when the helper failed halfway.
+            const QVariantMap data = job->data();
+            if (!data.isEmpty()) {
+                state->count += data.value(QStringLiteral("removed")).toInt();
+                state->freed += data.value(QStringLiteral("freed")).toULongLong();
             }
             finish(kjob->error() != KJob::NoError ? kjob->errorString() : QString());
         });
@@ -354,24 +363,42 @@ void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QS
         ++state->remaining;
     }
 
-    if (state->remaining == 0) {
-        Q_EMIT cleaned(0, 0, {});
-        return;
-    }
-
-    for (const QString &path : userPaths) {
-        const QFileInfo info(path);
-        bool success = false;
-        if (info.isDir() && !info.isSymLink()) {
-            success = QDir(path).removeRecursively();
-        } else {
-            success = QFile::remove(path);
-        }
-        if (success) {
-            ++state->count;
-            state->freed += sizes.value(path).toULongLong();
-        }
-        finish(success ? QString() : tr("Failed to remove %1").arg(path));
+    if (!userPaths.isEmpty()) {
+        // User-owned paths can be large; delete them off the GUI thread.
+        const QPointer<Cleaner> guard(this);
+        (void)QtConcurrent::run([guard, state, userPaths, userPathSizes] {
+            int count = 0;
+            qulonglong freed = 0;
+            QString error;
+            for (const QString &path : userPaths) {
+                const QFileInfo info(path);
+                bool success = false;
+                if (info.isDir() && !info.isSymLink()) {
+                    success = QDir(path).removeRecursively();
+                } else {
+                    success = QFile::remove(path);
+                }
+                if (success) {
+                    ++count;
+                    freed += userPathSizes.value(path);
+                } else if (error.isEmpty()) {
+                    error = QCoreApplication::translate("Cleaner", "Failed to remove %1").arg(path);
+                }
+            }
+            QMetaObject::invokeMethod(guard, [guard, state, count, freed, error] {
+                if (!guard) {
+                    return;
+                }
+                state->count += count;
+                state->freed += freed;
+                if (!error.isEmpty() && state->error.isEmpty()) {
+                    state->error = error;
+                }
+                if (--state->remaining == 0) {
+                    Q_EMIT guard->cleaned(state->count, state->freed, state->error);
+                }
+            }, Qt::QueuedConnection);
+        });
     }
 
     if (emptyTrash) {

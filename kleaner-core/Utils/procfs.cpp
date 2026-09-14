@@ -5,6 +5,8 @@
 
 #include <QFile>
 
+#include <limits>
+
 namespace Procfs
 {
 
@@ -43,7 +45,8 @@ quint64 readUInt64(const QString &path, bool *ok)
     if (!converted) {
         bool doubleOk = false;
         const double decimal = token.toDouble(&doubleOk);
-        if (doubleOk && decimal >= 0.0) {
+        constexpr double maxUInt64 = 18446744073709551616.0;
+        if (doubleOk && decimal >= 0.0 && decimal < maxUInt64) {
             value = static_cast<quint64>(decimal);
             converted = true;
         }

@@ -3,28 +3,52 @@ name: build
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     container:
       image: archlinux:latest
-      options: --privileged
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
+      - name: Cache pacman packages and ccache
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/pacman/pkg
+            /root/.cache/ccache
+          key: arch-${{ hashFiles('.github/workflows/build.yml') }}
+          restore-keys: arch-
 
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm --needed \
-            base-devel cmake ninja extra-cmake-modules \
-            qt6-base qt6-declarative qt6-svg qt6-wayland qt6-tools \
-            kirigami kquickcharts kcoreaddons kconfig kdbusaddons \
+            base-devel cmake ninja ccache clang extra-cmake-modules \
+            qt6-base qt6-declarative qt6-svg qt6-tools \
+            kirigami kcoreaddons kconfig kdbusaddons \
             kstatusnotifieritem kio kauth qqc2-desktop-style breeze-icons \
             appstream desktop-file-utils
 
       - name: Configure
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Build
         run: cmake --build build -j "$(nproc)"
@@ -35,8 +59,53 @@ jobs:
       - name: Install
         run: DESTDIR="$PWD/pkgdir" cmake --install build
 
-      - name: Validate desktop entry
-        run: desktop-file-validate desktop/org.volren.kleaner.desktop
+      - name: Validate installed metadata
+        run: |
+          desktop-file-validate pkgdir/usr/share/applications/org.volren.kleaner.desktop
+          appstreamcli validate --no-net pkgdir/usr/share/metainfo/org.volren.kleaner.metainfo.xml
 
-      - name: Validate AppStream metadata
-        run: appstreamcli validate --no-net build/desktop/org.volren.kleaner.metainfo.xml
+      - name: Lint QML
+        run: |
+          find kleaner/qml -name '*.qml' -print0 | xargs -0 qmllint -I kleaner/qml -I build/kleaner
+
+      - name: Check C++ formatting
+        # Advisory for now: run `ninja clang-format` locally to format.
+        continue-on-error: true
+        run: clang-format --dry-run --Werror $(git ls-files '*.cpp' '*.h')
+
+      - name: Check PKGBUILD metadata
+        run: |
+          useradd -m builder
+          for dir in packaging/aur/*/; do
+            (cd "$dir" && su builder -c "makepkg --printsrcinfo" | diff -u .SRCINFO -)
+          done
+
+  package:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    container:
+      image: archlinux:latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm --needed \
+            base-devel cmake ninja extra-cmake-modules \
+            qt6-base qt6-declarative qt6-svg qt6-tools \
+            kirigami kcoreaddons kconfig kdbusaddons \
+            kstatusnotifieritem kio kauth qqc2-desktop-style breeze-icons
+
+      - name: Build Arch package
+        run: |
+          useradd -m builder
+          chown -R builder:builder "$GITHUB_WORKSPACE"
+          su builder -c 'cd packaging/aur/kleaner && makepkg --noconfirm'
+
+      - name: Upload package
+        uses: actions/upload-artifact@v7
+        with:
+          name: arch-package
+          path: packaging/aur/kleaner/*.pkg.tar.*

@@ -10,9 +10,20 @@ ServiceModel::ServiceModel(QObject *parent) :
 {
     connect(&m_backend, &ServiceBackend::loaded, this, [this](const QVariantList &services) {
         m_all = services;
+        if (m_loading) {
+            m_loading = false;
+            Q_EMIT loadingChanged();
+        }
         applyFilter();
     });
     connect(&m_backend, &ServiceBackend::error, this, &ServiceModel::error);
+    connect(&m_backend, &ServiceBackend::error, this, [this] {
+        if (m_loading) {
+            m_loading = false;
+            Q_EMIT loadingChanged();
+        }
+    });
+    connect(&m_backend, &ServiceBackend::availableChanged, this, &ServiceModel::availableChanged);
 }
 
 int ServiceModel::rowCount(const QModelIndex &parent) const
@@ -48,13 +59,14 @@ QVariant ServiceModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> ServiceModel::roleNames() const
 {
-    return {
+    static const QHash<int, QByteArray> roles = {
         { NameRole, "name" },
         { DescriptionRole, "description" },
-        { EnabledRole, "enabled" },
+        { EnabledRole, "autostart" },
         { ActiveRole, "active" },
         { ActiveStateRole, "activeState" },
     };
+    return roles;
 }
 
 QString ServiceModel::filter() const
@@ -75,6 +87,11 @@ void ServiceModel::setFilter(const QString &filter)
 bool ServiceModel::available() const
 {
     return m_backend.available();
+}
+
+bool ServiceModel::loading() const
+{
+    return m_loading;
 }
 
 int ServiceModel::sortBy() const
@@ -109,6 +126,11 @@ void ServiceModel::setReverse(bool reverse)
 
 void ServiceModel::reload()
 {
+    if (m_loading) {
+        return;
+    }
+    m_loading = true;
+    Q_EMIT loadingChanged();
     m_backend.reload();
 }
 

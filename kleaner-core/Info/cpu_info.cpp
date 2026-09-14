@@ -6,7 +6,6 @@
 #include "Utils/procfs.h"
 
 #include <QDir>
-#include <QFile>
 #include <QRegularExpression>
 
 CpuInfo::CpuInfo(QObject *parent) :
@@ -172,7 +171,7 @@ void CpuInfo::updateClocks()
 
     // Fallback for platforms without cpufreq (mainly x86 /proc/cpuinfo)
     const QList<QByteArray> lines = Procfs::lines(QStringLiteral("/proc/cpuinfo"));
-    const QRegularExpression re(QStringLiteral("^cpu MHz\\s*:\\s*([0-9.]+)"));
+    static const QRegularExpression re(QStringLiteral("^cpu MHz\\s*:\\s*([0-9.]+)"));
     for (const QByteArray &line : lines) {
         const QRegularExpressionMatch match = re.match(QString::fromLatin1(line));
         if (match.hasMatch()) {

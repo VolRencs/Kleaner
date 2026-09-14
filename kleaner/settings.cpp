@@ -11,24 +11,17 @@
 
 #include <algorithm>
 
-#include <KConfigGroup>
 #include <KSharedConfig>
 
 Settings::Settings(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    m_group(KSharedConfig::openConfig(QStringLiteral("kleanerrc")), QStringLiteral("General"))
 {
-    KSharedConfigPtr config = KSharedConfig::openConfig(QStringLiteral("kleanerrc"));
-    m_group = new KConfigGroup(config, QStringLiteral("General"));
-}
-
-Settings::~Settings()
-{
-    delete m_group;
 }
 
 QString Settings::startPage() const
 {
-    return m_group->readEntry(QStringLiteral("StartPage"), QStringLiteral("dashboard"));
+    return m_group.readEntry(QStringLiteral("StartPage"), QStringLiteral("dashboard"));
 }
 
 void Settings::setStartPage(const QString &startPage)
@@ -36,13 +29,14 @@ void Settings::setStartPage(const QString &startPage)
     if (this->startPage() == startPage) {
         return;
     }
-    m_group->writeEntry(QStringLiteral("StartPage"), startPage);
+    m_group.writeEntry(QStringLiteral("StartPage"), startPage);
+    m_group.sync();
     Q_EMIT changed();
 }
 
 QString Settings::closeBehavior() const
 {
-    return m_group->readEntry(QStringLiteral("CloseBehavior"), QStringLiteral("ask"));
+    return m_group.readEntry(QStringLiteral("CloseBehavior"), QStringLiteral("ask"));
 }
 
 void Settings::setCloseBehavior(const QString &closeBehavior)
@@ -50,13 +44,14 @@ void Settings::setCloseBehavior(const QString &closeBehavior)
     if (this->closeBehavior() == closeBehavior) {
         return;
     }
-    m_group->writeEntry(QStringLiteral("CloseBehavior"), closeBehavior);
+    m_group.writeEntry(QStringLiteral("CloseBehavior"), closeBehavior);
+    m_group.sync();
     Q_EMIT changed();
 }
 
 bool Settings::useTray() const
 {
-    return m_group->readEntry(QStringLiteral("UseTray"), true);
+    return m_group.readEntry(QStringLiteral("UseTray"), true);
 }
 
 void Settings::setUseTray(bool useTray)
@@ -64,13 +59,14 @@ void Settings::setUseTray(bool useTray)
     if (this->useTray() == useTray) {
         return;
     }
-    m_group->writeEntry(QStringLiteral("UseTray"), useTray);
+    m_group.writeEntry(QStringLiteral("UseTray"), useTray);
+    m_group.sync();
     Q_EMIT changed();
 }
 
 QString Settings::language() const
 {
-    return m_group->readEntry(QStringLiteral("Language"), QString());
+    return m_group.readEntry(QStringLiteral("Language"), QString());
 }
 
 void Settings::setLanguage(const QString &language)
@@ -78,7 +74,8 @@ void Settings::setLanguage(const QString &language)
     if (this->language() == language) {
         return;
     }
-    m_group->writeEntry(QStringLiteral("Language"), language);
+    m_group.writeEntry(QStringLiteral("Language"), language);
+    m_group.sync();
     Q_EMIT languageChanged();
 }
 
@@ -141,5 +138,5 @@ QStringList Settings::translationDirectories()
 
 void Settings::sync()
 {
-    m_group->sync();
+    m_group.sync();
 }

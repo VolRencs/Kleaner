@@ -7,6 +7,7 @@ import QtQuick
 import QtQuick.Controls as Controls
 
 import org.kde.kirigami as Kirigami
+import Kleaner
 
 Controls.ComboBox {
     id: root
@@ -60,7 +61,10 @@ Controls.ComboBox {
         required property var model
         required property int index
 
-        width: root.width - 8
+        // The popup pads its content, so the delegate must match the list
+        // viewport instead of the ComboBox width, otherwise clip cuts off the
+        // right edge of the rounded highlight.
+        width: ListView.view ? ListView.view.width : root.width
         height: 34
         leftPadding: 12
         rightPadding: 12
@@ -77,10 +81,20 @@ Controls.ComboBox {
         }
 
         background: Rectangle {
-            radius: Design.radiusSmall
-            color: itemDelegate.highlighted ? Design.accentSoft
-                                            : itemDelegate.hovered ? Design.surfaceHover
-                                                                   : "transparent"
+            color: "transparent"
+
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: Design.itemInset
+                radius: Design.radiusItem
+                color: itemDelegate.highlighted ? Design.accentSoft
+                                                : itemDelegate.hovered ? Design.surfaceHover
+                                                                       : Design.surfaceHoverClear
+
+                Behavior on color {
+                    ColorAnimation { duration: 120 }
+                }
+            }
         }
     }
 

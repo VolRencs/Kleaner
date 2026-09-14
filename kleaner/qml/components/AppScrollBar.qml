@@ -3,6 +3,7 @@
 
 import QtQuick
 import QtQuick.Templates as T
+import Kleaner
 
 // Standalone overlay scrollbar. It deliberately does not inherit the platform
 // style implementation: the style hardcodes its own geometry, animations and
@@ -14,6 +15,9 @@ T.ScrollBar {
     implicitHeight: 8
 
     padding: 1
+    // Keep the handle clear of the rounded corners of the surrounding card.
+    topPadding: root.orientation === Qt.Vertical ? 6 : 1
+    bottomPadding: root.orientation === Qt.Vertical ? 6 : 1
     minimumSize: 0.1
     policy: T.ScrollBar.AsNeeded
 

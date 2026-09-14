@@ -5,6 +5,7 @@
 
 #include <QDBusArgument>
 #include <QDBusConnection>
+#include <QDBusConnectionInterface>
 #include <QDBusMessage>
 #include <QFileInfo>
 #include <QSet>
@@ -17,8 +18,8 @@ constexpr auto systemdManager = "org.freedesktop.systemd1.Manager";
 
 QDBusMessage systemdCall(const QString &method)
 {
-    QDBusMessage message = QDBusMessage::createMethodCall(QString::fromLatin1(systemdService), QString::fromLatin1(systemdPath),
-                                                          QString::fromLatin1(systemdManager), method);
+    QDBusMessage message = QDBusMessage::createMethodCall(QLatin1StringView(systemdService), QLatin1StringView(systemdPath),
+                                                          QLatin1StringView(systemdManager), method);
     // Let polkit prompt for authentication instead of failing with "access denied".
     message.setInteractiveAuthorizationAllowed(true);
     return message;
@@ -28,19 +29,23 @@ QDBusMessage systemdCall(const QString &method)
 ServiceBackend::ServiceBackend(QObject *parent) :
     QObject(parent)
 {
-    m_interface = new QDBusInterface(QString::fromLatin1(systemdService), QString::fromLatin1(systemdPath), QString::fromLatin1(systemdManager),
-                                     QDBusConnection::systemBus(), this);
-
-    m_available = m_interface->isValid();
-    if (!m_available) {
-        delete m_interface;
-        m_interface = nullptr;
-    }
+    m_available = detectSystemd();
 }
 
-ServiceBackend::~ServiceBackend()
+bool ServiceBackend::detectSystemd()
 {
-    delete m_interface;
+    QDBusConnectionInterface *bus = QDBusConnection::systemBus().interface();
+    return bus && bus->isServiceRegistered(QString::fromLatin1(systemdService)).value();
+}
+
+void ServiceBackend::refreshAvailability()
+{
+    const bool available = detectSystemd();
+    if (available == m_available) {
+        return;
+    }
+    m_available = available;
+    Q_EMIT availableChanged();
 }
 
 bool ServiceBackend::available() const
@@ -50,6 +55,8 @@ bool ServiceBackend::available() const
 
 void ServiceBackend::reload()
 {
+    refreshAvailability();
+
     if (!m_available) {
         Q_EMIT loaded({});
         return;

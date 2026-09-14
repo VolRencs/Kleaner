@@ -15,7 +15,6 @@ SystemInfo::SystemInfo(QObject *parent) :
     QObject(parent)
 {
     m_hostname = QSysInfo::machineHostName();
-    m_platform = QSysInfo::prettyProductName();
     m_kernel = QSysInfo::kernelVersion();
     m_username = Helpers::userName(getuid());
 
@@ -29,19 +28,9 @@ QString SystemInfo::hostname() const
     return m_hostname;
 }
 
-QString SystemInfo::platform() const
-{
-    return m_platform;
-}
-
 QString SystemInfo::distribution() const
 {
     return m_distribution;
-}
-
-QString SystemInfo::distributionId() const
-{
-    return m_distributionId;
 }
 
 QString SystemInfo::kernel() const
@@ -92,8 +81,6 @@ void SystemInfo::readOsRelease()
             m_distribution = value;
         } else if (key == QLatin1String("NAME") && m_distribution.isEmpty()) {
             m_distribution = value;
-        } else if (key == QLatin1String("ID")) {
-            m_distributionId = value;
         }
     }
 }
@@ -102,11 +89,12 @@ void SystemInfo::readCpuModel()
 {
     const QList<QByteArray> lines = Procfs::lines(QStringLiteral("/proc/cpuinfo"));
     static const QRegularExpression re(QStringLiteral("^(model name|Processor|Hardware|cpu model)\\s*:\\s*(.+)$"));
+    static const QRegularExpression frequencySuffix(QStringLiteral("\\s*@\\s*[0-9.]+\\s*GHz$"));
     for (const QByteArray &line : lines) {
         const QRegularExpressionMatch match = re.match(QString::fromLatin1(line));
         if (match.hasMatch()) {
             QString model = match.captured(2).trimmed();
-            model.remove(QRegularExpression(QStringLiteral("\\s*@\\s*[0-9.]+\\s*GHz$")));
+            model.remove(frequencySuffix);
             m_cpuModel = model;
             return;
         }

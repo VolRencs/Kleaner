@@ -8,7 +8,7 @@
 #include <QStringList>
 #include <QVariantList>
 
-class KConfigGroup;
+#include <KConfigGroup>
 
 class Settings : public QObject
 {
@@ -20,30 +20,29 @@ class Settings : public QObject
 
   public:
     explicit Settings(QObject *parent = nullptr);
-    ~Settings() override;
 
-    QString startPage() const;
+    [[nodiscard]] QString startPage() const;
     void setStartPage(const QString &startPage);
 
-    QString closeBehavior() const;
+    [[nodiscard]] QString closeBehavior() const;
     void setCloseBehavior(const QString &closeBehavior);
 
-    bool useTray() const;
+    [[nodiscard]] bool useTray() const;
     void setUseTray(bool useTray);
 
-    QString language() const;
+    [[nodiscard]] QString language() const;
     void setLanguage(const QString &language);
 
-    Q_INVOKABLE QVariantList availableLanguages() const;
+    [[nodiscard]] Q_INVOKABLE QVariantList availableLanguages() const;
 
     Q_INVOKABLE void sync();
 
-    static QStringList translationDirectories();
+    [[nodiscard]] static QStringList translationDirectories();
 
   Q_SIGNALS:
     void changed();
     void languageChanged();
 
   private:
-    KConfigGroup *m_group = nullptr;
+    KConfigGroup m_group;
 };

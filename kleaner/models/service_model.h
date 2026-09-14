@@ -12,7 +12,8 @@ class ServiceModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(bool available READ available CONSTANT)
+    Q_PROPERTY(bool available READ available NOTIFY availableChanged)
+    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
     Q_PROPERTY(int sortBy READ sortBy WRITE setSortBy NOTIFY sortByChanged)
     Q_PROPERTY(bool reverse READ reverse WRITE setReverse NOTIFY reverseChanged)
 
@@ -24,7 +25,7 @@ class ServiceModel : public QAbstractListModel
         ActiveRole,
         ActiveStateRole,
     };
-    Q_ENUM(Roles)
+
     enum SortBy {
         SortName,
         SortState,
@@ -42,6 +43,7 @@ class ServiceModel : public QAbstractListModel
     void setFilter(const QString &filter);
 
     bool available() const;
+    bool loading() const;
 
     int sortBy() const;
     void setSortBy(int sortBy);
@@ -57,6 +59,8 @@ class ServiceModel : public QAbstractListModel
 
   Q_SIGNALS:
     void filterChanged();
+    void availableChanged();
+    void loadingChanged();
     void sortByChanged();
     void reverseChanged();
     void error(const QString &message);
@@ -70,4 +74,5 @@ class ServiceModel : public QAbstractListModel
     QString m_filter;
     int m_sortBy = SortName;
     bool m_reverse = false;
+    bool m_loading = false;
 };

@@ -10,5 +10,6 @@ translations/*.qm
 
 # makepkg
 pkg/
+pkgdir/
 src/
 *.pkg.tar.*

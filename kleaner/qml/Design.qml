@@ -6,6 +6,7 @@ pragma Singleton
 import QtQuick
 
 import org.kde.kirigami as Kirigami
+import Kleaner
 
 QtObject {
     id: design
@@ -19,6 +20,9 @@ QtObject {
     readonly property color sidebar: "#0a0c0f"
     readonly property color surface: "#161a21"
     readonly property color surfaceHover: "#1c212b"
+    // Fully transparent variant of surfaceHover: animating to "transparent"
+    // would interpolate the RGB channels to black and visibly darken the item.
+    readonly property color surfaceHoverClear: design.alpha(design.surfaceHover, 0)
     readonly property color surfaceActive: "#232a35"
     readonly property color elevated: "#1a1f28"
 
@@ -38,6 +42,9 @@ QtObject {
     readonly property color accentPressed: "#2f93c9"
     readonly property color accentText: "#08131a"
     readonly property color accentSoft: design.alpha(design.accent, 0.16)
+    // Transparent accent for animations: keeps the RGB channels stable so
+    // fading out does not pass through black.
+    readonly property color accentClear: design.alpha(design.accent, 0)
 
     readonly property color positive: "#4cd07d"
     readonly property color warning: "#f5b74f"
@@ -50,6 +57,12 @@ QtObject {
     readonly property int radiusSmall: 8
     readonly property int radius: 12
     readonly property int radiusLarge: 16
+
+    // KDE's shared corner radius for selection and hover highlights.
+    readonly property int radiusItem: Math.round(Kirigami.Units.cornerRadius)
+    readonly property int itemInset: 2
+    // Width reserved on the right of list rows for the overlay scrollbar.
+    readonly property int scrollBarGutter: 8
 
     readonly property int space4: 4
     readonly property int space8: 8

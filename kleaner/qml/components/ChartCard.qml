@@ -4,6 +4,9 @@
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
+import Kleaner
+
+pragma ComponentBehavior: Bound
 
 // History chart card in the spirit of the KDE System Monitor "History" page:
 // translucent gradient area fills, a labelled grid, live statistics for the
@@ -93,7 +96,7 @@ AppCard {
 
         Flow {
             Layout.fillWidth: true
-            spacing: Design.space16
+            spacing: Design.space8
 
             Repeater {
                 // A stable model keeps the delegates (and therefore the hover
@@ -101,9 +104,11 @@ AppCard {
                 model: root.series.length
 
                 delegate: Rectangle {
-                    radius: Design.radiusSmall
+                    required property int index
+
+                    radius: Design.radiusItem
                     color: root.hoveredIndex === index ? Design.surfaceHover : "transparent"
-                    implicitWidth: legendRow.implicitWidth + Design.space12
+                    implicitWidth: legendRow.implicitWidth + Design.space8
                     implicitHeight: legendRow.implicitHeight + 2 * Design.space4
 
                     readonly property var entry: root.seriesAt(index)
@@ -120,13 +125,14 @@ AppCard {
 
                         Rectangle {
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.preferredWidth: 8
-                            Layout.preferredHeight: 8
-                            radius: 4
+                            Layout.preferredWidth: Design.radiusItem
+                            Layout.preferredHeight: legendName.implicitHeight
                             color: entry !== null ? entry.color : "transparent"
                         }
 
                         Controls.Label {
+                            id: legendName
+
                             Layout.alignment: Qt.AlignVCenter
                             text: entry !== null ? entry.name : ""
                             color: root.hoveredIndex === index ? Design.text : Design.textMuted

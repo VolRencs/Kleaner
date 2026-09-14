@@ -3,6 +3,7 @@
 
 import QtQuick
 import QtQuick.Controls as Controls
+import Kleaner
 
 Controls.ScrollView {
     id: control

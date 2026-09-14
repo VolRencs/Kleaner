@@ -6,6 +6,9 @@ import QtQuick.Controls as Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
+import Kleaner
+
+pragma ComponentBehavior: Bound
 
 Item {
     id: page
@@ -67,6 +70,8 @@ Item {
                 icon.name: "view-refresh"
                 display: Controls.AbstractButton.IconOnly
                 text: qsTr("Refresh")
+                spinning: StartupApps.loading
+                enabled: !StartupApps.loading
                 onClicked: StartupApps.reload()
             }
         }
@@ -113,6 +118,14 @@ Item {
                     delegate: Controls.ItemDelegate {
                         id: delegate
 
+                        required property int index
+                        required property string name
+                        required property string comment
+                        required property string exec
+                        required property string iconName
+                        required property bool autostart
+                        required property bool system
+
                         width: startupList.width
                         height: 64
                         leftPadding: Design.space16
@@ -122,14 +135,20 @@ Item {
                         hoverEnabled: true
 
                         background: Rectangle {
-                            color: delegate.hovered ? Design.surfaceHover : "transparent"
+                            color: "transparent"
 
                             Rectangle {
-                                anchors.bottom: parent.bottom
-                                width: parent.width
-                                height: 1
-                                color: Design.border
-                                opacity: 0.6
+                                anchors.fill: parent
+                                anchors.leftMargin: Design.itemInset
+                                anchors.topMargin: Design.itemInset
+                                anchors.bottomMargin: Design.itemInset
+                                anchors.rightMargin: Design.itemInset + (startupList.contentHeight > startupList.height ? Design.scrollBarGutter : 0)
+                                radius: Design.radiusItem
+                                color: delegate.hovered ? Design.surfaceHover : Design.surfaceHoverClear
+
+                                Behavior on color {
+                                    ColorAnimation { duration: 120 }
+                                }
                             }
                         }
 
@@ -147,7 +166,7 @@ Item {
                                     anchors.centerIn: parent
                                     width: 22
                                     height: 22
-                                    source: model.icon.length > 0 ? model.icon : "application-x-executable"
+                                    source: delegate.iconName.length > 0 ? delegate.iconName : "application-x-executable"
                                 }
                             }
 
@@ -157,7 +176,7 @@ Item {
 
                                 Controls.Label {
                                     Layout.fillWidth: true
-                                    text: model.name
+                                    text: delegate.name
                                     color: Design.text
                                     font.weight: Font.DemiBold
                                     elide: Text.ElideRight
@@ -165,7 +184,7 @@ Item {
 
                                 Controls.Label {
                                     Layout.fillWidth: true
-                                    text: model.comment.length > 0 ? model.comment : model.exec
+                                    text: delegate.comment.length > 0 ? delegate.comment : delegate.exec
                                     color: Design.textMuted
                                     font.pointSize: Design.smallFontSize
                                     elide: Text.ElideRight
@@ -174,7 +193,7 @@ Item {
 
                             Badge {
                                 Layout.alignment: Qt.AlignVCenter
-                                visible: model.system
+                                visible: delegate.system
                                 text: qsTr("System")
                                 badgeColor: Design.textMuted
                             }
@@ -185,38 +204,38 @@ Item {
 
                                 AppSwitch {
                                     anchors.centerIn: parent
-                                    checked: model.enabled
-                                    onClicked: StartupApps.setEnabled(index, checked)
+                                    checked: delegate.autostart
+                                    onClicked: StartupApps.setEnabled(delegate.index, checked)
                                 }
                             }
 
                             AppButton {
-                                visible: !model.system
+                                visible: !delegate.system
                                 Layout.preferredWidth: 40
                                 display: Controls.AbstractButton.IconOnly
                                 icon.name: "document-edit"
                                 text: qsTr("Edit")
                                 onClicked: {
-                                    nameField.text = model.name;
-                                    execField.text = model.exec;
-                                    commentField.text = model.comment;
-                                    iconField.text = model.icon;
-                                    editDialog.editingRow = index;
+                                    nameField.text = delegate.name;
+                                    execField.text = delegate.exec;
+                                    commentField.text = delegate.comment;
+                                    iconField.text = delegate.iconName;
+                                    editDialog.editingRow = delegate.index;
                                     editDialog.open();
                                 }
                             }
 
                             AppButton {
-                                visible: !model.system
+                                visible: !delegate.system
                                 Layout.preferredWidth: 40
                                 display: Controls.AbstractButton.IconOnly
                                 icon.name: "edit-delete"
                                 text: qsTr("Remove")
-                                onClicked: StartupApps.remove(index)
+                                onClicked: StartupApps.remove(delegate.index)
                             }
 
                             Item {
-                                visible: model.system
+                                visible: delegate.system
                                 Layout.preferredWidth: 80
                             }
                         }

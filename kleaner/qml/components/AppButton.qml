@@ -6,9 +6,13 @@ import QtQuick.Controls as Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
+import Kleaner
 
 Controls.Button {
     id: root
+
+    // Spins the button icon while an action is running.
+    property bool spinning: false
 
     implicitHeight: Design.controlHeight
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset,
@@ -45,7 +49,7 @@ Controls.Button {
         if (root.flat) {
             return root.down ? Design.alpha(Design.accent, 0.22)
                              : root.hovered ? Design.alpha(Design.accent, 0.12)
-                                            : "transparent";
+                                            : Design.accentClear;
         }
         if (root.down) {
             return Design.surfaceActive;
@@ -81,12 +85,22 @@ Controls.Button {
             spacing: root.spacing
 
             Kirigami.Icon {
+                id: buttonIcon
+
                 Layout.alignment: Qt.AlignVCenter
                 visible: root.display !== Controls.AbstractButton.TextOnly && root.icon.name.length > 0
                 implicitWidth: root.icon.width
                 implicitHeight: root.icon.height
                 source: root.icon.name
                 color: root.foregroundColor
+
+                RotationAnimator on rotation {
+                    from: 0
+                    to: 360
+                    duration: 900
+                    loops: Animation.Infinite
+                    running: root.spinning && root.visible
+                }
             }
 
             Controls.Label {

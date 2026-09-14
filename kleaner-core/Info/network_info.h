@@ -11,8 +11,6 @@ class NetworkInfo : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString interface READ interface NOTIFY changed)
-    Q_PROPERTY(qulonglong rxBytes READ rxBytes NOTIFY changed)
-    Q_PROPERTY(qulonglong txBytes READ txBytes NOTIFY changed)
     Q_PROPERTY(double rxRate READ rxRate NOTIFY changed)
     Q_PROPERTY(double txRate READ txRate NOTIFY changed)
     Q_PROPERTY(bool connected READ connected NOTIFY changed)
@@ -21,8 +19,6 @@ class NetworkInfo : public QObject
     explicit NetworkInfo(QObject *parent = nullptr);
 
     QString interface() const;
-    qulonglong rxBytes() const;
-    qulonglong txBytes() const;
     double rxRate() const;
     double txRate() const;
     bool connected() const;
@@ -37,8 +33,6 @@ class NetworkInfo : public QObject
     QString resolveFallbackInterface() const;
 
     QString m_interface;
-    qulonglong m_rxBytes = 0;
-    qulonglong m_txBytes = 0;
     double m_rxRate = 0.0;
     double m_txRate = 0.0;
     bool m_connected = false;

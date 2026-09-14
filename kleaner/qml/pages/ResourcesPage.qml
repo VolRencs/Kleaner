@@ -2,20 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import QtQuick
-import QtQuick.Controls as Controls
 import QtQuick.Layouts
+import Kleaner
 
 Item {
     id: page
 
-    // Distinct colour per core, cycling through the application palette.
-    readonly property var coreColors: [
-        Design.accent, Design.positive, Design.violet,
-        Design.cyan, Design.orange, Design.warning
-    ]
-
-    function coreColor(index) {
-        return page.coreColors[index % page.coreColors.length];
+    // Distinct colour per core, evenly spread over the hue wheel around the
+    // accent colour: the same algorithm KDE System Monitor uses, so no two
+    // cores share a colour.
+    function coreColor(index, count) {
+        if (count <= 0) {
+            return Design.accent;
+        }
+        const hue = (Design.accent.hsvHue + index / count) % 1.0;
+        return Qt.hsva(hue, Design.accent.hsvSaturation, Design.accent.hsvValue, 1.0);
     }
 
     AppScrollView {
@@ -40,6 +41,7 @@ Item {
                 yMax: 100
                 fillStrength: 0.14
                 lineWidth: 1.5
+                legendValueWidth: 48
                 headerValues: History.cpuUsage
                 valueFormatter: function(value) { return Format.percent(value); }
                 series: {
@@ -47,7 +49,7 @@ Item {
                     for (let i = 0; i < History.cpuCores.length; ++i) {
                         cores.push({
                             name: qsTr("Core %1").arg(i),
-                            color: page.coreColor(i),
+                            color: page.coreColor(i, History.cpuCores.length),
                             values: History.cpuCores[i]
                         });
                     }
@@ -59,6 +61,7 @@ Item {
                 Layout.fillWidth: true
                 title: qsTr("CPU Load Average")
                 automaticYRange: true
+                legendValueWidth: 52
                 valueFormatter: function(value) { return value.toFixed(2); }
                 series: [
                     { name: qsTr("1 min"), color: Design.accent, values: History.load1 },
@@ -71,6 +74,7 @@ Item {
                 Layout.fillWidth: true
                 title: qsTr("Memory and Swap")
                 yMax: 100
+                legendValueWidth: 48
                 valueFormatter: function(value) { return Format.percent(value); }
                 series: [
                     { name: qsTr("Memory"), color: Design.violet, values: History.memoryUsage },
@@ -82,6 +86,7 @@ Item {
                 Layout.fillWidth: true
                 title: qsTr("Disk Read / Write")
                 automaticYRange: true
+                legendValueWidth: 76
                 valueFormatter: function(value) { return Format.bytes(value) + "/s"; }
                 series: [
                     { name: qsTr("Read"), color: Design.cyan, values: History.diskRead },
@@ -93,6 +98,7 @@ Item {
                 Layout.fillWidth: true
                 title: qsTr("Network Download / Upload")
                 automaticYRange: true
+                legendValueWidth: 76
                 valueFormatter: function(value) { return Format.bytes(value) + "/s"; }
                 series: [
                     { name: qsTr("Download"), color: Design.positive, values: History.networkRx },

@@ -6,6 +6,9 @@ import QtQuick.Controls as Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
+import Kleaner
+
+pragma ComponentBehavior: Bound
 
 Item {
     id: page
@@ -139,17 +142,12 @@ Item {
                 font.pointSize: Design.smallFontSize
             }
 
-            AppSpinner {
-                running: Processes.loading
-                visible: running
-                implicitWidth: Kirigami.Units.gridUnit * 1.5
-                implicitHeight: Kirigami.Units.gridUnit * 1.5
-            }
-
             AppButton {
                 icon.name: "view-refresh"
                 display: Controls.AbstractButton.IconOnly
                 text: qsTr("Refresh")
+                spinning: Processes.loading
+                enabled: !Processes.loading
                 onClicked: Processes.refresh()
             }
         }
@@ -272,27 +270,42 @@ Item {
                     delegate: Controls.ItemDelegate {
                         id: delegate
 
+                        required property int pid
+                        required property string name
+                        required property string user
+                        required property string processState
+                        required property real cpu
+                        required property real mem
+                        required property real rss
+                        required property string cmd
+
                         width: processList.width
                         height: 42
                         leftPadding: Design.space16
                         rightPadding: Design.space16
                         topPadding: 0
                         bottomPadding: 0
-                        highlighted: page.selectedPid === model.pid
+                        highlighted: page.selectedPid === pid
                         hoverEnabled: true
-                        onClicked: page.selectedPid = model.pid
+                        onClicked: page.selectedPid = pid
 
                         background: Rectangle {
-                            color: delegate.highlighted ? Design.accentSoft
-                                                        : delegate.hovered ? Design.surfaceHover
-                                                                           : "transparent"
+                            color: "transparent"
 
                             Rectangle {
-                                anchors.bottom: parent.bottom
-                                width: parent.width
-                                height: 1
-                                color: Design.border
-                                opacity: 0.6
+                                anchors.fill: parent
+                                anchors.leftMargin: Design.itemInset
+                                anchors.topMargin: Design.itemInset
+                                anchors.bottomMargin: Design.itemInset
+                                anchors.rightMargin: Design.itemInset + (processList.contentHeight > processList.height ? Design.scrollBarGutter : 0)
+                                radius: Design.radiusItem
+                                color: delegate.highlighted ? Design.accentSoft
+                                                            : delegate.hovered ? Design.surfaceHover
+                                                                               : Design.surfaceHoverClear
+
+                                Behavior on color {
+                                    ColorAnimation { duration: 120 }
+                                }
                             }
                         }
 
@@ -301,7 +314,7 @@ Item {
 
                             Controls.Label {
                                 Layout.preferredWidth: processList.width * 0.22
-                                text: model.name
+                                text: delegate.name
                                 color: Design.text
                                 font.weight: Font.DemiBold
                                 elide: Text.ElideRight
@@ -309,13 +322,13 @@ Item {
 
                             Controls.Label {
                                 Layout.preferredWidth: processList.width * 0.06
-                                text: model.pid
+                                text: delegate.pid
                                 color: Design.textMuted
                             }
 
                             Controls.Label {
                                 Layout.preferredWidth: processList.width * 0.11
-                                text: model.user
+                                text: delegate.user
                                 color: Design.textMuted
                                 elide: Text.ElideRight
                             }
@@ -323,35 +336,35 @@ Item {
                             Controls.Label {
                                 Layout.preferredWidth: processList.width * 0.07
                                 horizontalAlignment: Text.AlignRight
-                                text: model.cpu.toFixed(1) + "%"
-                                color: model.cpu > 80 ? Design.negative : model.cpu > 40 ? Design.warning : Design.text
+                                text: qsTr("%1%").arg(delegate.cpu.toFixed(1))
+                                color: delegate.cpu > 80 ? Design.negative : delegate.cpu > 40 ? Design.warning : Design.text
                             }
 
                             Controls.Label {
                                 Layout.preferredWidth: processList.width * 0.08
                                 horizontalAlignment: Text.AlignRight
-                                text: model.mem.toFixed(1) + "%"
-                                color: model.mem > 80 ? Design.negative : model.mem > 40 ? Design.warning : Design.text
+                                text: qsTr("%1%").arg(delegate.mem.toFixed(1))
+                                color: delegate.mem > 80 ? Design.negative : delegate.mem > 40 ? Design.warning : Design.text
                             }
 
                             Controls.Label {
                                 Layout.preferredWidth: processList.width * 0.09
                                 horizontalAlignment: Text.AlignRight
-                                text: Format.bytes(model.rss)
+                                text: Format.bytes(delegate.rss)
                                 color: Design.textMuted
                             }
 
                             Controls.Label {
                                 Layout.preferredWidth: processList.width * 0.06
                                 horizontalAlignment: Text.AlignHCenter
-                                text: model.state
-                                color: page.stateColor(model.state)
+                                text: delegate.processState
+                                color: page.stateColor(delegate.processState)
                                 font.weight: Font.DemiBold
                             }
 
                             Controls.Label {
                                 Layout.fillWidth: true
-                                text: model.cmd
+                                text: delegate.cmd
                                 color: Design.textMuted
                                 elide: Text.ElideRight
                             }

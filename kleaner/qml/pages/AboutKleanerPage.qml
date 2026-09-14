@@ -4,6 +4,7 @@
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
+import Kleaner
 
 Item {
     id: page
@@ -127,14 +128,14 @@ Item {
                         Layout.fillWidth: true
                         iconName: "user"
                         label: qsTr("Original project")
-                        value: "Stacer by Quentin Lienhardt"
+                        value: qsTr("Stacer by Quentin Lienhardt")
                     }
 
                     InfoRow {
                         Layout.fillWidth: true
                         iconName: "application-x-executable"
                         label: qsTr("Framework")
-                        value: "Qt 6 · KDE Frameworks 6"
+                        value: qsTr("Qt 6 · KDE Frameworks 6")
                     }
 
                     InfoRow {

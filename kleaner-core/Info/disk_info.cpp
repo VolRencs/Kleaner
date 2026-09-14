@@ -48,16 +48,6 @@ QVariantList DiskInfo::disks() const
     return m_disks;
 }
 
-qulonglong DiskInfo::readBytes() const
-{
-    return m_readBytes;
-}
-
-qulonglong DiskInfo::writeBytes() const
-{
-    return m_writeBytes;
-}
-
 double DiskInfo::readRate() const
 {
     return m_readRate;
@@ -108,7 +98,7 @@ void DiskInfo::update()
     qulonglong sectorsWritten = 0;
 
     const QDir blockDir(QStringLiteral("/sys/block"));
-    const QStringList devices = blockDir.entryList(QDir::Dirs | QDir::NoSymLinks);
+    const QStringList devices = blockDir.entryList(QDir::Dirs);
     for (const QString &device : devices) {
         if (!isPhysicalBlockDevice(device)) {
             continue;
@@ -124,9 +114,6 @@ void DiskInfo::update()
     const qulonglong read = sectorsRead * 512ULL;
     const qulonglong write = sectorsWritten * 512ULL;
 
-    m_readBytes = read;
-    m_writeBytes = write;
-
     if (!m_hasBaseline || read < m_previousRead || write < m_previousWrite) {
         m_previousRead = read;
         m_previousWrite = write;
@@ -135,7 +122,7 @@ void DiskInfo::update()
         m_readRate = 0.0;
         m_writeRate = 0.0;
     } else {
-        const qint64 elapsedMs = m_elapsed.isValid() ? m_elapsed.elapsed() : 0;
+        const qint64 elapsedMs = m_elapsed.elapsed();
         if (elapsedMs > 200) {
             m_readRate = static_cast<double>(read - m_previousRead) * 1000.0 / static_cast<double>(elapsedMs);
             m_writeRate = static_cast<double>(write - m_previousWrite) * 1000.0 / static_cast<double>(elapsedMs);

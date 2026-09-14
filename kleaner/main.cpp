@@ -95,6 +95,10 @@ int main(int argc, char *argv[])
     app.setDesktopFileName(QStringLiteral(KLEANER_DESKTOP_NAME));
     app.setWindowIcon(QIcon::fromTheme(QStringLiteral(KLEANER_DESKTOP_NAME), QIcon(QStringLiteral(":/kleaner-circle.svg"))));
 
+    // Created before the models so that a duplicate launch quits immediately
+    // instead of building the whole application state first.
+    KDBusService dbusService(KDBusService::Unique);
+
     const QString desktopStylePath = QLibraryInfo::path(QLibraryInfo::QmlImportsPath) + QStringLiteral("/org/kde/desktop");
     if (QFileInfo::exists(desktopStylePath)) {
         QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
@@ -106,26 +110,51 @@ int main(int argc, char *argv[])
 
     Settings settings;
 
-    QTranslator translator;
-    auto applyLanguage = [&settings, &translator] {
-        QCoreApplication::removeTranslator(&translator);
+    QTranslator appTranslator;
+    QTranslator qtTranslator;
+    auto applyLanguage = [&settings, &appTranslator, &qtTranslator] {
+        QCoreApplication::removeTranslator(&appTranslator);
+        QCoreApplication::removeTranslator(&qtTranslator);
 
         const QString configured = settings.language();
         QStringList codes;
         if (configured.isEmpty()) {
-            codes.append(QLocale::system().name());
-            codes.append(QLocale::system().name().section(QLatin1Char('_'), 0, 0));
+            const QLocale system = QLocale::system();
+            for (const QString &uiLanguage : system.uiLanguages()) {
+                codes.append(uiLanguage);
+                codes.append(uiLanguage.section(QLatin1Char('_'), 0, 0));
+                codes.append(uiLanguage.section(QLatin1Char('-'), 0, 0));
+            }
+            codes.append(system.name());
+            codes.append(system.name().section(QLatin1Char('_'), 0, 0));
+            codes.removeAll(QString());
+            codes.removeDuplicates();
         } else {
             codes.append(configured);
+            QLocale::setDefault(QLocale(configured));
         }
 
+        bool appLoaded = false;
         for (const QString &directory : Settings::translationDirectories()) {
+            if (appLoaded) {
+                break;
+            }
             for (const QString &code : std::as_const(codes)) {
                 const QString path = directory + QStringLiteral("/kleaner_%1.qm").arg(code);
-                if (QFileInfo::exists(path) && translator.load(path)) {
-                    QCoreApplication::installTranslator(&translator);
-                    return;
+                if (QFileInfo::exists(path) && appTranslator.load(path)) {
+                    QCoreApplication::installTranslator(&appTranslator);
+                    appLoaded = true;
+                    break;
                 }
+            }
+        }
+
+        // Qt's own strings (dialogs, controls) and KDE framework messages.
+        const QString qtDirectory = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
+        for (const QString &code : std::as_const(codes)) {
+            if (qtTranslator.load(QStringLiteral("qtbase_%1").arg(code), qtDirectory)) {
+                QCoreApplication::installTranslator(&qtTranslator);
+                break;
             }
         }
     };
@@ -157,8 +186,6 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonInstance("Kleaner", 1, 0, "Processes", &processModel);
     qmlRegisterSingletonInstance("Kleaner", 1, 0, "Services", &serviceModel);
     qmlRegisterSingletonInstance("Kleaner", 1, 0, "StartupApps", &startupAppModel);
-
-    KDBusService dbusService(KDBusService::Unique);
 
     QQmlApplicationEngine engine;
 

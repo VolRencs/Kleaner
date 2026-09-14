@@ -11,8 +11,6 @@ class DiskInfo : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QVariantList disks READ disks NOTIFY changed)
-    Q_PROPERTY(qulonglong readBytes READ readBytes NOTIFY changed)
-    Q_PROPERTY(qulonglong writeBytes READ writeBytes NOTIFY changed)
     Q_PROPERTY(double readRate READ readRate NOTIFY changed)
     Q_PROPERTY(double writeRate READ writeRate NOTIFY changed)
 
@@ -20,8 +18,6 @@ class DiskInfo : public QObject
     explicit DiskInfo(QObject *parent = nullptr);
 
     QVariantList disks() const;
-    qulonglong readBytes() const;
-    qulonglong writeBytes() const;
     double readRate() const;
     double writeRate() const;
 
@@ -33,8 +29,6 @@ class DiskInfo : public QObject
   private:
     QVariantList m_disks;
 
-    qulonglong m_readBytes = 0;
-    qulonglong m_writeBytes = 0;
     double m_readRate = 0.0;
     double m_writeRate = 0.0;
 

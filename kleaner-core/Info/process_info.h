@@ -29,14 +29,19 @@ class ProcessInfo : public QObject
   public:
     explicit ProcessInfo(QObject *parent = nullptr);
 
-    QVector<Process> read();
+    [[nodiscard]] QVector<Process> read();
 
-    Q_INVOKABLE bool killProcess(int pid, bool force);
+    [[nodiscard]] Q_INVOKABLE bool killProcess(int pid, bool force);
 
   private:
+    struct CpuSample {
+        quint64 startTime = 0;
+        quint64 cpuTicks = 0;
+    };
+
     QMutex m_mutex;
     bool m_hasBaseline = false;
     quint64 m_previousTotal = 0;
-    QHash<int, quint64> m_previousCpu;
+    QHash<int, CpuSample> m_previousCpu;
     qulonglong m_memoryTotal = 0;
 };

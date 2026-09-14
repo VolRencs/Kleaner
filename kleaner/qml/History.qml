@@ -4,6 +4,7 @@
 pragma Singleton
 
 import QtQuick
+import Kleaner
 
 // Keeps 60-second histories for the resource charts. Living in a singleton
 // means the data survives page switches: reopening Resources never resets

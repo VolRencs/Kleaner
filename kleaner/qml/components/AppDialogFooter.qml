@@ -3,6 +3,7 @@
 
 import QtQuick
 import QtQuick.Layouts
+import Kleaner
 
 Item {
     id: root

@@ -9,7 +9,6 @@
 
 namespace Helpers
 {
-QString userName(uid_t uid);
-int pageSizeKiB();
-double clockTicks();
+[[nodiscard]] QString userName(uid_t uid);
+[[nodiscard]] int pageSizeKiB();
 }

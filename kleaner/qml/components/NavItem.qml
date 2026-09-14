@@ -5,6 +5,7 @@ import QtQuick
 import QtQuick.Controls as Controls
 
 import org.kde.kirigami as Kirigami
+import Kleaner
 
 Item {
     id: root
@@ -22,10 +23,10 @@ Item {
         id: background
 
         anchors.fill: parent
-        radius: Design.radiusSmall
+        radius: Design.radiusItem
         color: root.selected ? Design.accentSoft
                              : mouseArea.containsMouse ? Design.surfaceHover
-                                                       : "transparent"
+                                                       : Design.surfaceHoverClear
 
         Behavior on color {
             ColorAnimation { duration: 120 }

@@ -34,16 +34,16 @@ void MemoryInfo::update()
     m_total = values.value(QStringLiteral("MemTotal"));
     const qulonglong freeMemory = values.value(QStringLiteral("MemFree"));
 
-    m_available = values.value(QStringLiteral("MemAvailable"));
-    if (m_available == 0) {
+    qulonglong available = values.value(QStringLiteral("MemAvailable"));
+    if (available == 0) {
         const qulonglong buffers = values.value(QStringLiteral("Buffers"));
         const qulonglong cachedAndReclaimable = values.value(QStringLiteral("Cached")) + values.value(QStringLiteral("SReclaimable"));
         const qulonglong shmem = values.value(QStringLiteral("Shmem"));
         const qulonglong cached = cachedAndReclaimable >= shmem ? cachedAndReclaimable - shmem : 0;
-        m_available = freeMemory + buffers + cached;
+        available = freeMemory + buffers + cached;
     }
 
-    m_used = m_total > m_available ? m_total - m_available : 0;
+    m_used = m_total > available ? m_total - available : 0;
     m_swapTotal = values.value(QStringLiteral("SwapTotal"));
     const qulonglong swapFree = values.value(QStringLiteral("SwapFree"));
     m_swapUsed = m_swapTotal > swapFree ? m_swapTotal - swapFree : 0;
@@ -64,11 +64,6 @@ qulonglong MemoryInfo::total() const
 qulonglong MemoryInfo::used() const
 {
     return m_used;
-}
-
-qulonglong MemoryInfo::available() const
-{
-    return m_available;
 }
 
 qulonglong MemoryInfo::swapTotal() const

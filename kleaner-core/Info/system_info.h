@@ -10,9 +10,7 @@ class SystemInfo : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString hostname READ hostname CONSTANT)
-    Q_PROPERTY(QString platform READ platform CONSTANT)
     Q_PROPERTY(QString distribution READ distribution CONSTANT)
-    Q_PROPERTY(QString distributionId READ distributionId CONSTANT)
     Q_PROPERTY(QString kernel READ kernel CONSTANT)
     Q_PROPERTY(QString cpuModel READ cpuModel CONSTANT)
     Q_PROPERTY(QString username READ username CONSTANT)
@@ -22,9 +20,7 @@ class SystemInfo : public QObject
     explicit SystemInfo(QObject *parent = nullptr);
 
     QString hostname() const;
-    QString platform() const;
     QString distribution() const;
-    QString distributionId() const;
     QString kernel() const;
     QString cpuModel() const;
     QString username() const;
@@ -40,9 +36,7 @@ class SystemInfo : public QObject
     void readCpuModel();
 
     QString m_hostname;
-    QString m_platform;
     QString m_distribution;
-    QString m_distributionId;
     QString m_kernel;
     QString m_cpuModel;
     QString m_username;

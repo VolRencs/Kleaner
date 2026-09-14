@@ -1,0 +1,19 @@
+[@KLEANER_APP_ID@.clean]
+Name=Clean system files
+Name[ru]=Очистка системных файлов
+Name[uk]=Очищення системних файлів
+Description=Remove selected system files, orphan packages and vacuum the systemd journal
+Description[ru]=Удаление выбранных системных файлов и пакетов-сирот, очистка журнала systemd
+Description[uk]=Видалення вибраних системних файлів і пакунків-сиріт, очищення журналу systemd
+Policy=auth_admin
+Persistence=session
+
+[@KLEANER_APP_ID@.writehosts]
+Name=Write hosts file
+Name[ru]=Запись файла hosts
+Name[uk]=Запис файлу hosts
+Description=Replace the hosts file with new content
+Description[ru]=Замена содержимого файла /etc/hosts
+Description[uk]=Заміна вмісту файлу /etc/hosts
+Policy=auth_admin
+Persistence=session

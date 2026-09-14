@@ -5,6 +5,7 @@ import QtQuick
 import QtQuick.Controls as Controls
 
 import org.kde.kirigami as Kirigami
+import Kleaner
 
 Item {
     id: root
@@ -22,7 +23,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        radius: Design.radiusSmall
+        radius: Design.radiusItem
         color: hoverHandler.hovered ? Design.surfaceHover : "transparent"
     }
 

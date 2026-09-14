@@ -62,7 +62,6 @@ CleanerModel::CleanerModel(QObject *parent) :
 
         rebuild();
         updateCheckedSize();
-        Q_EMIT scanFinished();
     });
     connect(&m_cleaner, &Cleaner::cleaned, this, [this](int count, qulonglong freedBytes, const QString &error) {
         m_cleaning = false;
@@ -75,7 +74,6 @@ CleanerModel::CleanerModel(QObject *parent) :
             m_checkedPaths.clear();
             saveSelection();
         }
-        Q_EMIT cleanFinished(error.isEmpty(), error, count, freedBytes);
         if (error.isEmpty()) {
             scan();
         }
@@ -134,7 +132,7 @@ QVariant CleanerModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> CleanerModel::roleNames() const
 {
-    return {
+    static const QHash<int, QByteArray> roles = {
         { TitleRole, "title" },
         { SizeRole, "size" },
         { DepthRole, "depth" },
@@ -144,6 +142,7 @@ QHash<int, QByteArray> CleanerModel::roleNames() const
         { RootRole, "root" },
         { IsCategoryRole, "isCategory" },
     };
+    return roles;
 }
 
 bool CleanerModel::scanning() const
@@ -318,7 +317,7 @@ void CleanerModel::clean()
 
 void CleanerModel::rebuild()
 {
-    QVector<Row> rows;
+    QList<Row> rows;
     for (int i = 0; i < m_categories.size(); ++i) {
         rows.append(Row { i, -1 });
         if (!m_categories.at(i).expanded) {
@@ -368,4 +367,5 @@ void CleanerModel::saveSelection()
 {
     KConfigGroup group(KSharedConfig::openConfig(QStringLiteral("kleanerrc")), QLatin1String(selectionGroup));
     group.writeEntry(QLatin1String(selectionKey), QStringList(m_checkedPaths.begin(), m_checkedPaths.end()));
+    group.sync();
 }

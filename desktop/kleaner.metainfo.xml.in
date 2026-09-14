@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2026 VolRen -->
 <component type="desktop-application">
-    <id>org.volren.kleaner.desktop</id>
+    <id>@KLEANER_APP_ID@.desktop</id>
 
     <name>Kleaner</name>
     <summary>Linux System Optimizer and Monitoring</summary>
@@ -14,16 +14,14 @@
         <name>VolRen</name>
     </developer>
 
-    <translation type="qt">kleaner</translation>
-
     <description>
         <p>Kleaner is a system optimizer and monitor for Arch Linux. It shows live CPU, memory, disk and network usage, manages processes and systemd services, controls startup applications, cleans caches and logs, and edits /etc/hosts.</p>
         <p>Built with Qt 6 and KDE Frameworks 6, it runs as a native Wayland application with a dark interface. Kleaner is a fork of Stacer.</p>
     </description>
 
-    <launchable type="desktop-id">org.volren.kleaner.desktop</launchable>
+    <launchable type="desktop-id">@KLEANER_APP_ID@.desktop</launchable>
 
-    <icon type="stock">org.volren.kleaner</icon>
+    <icon type="stock">@KLEANER_APP_ID@</icon>
 
     <branding>
         <color type="primary" scheme_preference="light">#1a7fb5</color>
@@ -47,15 +45,15 @@
 
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/dashboard.png</image>
+            <image>https://raw.githubusercontent.com/VolRencs/Kleaner/v1.1.0/docs/screenshots/dashboard.png</image>
             <caption>Dashboard with live system overview</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/processes.png</image>
+            <image>https://raw.githubusercontent.com/VolRencs/Kleaner/v1.1.0/docs/screenshots/processes.png</image>
             <caption>Process list with sorting and filtering</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/cleaner.png</image>
+            <image>https://raw.githubusercontent.com/VolRencs/Kleaner/v1.1.0/docs/screenshots/cleaner.png</image>
             <caption>System cleaner</caption>
         </screenshot>
     </screenshots>
@@ -65,6 +63,11 @@
     </provides>
 
     <releases>
+        <release version="1.2.0" date="2026-09-14">
+            <description>
+                <p>Disk I/O and network monitoring now report real values, the hosts editor and the privileged cleaner are safer, and user cleanup no longer freezes the window. The interface received KDE-style rounded list highlighting, spinning refresh buttons, a more compact resource legend and unique colours for CPU cores.</p>
+            </description>
+        </release>
         <release version="1.1.0" date="2026-09-14">
             <description>
                 <p>Resources now show per-core CPU history on a single translucent chart with live statistics and hover highlighting. The system cleaner performs the whole privileged cleanup with one authentication prompt, includes temporary files and vacuums the journal completely, and reports the exact freed size. Language and close-behaviour selectors, the tray menu and launching from the application menu were fixed.</p>

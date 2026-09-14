@@ -2,6 +2,41 @@
 
 All notable changes to Kleaner are documented in this file.
 
+## 1.2.0 — 2026-09-14
+
+- Fixed disk I/O rates being stuck at zero: `/sys/block` entries are symlinks
+  and were skipped by the device enumeration.
+- Fixed network interface detection ignoring route flags and preferring tunnel
+  interfaces over the physical default route.
+- The hosts editor keeps the last known good file if `/etc/hosts` cannot be
+  read and refuses to save over external modifications instead of replacing the
+  file with a partial list.
+- The privileged helper validates canonical paths, only removes packages that
+  are still actual orphans and reports partial results when a step fails.
+- User-owned cleanup paths are deleted off the GUI thread, so large caches no
+  longer freeze the window.
+- Process CPU usage for newly seen and reused PIDs is baselined instead of
+  attributing a whole lifetime of CPU time to one sample.
+- The system cleaner selection is synced to disk immediately, so it survives a
+  crash.
+- Startup entries are written into the existing `[Desktop Entry]` group;
+  creation uses an exclusive file name claim.
+- Interface polish: KDE-style inset rounded highlights for list rows, the
+  sidebar and sort headers, with the overlay scrollbar kept clear of both the
+  card corners and the highlight.
+- The refresh buttons on Processes, Services and Startup Apps spin their icon
+  and are disabled while loading; startup entries are now scanned off the GUI
+  thread.
+- The Resources legend is more compact and uses KDE-style colour bars; CPU
+  cores are coloured with the same hue-wheel algorithm as KDE System Monitor,
+  so no two cores share a colour.
+- Dead code and unused dependencies removed (`kquickcharts`, `qt6-wayland`,
+  `Qt6::Network`, unused properties and signals); QML delegates use
+  `pragma ComponentBehavior: Bound` with required properties.
+- Build system, CI, packaging and translations polished: modern CMake targets,
+  pinned GitHub Actions, PKGBUILD checks, only complete Russian and Ukrainian
+  catalogs are shipped.
+
 ## 1.1.0 — 2026-09-14
 
 - Resources: per-core CPU history on a single chart with translucent gradient

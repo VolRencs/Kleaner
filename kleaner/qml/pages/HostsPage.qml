@@ -6,6 +6,9 @@ import QtQuick.Controls as Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
+import Kleaner
+
+pragma ComponentBehavior: Bound
 
 Item {
     id: page
@@ -133,6 +136,9 @@ Item {
                     delegate: Controls.ItemDelegate {
                         id: delegate
 
+                        required property var modelData
+                        required property int index
+
                         width: hostsList.width
                         height: 52
                         leftPadding: Design.space16
@@ -142,14 +148,20 @@ Item {
                         hoverEnabled: true
 
                         background: Rectangle {
-                            color: delegate.hovered ? Design.surfaceHover : "transparent"
+                            color: "transparent"
 
                             Rectangle {
-                                anchors.bottom: parent.bottom
-                                width: parent.width
-                                height: 1
-                                color: Design.border
-                                opacity: 0.6
+                                anchors.fill: parent
+                                anchors.leftMargin: Design.itemInset
+                                anchors.topMargin: Design.itemInset
+                                anchors.bottomMargin: Design.itemInset
+                                anchors.rightMargin: Design.itemInset + (hostsList.contentHeight > hostsList.height ? Design.scrollBarGutter : 0)
+                                radius: Design.radiusItem
+                                color: delegate.hovered ? Design.surfaceHover : Design.surfaceHoverClear
+
+                                Behavior on color {
+                                    ColorAnimation { duration: 120 }
+                                }
                             }
                         }
 
@@ -158,7 +170,7 @@ Item {
 
                             Controls.Label {
                                 Layout.preferredWidth: 170
-                                text: modelData.ip
+                                text: delegate.modelData.ip
                                 color: Design.accent
                                 font.family: "monospace"
                                 font.weight: Font.DemiBold
@@ -167,7 +179,7 @@ Item {
 
                             Controls.Label {
                                 Layout.fillWidth: true
-                                text: modelData.names
+                                text: delegate.modelData.names
                                 color: Design.text
                                 elide: Text.ElideRight
                             }
@@ -178,9 +190,9 @@ Item {
                                 icon.name: "document-edit"
                                 text: qsTr("Edit")
                                 onClicked: {
-                                    ipField.text = modelData.ip;
-                                    namesField.text = modelData.names;
-                                    hostDialog.editingIndex = index;
+                                    ipField.text = delegate.modelData.ip;
+                                    namesField.text = delegate.modelData.names;
+                                    hostDialog.editingIndex = delegate.index;
                                     hostDialog.open();
                                 }
                             }
@@ -192,7 +204,7 @@ Item {
                                 text: qsTr("Delete")
                                 onClicked: {
                                     const entries = page.hostEntries.slice();
-                                    entries.splice(index, 1);
+                                    entries.splice(delegate.index, 1);
                                     Hosts.setEntries(entries);
                                 }
                             }

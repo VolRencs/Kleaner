@@ -9,7 +9,7 @@
 
 namespace Procfs
 {
-QByteArray read(const QString &path);
-QList<QByteArray> lines(const QString &path);
-quint64 readUInt64(const QString &path, bool *ok = nullptr);
+[[nodiscard]] QByteArray read(const QString &path);
+[[nodiscard]] QList<QByteArray> lines(const QString &path);
+[[nodiscard]] quint64 readUInt64(const QString &path, bool *ok = nullptr);
 }

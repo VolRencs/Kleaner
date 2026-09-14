@@ -57,13 +57,4 @@ int pageSizeKiB()
     return size > 0 ? size : 4;
 }
 
-double clockTicks()
-{
-    static const double ticks = [] {
-        const long value = sysconf(_SC_CLK_TCK);
-        return value > 0 ? static_cast<double>(value) : 100.0;
-    }();
-    return ticks;
-}
-
 }

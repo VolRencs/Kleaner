@@ -21,6 +21,22 @@ bool sameProcess(const Process &a, const Process &b)
 ProcessModel::ProcessModel(QObject *parent) :
     QAbstractListModel(parent)
 {
+    connect(&m_watcher, &QFutureWatcher<QList<Process>>::finished, this, [this] {
+        m_all = m_watcher.result();
+        m_fetching = false;
+        if (m_loading) {
+            m_loading = false;
+            Q_EMIT loadingChanged();
+        }
+        applyFilterAndSort();
+    });
+}
+
+ProcessModel::~ProcessModel()
+{
+    // The worker captures this, so it must not outlive the model.
+    m_watcher.cancel();
+    m_watcher.waitForFinished();
 }
 
 int ProcessModel::rowCount(const QModelIndex &parent) const
@@ -62,16 +78,17 @@ QVariant ProcessModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> ProcessModel::roleNames() const
 {
-    return {
+    static const QHash<int, QByteArray> roles = {
         { PidRole, "pid" },
         { NameRole, "name" },
         { UserRole, "user" },
-        { StateRole, "state" },
+        { StateRole, "processState" },
         { CpuRole, "cpu" },
         { MemRole, "mem" },
         { RssRole, "rss" },
         { CmdRole, "cmd" },
     };
+    return roles;
 }
 
 QString ProcessModel::filter() const
@@ -86,7 +103,7 @@ void ProcessModel::setFilter(const QString &filter)
     }
     m_filter = filter;
     Q_EMIT filterChanged();
-    applyFilterAndSort(true);
+    applyFilterAndSort();
 }
 
 int ProcessModel::sortBy() const
@@ -101,7 +118,7 @@ void ProcessModel::setSortBy(int sortBy)
     }
     m_sortBy = sortBy;
     Q_EMIT sortByChanged();
-    applyFilterAndSort(true);
+    applyFilterAndSort();
 }
 
 bool ProcessModel::reverse() const
@@ -116,7 +133,7 @@ void ProcessModel::setReverse(bool reverse)
     }
     m_reverse = reverse;
     Q_EMIT reverseChanged();
-    applyFilterAndSort(true);
+    applyFilterAndSort();
 }
 
 bool ProcessModel::loading() const
@@ -142,15 +159,15 @@ void ProcessModel::update()
 {
     // The automatic refresh re-sorts as well, so the busiest processes keep
     // moving to the top just like in a system monitor.
-    fetchProcesses(true, false);
+    fetchProcesses(false);
 }
 
 void ProcessModel::refresh()
 {
-    fetchProcesses(true, true);
+    fetchProcesses(true);
 }
 
-void ProcessModel::fetchProcesses(bool reorder, bool showLoading)
+void ProcessModel::fetchProcesses(bool showLoading)
 {
     if (m_fetching || m_paused) {
         return;
@@ -162,26 +179,14 @@ void ProcessModel::fetchProcesses(bool reorder, bool showLoading)
         Q_EMIT loadingChanged();
     }
 
-    auto *watcher = new QFutureWatcher<QVector<Process>>(this);
-    connect(watcher, &QFutureWatcher<QVector<Process>>::finished, this, [this, watcher, reorder, showLoading] {
-        m_all = watcher->result();
-        watcher->deleteLater();
-        m_fetching = false;
-        if (showLoading) {
-            m_loading = false;
-            Q_EMIT loadingChanged();
-        }
-        applyFilterAndSort(reorder);
-    });
-
-    watcher->setFuture(QtConcurrent::run([this] {
+    m_watcher.setFuture(QtConcurrent::run([this] {
         return m_info.read();
     }));
 }
 
-void ProcessModel::applyFilterAndSort(bool reorder)
+void ProcessModel::applyFilterAndSort()
 {
-    QVector<Process> filtered;
+    QList<Process> filtered;
     filtered.reserve(m_all.size());
 
     if (m_filter.isEmpty()) {
@@ -257,29 +262,23 @@ void ProcessModel::applyFilterAndSort(bool reorder)
 
     // Move rows into their sorted positions; the scroll offset is kept by the
     // view, only the order of the processes changes.
-    if (reorder) {
-        for (int target = 0; target < filtered.size(); ++target) {
-            const int pid = filtered.at(target).pid;
-            int source = target;
-            while (source < m_view.size() && m_view.at(source).pid != pid) {
-                ++source;
-            }
-            if (source == target || source >= m_view.size()) {
-                continue;
-            }
-            beginMoveRows(QModelIndex(), source, source, QModelIndex(), target);
-            m_view.move(source, target);
-            endMoveRows();
+    for (int target = 0; target < filtered.size(); ++target) {
+        const int pid = filtered.at(target).pid;
+        int source = target;
+        while (source < m_view.size() && m_view.at(source).pid != pid) {
+            ++source;
         }
+        if (source == target || source >= m_view.size()) {
+            continue;
+        }
+        beginMoveRows(QModelIndex(), source, source, QModelIndex(), target);
+        m_view.move(source, target);
+        endMoveRows();
     }
 
     // Refresh values of the rows that stayed in place.
     for (int i = 0; i < m_view.size(); ++i) {
-        const int filteredRow = reorder ? i : wanted.value(m_view.at(i).pid, -1);
-        if (filteredRow < 0 || filteredRow >= filtered.size()) {
-            continue;
-        }
-        const Process &updated = filtered.at(filteredRow);
+        const Process &updated = filtered.at(i);
         if (!sameProcess(m_view.at(i), updated)) {
             m_view[i] = updated;
             const QModelIndex modelIndex = index(i, 0);

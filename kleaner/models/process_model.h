@@ -4,7 +4,8 @@
 #pragma once
 
 #include <QAbstractListModel>
-#include <QVector>
+#include <QFutureWatcher>
+#include <QList>
 
 #include "Info/process_info.h"
 
@@ -28,7 +29,6 @@ class ProcessModel : public QAbstractListModel
         RssRole,
         CmdRole,
     };
-    Q_ENUM(Roles)
 
     enum SortBy {
         SortCpu,
@@ -42,6 +42,7 @@ class ProcessModel : public QAbstractListModel
     Q_ENUM(SortBy)
 
     explicit ProcessModel(QObject *parent = nullptr);
+    ~ProcessModel() override;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
@@ -75,12 +76,13 @@ class ProcessModel : public QAbstractListModel
     void error(const QString &message);
 
   private:
-    void fetchProcesses(bool reorder, bool showLoading);
-    void applyFilterAndSort(bool reorder);
+    void fetchProcesses(bool showLoading);
+    void applyFilterAndSort();
 
     ProcessInfo m_info;
-    QVector<Process> m_all;
-    QVector<Process> m_view;
+    QList<Process> m_all;
+    QList<Process> m_view;
+    QFutureWatcher<QList<Process>> m_watcher;
     QString m_filter;
     int m_sortBy = SortCpu;
     bool m_reverse = true;

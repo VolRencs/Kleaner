@@ -41,7 +41,7 @@ QVector<Process> ProcessInfo::read()
         }
     }
 
-    QHash<int, quint64> currentCpu;
+    QHash<int, CpuSample> currentCpu;
 
     QVector<Process> processes;
     processes.reserve(512);
@@ -81,10 +81,18 @@ QVector<Process> ProcessInfo::read()
             const qulonglong rssPages = fields.at(21).toULongLong();
             process.rss = rssPages * static_cast<qulonglong>(Helpers::pageSizeKiB()) * 1024ULL;
             const quint64 currentTicks = utime + stime;
-            const quint64 previousTicks = m_previousCpu.value(pid);
+            const quint64 startTime = fields.at(19).toULongLong();
+            const auto previous = m_previousCpu.constFind(pid);
+            // A PID can be reused after a process exits; starttime identifies the
+            // actual process, and unknown ones are baselined at zero instead of
+            // attributing their whole lifetime of CPU time to a single interval.
+            const bool known = previous != m_previousCpu.constEnd() && previous->startTime == startTime;
+            const quint64 previousTicks = known ? previous->cpuTicks : currentTicks;
             const quint64 deltaTicks = currentTicks >= previousTicks ? currentTicks - previousTicks : 0;
-            process.cpu = deltaTotal > 0 ? 100.0 * static_cast<double>(deltaTicks) / static_cast<double>(deltaTotal) : 0.0;
-            currentCpu.insert(pid, currentTicks);
+            process.cpu = (known && deltaTotal > 0)
+                ? 100.0 * static_cast<double>(deltaTicks) / static_cast<double>(deltaTotal)
+                : 0.0;
+            currentCpu.insert(pid, CpuSample { startTime, currentTicks });
         } else {
             process.state = QChar::fromLatin1('?');
         }

@@ -56,11 +56,12 @@ The project targets **Arch Linux** only.
 
 ### Arch Linux package (PKGBUILD)
 
-The packaging files live in `packaging/arch`:
+The packaging files live in `packaging/aur`: `kleaner` builds the tagged release,
+`kleaner-git` tracks the `main` branch:
 
 ```bash
 git clone https://github.com/VolRencs/Kleaner.git
-cd Kleaner/packaging/arch
+cd Kleaner/packaging/aur/kleaner
 makepkg -si
 ```
 
@@ -69,8 +70,8 @@ makepkg -si
 ```bash
 sudo pacman -S --needed \
   base-devel cmake ninja extra-cmake-modules \
-  qt6-base qt6-declarative qt6-svg qt6-wayland qt6-tools \
-  kirigami kquickcharts kcoreaddons kconfig kdbusaddons \
+  qt6-base qt6-declarative qt6-svg qt6-tools \
+  kirigami kcoreaddons kconfig kdbusaddons \
   kstatusnotifieritem kio kauth qqc2-desktop-style breeze-icons
 
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
@@ -99,11 +100,11 @@ loaded according to the selected language.
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
 cmake --build build -j $(nproc)
 ctest --test-dir build --output-on-failure
-./build/kleaner/kleaner
+./build/bin/kleaner
 ```
 
-Translation catalogs live in `translations/` and can be refreshed with the CMake
-targets:
+Translation catalogs live in `translations/` (Russian and Ukrainian) and can be
+refreshed with the CMake targets:
 
 ```bash
 cmake --build build --target update_translations

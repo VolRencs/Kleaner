@@ -1,10 +1,8 @@
 # SPDX-FileCopyrightText: 2026 VolRen
 # SPDX-License-Identifier: GPL-3.0-only
 
-find_package(Qt6 6.11 REQUIRED COMPONENTS Quick QuickControls2 Svg Widgets LinguistTools)
-find_package(KF6 6.30 REQUIRED COMPONENTS Kirigami QuickCharts Config DBusAddons StatusNotifierItem)
-
-qt_standard_project_setup(REQUIRES 6.11)
+find_package(Qt6 6.11 REQUIRED COMPONENTS Quick QuickControls2 Svg Widgets Concurrent LinguistTools)
+find_package(KF6 6.30 REQUIRED COMPONENTS Kirigami Config DBusAddons StatusNotifierItem Auth)
 
 qt_add_executable(kleaner
     main.cpp
@@ -22,16 +20,14 @@ qt_add_executable(kleaner
     models/cleaner_model.h
 )
 
-target_include_directories(kleaner PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
 target_link_libraries(kleaner
     PRIVATE
         Qt6::Quick
         Qt6::QuickControls2
         Qt6::Svg
         Qt6::Widgets
+        Qt6::Concurrent
         KF6::Kirigami
-        KF6::QuickCharts
         KF6::ConfigCore
         KF6::DBusAddons
         KF6::StatusNotifierItem
@@ -86,9 +82,10 @@ qt_add_resources(kleaner "kleaner-resources"
         resources/kleaner-k.svg
 )
 
-file(GLOB KLEANER_TS_FILES "${CMAKE_SOURCE_DIR}/translations/*.ts")
+file(GLOB KLEANER_TS_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/translations/*.ts")
 
 qt_add_translations(kleaner
+    TARGETS kleaner
     TS_FILES ${KLEANER_TS_FILES}
     LUPDATE_OPTIONS -no-obsolete
     QM_FILES_OUTPUT_VARIABLE KLEANER_QM_FILES
@@ -102,15 +99,10 @@ install(
 # Privileged helper (KAuth / polkit)
 qt_add_executable(kleaner-kauth-helper helper/main.cpp)
 
-target_link_libraries(kleaner-kauth-helper PRIVATE Qt6::Core KF6::AuthCore)
-
-find_package(KF6Auth REQUIRED)
-include("${KF6Auth_DIR}/KF6AuthMacros.cmake")
-
-set(KLEANER_HELPER_EXEC "${KAUTH_HELPER_INSTALL_ABSOLUTE_DIR}/kleaner-kauth-helper")
+target_link_libraries(kleaner-kauth-helper PRIVATE KF6::AuthCore)
 
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/helper/org.volren.kleaner.actions.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/helper/kleaner.actions.in"
     "${CMAKE_CURRENT_BINARY_DIR}/org.volren.kleaner.actions"
     @ONLY
 )

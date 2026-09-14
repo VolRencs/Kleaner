@@ -10,7 +10,6 @@ class MemoryInfo : public QObject
     Q_OBJECT
     Q_PROPERTY(qulonglong total READ total NOTIFY changed)
     Q_PROPERTY(qulonglong used READ used NOTIFY changed)
-    Q_PROPERTY(qulonglong available READ available NOTIFY changed)
     Q_PROPERTY(qulonglong swapTotal READ swapTotal NOTIFY changed)
     Q_PROPERTY(qulonglong swapUsed READ swapUsed NOTIFY changed)
     Q_PROPERTY(double usagePercent READ usagePercent NOTIFY changed)
@@ -21,7 +20,6 @@ class MemoryInfo : public QObject
 
     qulonglong total() const;
     qulonglong used() const;
-    qulonglong available() const;
     qulonglong swapTotal() const;
     qulonglong swapUsed() const;
     double usagePercent() const;
@@ -35,7 +33,6 @@ class MemoryInfo : public QObject
   private:
     qulonglong m_total = 0;
     qulonglong m_used = 0;
-    qulonglong m_available = 0;
     qulonglong m_swapTotal = 0;
     qulonglong m_swapUsed = 0;
 };

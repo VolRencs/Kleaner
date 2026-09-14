@@ -26,6 +26,23 @@ QString sanitizeValue(const QString &value)
     return result.trimmed();
 }
 
+bool isSystemAutostartPath(const QString &path)
+{
+    return QDir::cleanPath(path).startsWith(QStringLiteral("/etc/xdg/autostart/"));
+}
+
+const QRegularExpression &slugPattern()
+{
+    static const QRegularExpression pattern(QStringLiteral("[^a-z0-9]+"));
+    return pattern;
+}
+
+const QRegularExpression &slugTrimPattern()
+{
+    static const QRegularExpression pattern(QStringLiteral("^-+|-+$"));
+    return pattern;
+}
+
 bool writeKeys(const QString &path, const QHash<QString, QString> &updates)
 {
     QFile file(path);
@@ -39,13 +56,20 @@ bool writeKeys(const QString &path, const QHash<QString, QString> &updates)
     output.reserve(lines.size() + updates.size());
 
     bool inDesktopEntry = false;
+    int desktopEntryHeader = -1;
+    int desktopEntryEnd = -1;
     QSet<QString> replaced;
     for (const QString &rawLine : lines) {
-        QString line = rawLine;
-        const QString trimmed = line.trimmed();
+        const QString trimmed = rawLine.trimmed();
 
         if (trimmed.startsWith(QLatin1Char('['))) {
+            if (inDesktopEntry && desktopEntryEnd < 0) {
+                desktopEntryEnd = output.size();
+            }
             inDesktopEntry = trimmed == QLatin1String("[Desktop Entry]");
+            if (inDesktopEntry) {
+                desktopEntryHeader = output.size();
+            }
         }
 
         if (inDesktopEntry) {
@@ -53,27 +77,44 @@ bool writeKeys(const QString &path, const QHash<QString, QString> &updates)
             if (separator > 0) {
                 const QString key = trimmed.left(separator).trimmed();
                 if (updates.contains(key)) {
-                    line = key + QLatin1Char('=') + updates.value(key);
+                    output.append(key + QLatin1Char('=') + updates.value(key));
                     replaced.insert(key);
+                    continue;
                 }
             }
         }
-        output.append(line);
+        output.append(rawLine);
+    }
+    if (inDesktopEntry) {
+        desktopEntryEnd = output.size();
     }
 
-    bool headerEnsured = false;
+    QStringList missing;
     for (auto it = updates.constBegin(); it != updates.constEnd(); ++it) {
-        if (replaced.contains(it.key())) {
-            continue;
+        if (!replaced.contains(it.key())) {
+            missing.append(it.key() + QLatin1Char('=') + it.value());
         }
-        if (!headerEnsured) {
-            if (output.isEmpty() || !output.last().trimmed().isEmpty()) {
+    }
+    std::sort(missing.begin(), missing.end());
+
+    if (!missing.isEmpty()) {
+        if (desktopEntryHeader >= 0) {
+            // Add the keys at the end of the existing [Desktop Entry] group so
+            // they cannot end up inside a later [Desktop Action ...] group.
+            int insertAt = desktopEntryEnd >= 0 ? desktopEntryEnd : output.size();
+            while (insertAt > desktopEntryHeader + 1 && output.at(insertAt - 1).trimmed().isEmpty()) {
+                --insertAt;
+            }
+            for (int i = 0; i < missing.size(); ++i) {
+                output.insert(insertAt + i, missing.at(i));
+            }
+        } else {
+            if (!output.isEmpty() && !output.last().trimmed().isEmpty()) {
                 output.append(QString());
             }
             output.append(QStringLiteral("[Desktop Entry]"));
-            headerEnsured = true;
+            output.append(missing);
         }
-        output.append(it.key() + QLatin1Char('=') + it.value());
     }
 
     QSaveFile outputFile(path);
@@ -215,7 +256,7 @@ bool StartupApps::setEnabled(const QString &path, bool enabled)
     QString target = path;
     const QString fileName = QFileInfo(path).fileName();
 
-    const bool isSystem = path.startsWith(QLatin1String("/etc/xdg/autostart/"));
+    const bool isSystem = isSystemAutostartPath(path);
     if (isSystem) {
         QDir().mkpath(userAutostartDir());
         const QString userPath = QDir(userAutostartDir()).filePath(fileName);
@@ -241,7 +282,7 @@ bool StartupApps::setEnabled(const QString &path, bool enabled)
 
 bool StartupApps::save(const QString &path, const QString &name, const QString &comment, const QString &exec, const QString &icon)
 {
-    if (path.startsWith(QLatin1String("/etc/xdg/autostart/"))) {
+    if (isSystemAutostartPath(path)) {
         return false;
     }
 
@@ -261,24 +302,32 @@ bool StartupApps::save(const QString &path, const QString &name, const QString &
 
 QString StartupApps::create(const QString &name, const QString &comment, const QString &exec, const QString &icon)
 {
-    QDir().mkpath(userAutostartDir());
+    const QString directory = userAutostartDir();
+    QDir().mkpath(directory);
 
-    QString slug = name.trimmed().toLower().replace(QRegularExpression(QStringLiteral("[^a-z0-9]+")), QStringLiteral("-"));
-    slug.remove(QRegularExpression(QStringLiteral("^-+|-+$")));
+    QString slug = name.trimmed().toLower().replace(slugPattern(), QStringLiteral("-"));
+    slug.remove(slugTrimPattern());
     if (slug.isEmpty()) {
         slug = QStringLiteral("startup-app");
     }
 
-    QString fileName = slug + QStringLiteral(".desktop");
-    int counter = 1;
-    while (QFile::exists(QDir(userAutostartDir()).filePath(fileName))) {
-        fileName = slug + QStringLiteral("-") + QString::number(counter++) + QStringLiteral(".desktop");
+    QFile file;
+    QString path;
+    for (int counter = 0; counter < 1000; ++counter) {
+        QString fileName;
+        if (counter == 0) {
+            fileName = slug + QStringLiteral(".desktop");
+        } else {
+            fileName = slug + QLatin1Char('-') + QString::number(counter) + QStringLiteral(".desktop");
+        }
+        const QString candidate = QDir(directory).filePath(fileName);
+        // NewOnly atomically claims the name and closes the check-then-create race.
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::NewOnly)) {
+            path = candidate;
+            break;
+        }
     }
-
-    const QString path = QDir(userAutostartDir()).filePath(fileName);
-
-    QSaveFile file(path);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (path.isEmpty()) {
         return {};
     }
 
@@ -299,7 +348,10 @@ QString StartupApps::create(const QString &name, const QString &comment, const Q
     stream << "Hidden=false\n";
     stream.flush();
 
-    if (stream.status() != QTextStream::Ok || !file.commit()) {
+    const bool writeOk = stream.status() == QTextStream::Ok;
+    file.close();
+    if (!writeOk || file.error() != QFileDevice::NoError) {
+        QFile::remove(path);
         return {};
     }
 
@@ -309,7 +361,7 @@ QString StartupApps::create(const QString &name, const QString &comment, const Q
 
 bool StartupApps::remove(const QString &path)
 {
-    if (path.startsWith(QLatin1String("/etc/xdg/autostart/"))) {
+    if (isSystemAutostartPath(path)) {
         return false;
     }
 

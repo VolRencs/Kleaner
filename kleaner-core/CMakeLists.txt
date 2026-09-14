@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: 2026 VolRen
 # SPDX-License-Identifier: GPL-3.0-only
 
-find_package(Qt6 6.11 REQUIRED COMPONENTS Concurrent)
-find_package(KF6 6.30 REQUIRED COMPONENTS Auth KIO)
+find_package(Qt6 6.11 REQUIRED COMPONENTS Core DBus Concurrent)
+find_package(KF6 6.30 REQUIRED COMPONENTS CoreAddons Auth KIO)
 
 add_library(kleaner-core STATIC
     Info/cpu_info.cpp
@@ -20,7 +20,7 @@ add_library(kleaner-core STATIC
     Utils/procfs.cpp
 )
 
-target_include_directories(kleaner-core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(kleaner-core PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 target_link_libraries(kleaner-core
     PUBLIC

@@ -15,6 +15,7 @@
 #include "Info/system_info.h"
 #include "Utils/format.h"
 #include "Utils/helpers.h"
+#include "Utils/hosts.h"
 #include "Utils/procfs.h"
 
 class CoreTest : public QObject
@@ -24,6 +25,7 @@ class CoreTest : public QObject
   private Q_SLOTS:
     void procfsReadsUInt64();
     void procfsReadsLines();
+    void procfsRejectsOutOfRangeDoubles();
 
     void helpersReportPageSize();
 
@@ -34,6 +36,7 @@ class CoreTest : public QObject
     void memoryInfoReportsMemory();
     void cpuInfoReportsCores();
     void systemInfoReportsKernel();
+    void hostsLoadsSystemFile();
 
     void cleanerComputesDirectorySize();
 };
@@ -52,10 +55,25 @@ void CoreTest::procfsReadsLines()
     QVERIFY(!lines.isEmpty());
 }
 
+void CoreTest::procfsRejectsOutOfRangeDoubles()
+{
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+
+    QFile file(dir.filePath(QStringLiteral("huge")));
+    QVERIFY(file.open(QIODevice::WriteOnly));
+    file.write("1e30\n");
+    file.close();
+
+    bool ok = true;
+    const quint64 value = Procfs::readUInt64(file.fileName(), &ok);
+    QVERIFY(!ok);
+    QCOMPARE(value, 0ULL);
+}
+
 void CoreTest::helpersReportPageSize()
 {
     QVERIFY(Helpers::pageSizeKiB() > 0);
-    QVERIFY(Helpers::clockTicks() > 0.0);
     QVERIFY(!Helpers::userName(0).isEmpty());
 }
 
@@ -109,8 +127,14 @@ void CoreTest::systemInfoReportsKernel()
     SystemInfo info;
     QVERIFY(!info.kernel().isEmpty());
     QVERIFY(!info.hostname().isEmpty());
-    QVERIFY(!info.platform().isEmpty());
+    QVERIFY(!info.distribution().isEmpty());
     info.update();
+}
+
+void CoreTest::hostsLoadsSystemFile()
+{
+    Hosts hosts;
+    QVERIFY(!hosts.entriesProperty().isEmpty());
 }
 
 void CoreTest::cleanerComputesDirectorySize()

@@ -6,6 +6,9 @@ import QtQuick.Controls as Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
+import Kleaner
+
+pragma ComponentBehavior: Bound
 
 Item {
     id: page
@@ -81,6 +84,8 @@ Item {
                 icon.name: "view-refresh"
                 display: Controls.AbstractButton.IconOnly
                 text: qsTr("Refresh")
+                spinning: Services.loading
+                enabled: !Services.loading
                 onClicked: Services.reload()
             }
         }
@@ -188,6 +193,13 @@ Item {
                     delegate: Controls.ItemDelegate {
                         id: delegate
 
+                        required property int index
+                        required property string name
+                        required property string description
+                        required property bool autostart
+                        required property bool active
+                        required property string activeState
+
                         width: serviceList.width
                         height: 60
                         leftPadding: Design.space16
@@ -197,14 +209,20 @@ Item {
                         hoverEnabled: true
 
                         background: Rectangle {
-                            color: delegate.hovered ? Design.surfaceHover : "transparent"
+                            color: "transparent"
 
                             Rectangle {
-                                anchors.bottom: parent.bottom
-                                width: parent.width
-                                height: 1
-                                color: Design.border
-                                opacity: 0.6
+                                anchors.fill: parent
+                                anchors.leftMargin: Design.itemInset
+                                anchors.topMargin: Design.itemInset
+                                anchors.bottomMargin: Design.itemInset
+                                anchors.rightMargin: Design.itemInset + (serviceList.contentHeight > serviceList.height ? Design.scrollBarGutter : 0)
+                                radius: Design.radiusItem
+                                color: delegate.hovered ? Design.surfaceHover : Design.surfaceHoverClear
+
+                                Behavior on color {
+                                    ColorAnimation { duration: 120 }
+                                }
                             }
                         }
 
@@ -223,7 +241,7 @@ Item {
                                     width: 18
                                     height: 18
                                     source: "preferences-system-services"
-                                    color: model.active ? Design.positive : Design.textFaint
+                                    color: delegate.active ? Design.positive : Design.textFaint
                                 }
                             }
 
@@ -233,7 +251,7 @@ Item {
 
                                 Controls.Label {
                                     Layout.fillWidth: true
-                                    text: model.name
+                                    text: delegate.name
                                     color: Design.text
                                     font.weight: Font.DemiBold
                                     elide: Text.ElideRight
@@ -241,7 +259,7 @@ Item {
 
                                 Controls.Label {
                                     Layout.fillWidth: true
-                                    text: model.description
+                                    text: delegate.description
                                     color: Design.textMuted
                                     font.pointSize: Design.smallFontSize
                                     elide: Text.ElideRight
@@ -255,12 +273,12 @@ Item {
                                 Badge {
                                     id: stateBadge
                                     anchors.centerIn: parent
-                                    text: model.activeState === "failed" ? qsTr("Failed")
-                                                                         : model.active ? qsTr("Running")
-                                                                                        : qsTr("Stopped")
-                                    badgeColor: model.activeState === "failed" ? Design.negative
-                                                                               : model.active ? Design.positive
-                                                                                              : Design.textMuted
+                                    text: delegate.activeState === "failed" ? qsTr("Failed")
+                                                                             : delegate.active ? qsTr("Running")
+                                                                                               : qsTr("Stopped")
+                                    badgeColor: delegate.activeState === "failed" ? Design.negative
+                                                                                  : delegate.active ? Design.positive
+                                                                                                     : Design.textMuted
                                 }
                             }
 
@@ -270,30 +288,30 @@ Item {
 
                                 AppSwitch {
                                     anchors.centerIn: parent
-                                    checked: model.enabled
-                                    onClicked: Services.setEnabled(index, checked)
+                                    checked: delegate.autostart
+                                    onClicked: Services.setEnabled(delegate.index, checked)
                                 }
                             }
 
                             RowLayout {
                                 Layout.preferredWidth: 96
                                 Layout.alignment: Qt.AlignVCenter
-                                spacing: 0
+                                spacing: Design.space8
 
                                 AppButton {
-                                    Layout.preferredWidth: 48
+                                    Layout.preferredWidth: 44
                                     display: Controls.AbstractButton.IconOnly
-                                    icon.name: model.active ? "media-playback-stop" : "media-playback-start"
-                                    text: model.active ? qsTr("Stop") : qsTr("Start")
-                                    onClicked: model.active ? Services.stop(index) : Services.start(index)
+                                    icon.name: delegate.active ? "media-playback-stop" : "media-playback-start"
+                                    text: delegate.active ? qsTr("Stop") : qsTr("Start")
+                                    onClicked: delegate.active ? Services.stop(delegate.index) : Services.start(delegate.index)
                                 }
 
                                 AppButton {
-                                    Layout.preferredWidth: 48
+                                    Layout.preferredWidth: 44
                                     display: Controls.AbstractButton.IconOnly
                                     icon.name: "view-refresh"
                                     text: qsTr("Restart")
-                                    onClicked: Services.restart(index)
+                                    onClicked: Services.restart(delegate.index)
                                 }
                             }
                         }

@@ -6,18 +6,41 @@
 #include <QAction>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
+#include <QDBusServiceWatcher>
 #include <QIcon>
 #include <QMenu>
 
 #include <KStatusNotifierItem/kstatusnotifieritem.h>
 
+namespace
+{
+constexpr auto watcherService = "org.kde.StatusNotifierWatcher";
+}
+
 Tray::Tray(QObject *parent) :
     QObject(parent)
 {
-    auto *busInterface = QDBusConnection::sessionBus().interface();
-    m_available = busInterface && busInterface->isServiceRegistered(QStringLiteral("org.kde.StatusNotifierWatcher"));
+    // The StatusNotifierWatcher may appear or restart after startup; track it
+    // instead of freezing the availability at construction time.
+    m_watcher = new QDBusServiceWatcher(QString::fromLatin1(watcherService), QDBusConnection::sessionBus(),
+                                        QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration, this);
+    connect(m_watcher, &QDBusServiceWatcher::serviceRegistered, this, [this] {
+        setupItem();
+    });
+    connect(m_watcher, &QDBusServiceWatcher::serviceUnregistered, this, [this] {
+        setAvailable(false);
+    });
 
-    if (!m_available) {
+    setupItem();
+}
+
+void Tray::setupItem()
+{
+    QDBusConnectionInterface *busInterface = QDBusConnection::sessionBus().interface();
+    setAvailable(busInterface && busInterface->isServiceRegistered(QString::fromLatin1(watcherService)).value());
+
+    if (m_item) {
+        m_item->setStatus(m_enabled ? KStatusNotifierItem::Active : KStatusNotifierItem::Passive);
         return;
     }
 
@@ -27,9 +50,9 @@ Tray::Tray(QObject *parent) :
     m_item = new KStatusNotifierItem(this);
     m_item->setIconByPixmap(icon);
     m_item->setTitle(QStringLiteral("Kleaner"));
-    m_item->setToolTip(QStringLiteral("kleaner"), QStringLiteral("Kleaner"), tr("Linux System Optimizer"));
+    m_item->setToolTip(QStringLiteral(KLEANER_DESKTOP_NAME), QStringLiteral("Kleaner"), tr("Linux System Optimizer"));
     m_item->setStandardActionsEnabled(false);
-    m_item->setStatus(KStatusNotifierItem::Active);
+    m_item->setStatus(m_enabled ? KStatusNotifierItem::Active : KStatusNotifierItem::Passive);
 
     auto *menu = new QMenu();
     QAction *showAction = menu->addAction(tr("Show Kleaner"));
@@ -47,16 +70,18 @@ Tray::Tray(QObject *parent) :
     });
 }
 
-Tray::~Tray()
-{
-    // KStatusNotifierItem owns its context menu and deletes it on destruction.
-    delete m_item;
-    m_item = nullptr;
-}
-
 bool Tray::available() const
 {
     return m_available;
+}
+
+void Tray::setAvailable(bool available)
+{
+    if (m_available == available) {
+        return;
+    }
+    m_available = available;
+    Q_EMIT availableChanged();
 }
 
 bool Tray::enabled() const

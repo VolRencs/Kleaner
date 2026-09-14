@@ -4,6 +4,7 @@
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
+import Kleaner
 
 Item {
     id: page
@@ -47,8 +48,10 @@ Item {
                             id: startPageCombo
                             Layout.preferredWidth: 220
                             textRole: "text"
-                            valueRole: "value"
-                            model: [
+
+                            // See closeBehaviorCombo: the list is a JavaScript array,
+                            // so the current entry has to be matched by hand.
+                            property var options: [
                                 { text: qsTr("Dashboard"), value: "dashboard" },
                                 { text: qsTr("Resources"), value: "resources" },
                                 { text: qsTr("Processes"), value: "processes" },
@@ -57,8 +60,17 @@ Item {
                                 { text: qsTr("System Cleaner"), value: "cleaner" },
                                 { text: qsTr("Hosts"), value: "hosts" }
                             ]
-                            Component.onCompleted: currentIndex = Math.max(0, indexOfValue(Settings.startPage))
-                            onActivated: Settings.startPage = currentValue
+
+                            model: options
+                            currentIndex: {
+                                for (let i = 0; i < options.length; ++i) {
+                                    if (options[i].value === Settings.startPage) {
+                                        return i;
+                                    }
+                                }
+                                return 0;
+                            }
+                            onActivated: Settings.startPage = options[currentIndex].value
                         }
                     }
                 }

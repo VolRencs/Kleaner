@@ -6,6 +6,9 @@ import QtQuick.Controls as Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
+import Kleaner
+
+pragma ComponentBehavior: Bound
 
 Item {
     id: page
@@ -145,6 +148,16 @@ Item {
                     delegate: Controls.ItemDelegate {
                         id: delegate
 
+                        required property int index
+                        required property string title
+                        required property real size
+                        required property int depth
+                        required property bool expandable
+                        required property bool expanded
+                        required property int checkState
+                        required property bool root
+                        required property bool isCategory
+
                         width: cleanerList.width
                         height: 46
                         leftPadding: Design.space16
@@ -154,14 +167,20 @@ Item {
                         hoverEnabled: true
 
                         background: Rectangle {
-                            color: delegate.hovered ? Design.surfaceHover : "transparent"
+                            color: "transparent"
 
                             Rectangle {
-                                anchors.bottom: parent.bottom
-                                width: parent.width
-                                height: 1
-                                color: Design.border
-                                opacity: 0.6
+                                anchors.fill: parent
+                                anchors.leftMargin: Design.itemInset
+                                anchors.topMargin: Design.itemInset
+                                anchors.bottomMargin: Design.itemInset
+                                anchors.rightMargin: Design.itemInset + (cleanerList.contentHeight > cleanerList.height ? Design.scrollBarGutter : 0)
+                                radius: Design.radiusItem
+                                color: delegate.hovered ? Design.surfaceHover : Design.surfaceHoverClear
+
+                                Behavior on color {
+                                    ColorAnimation { duration: 120 }
+                                }
                             }
                         }
 
@@ -169,7 +188,7 @@ Item {
                             spacing: Design.space8
 
                             Item {
-                                Layout.preferredWidth: model.depth * 20
+                                Layout.preferredWidth: delegate.depth * 20
                             }
 
                             Item {
@@ -181,35 +200,35 @@ Item {
 
                                 Controls.Button {
                                     anchors.fill: parent
-                                    visible: model.expandable
+                                    visible: delegate.expandable
                                     flat: true
                                     display: Controls.AbstractButton.IconOnly
-                                    icon.name: model.expanded ? "go-down" : "go-next"
-                                    text: model.expanded ? qsTr("Collapse") : qsTr("Expand")
-                                    onClicked: Cleaner.toggleExpand(index)
+                                    icon.name: delegate.expanded ? "go-down" : "go-next"
+                                    text: delegate.expanded ? qsTr("Collapse") : qsTr("Expand")
+                                    onClicked: Cleaner.toggleExpand(delegate.index)
                                 }
                             }
 
                             AppCheckBox {
                                 Layout.alignment: Qt.AlignVCenter
-                                tristate: model.isCategory
-                                checkState: model.checkState
+                                tristate: delegate.isCategory
+                                checkState: delegate.checkState
                                 // With tristate the first click yields PartiallyChecked, so use
                                 // the state instead of `checked` to actually select the category.
-                                onClicked: Cleaner.setChecked(index, checkState !== Qt.Unchecked)
+                                onClicked: Cleaner.setChecked(delegate.index, checkState !== Qt.Unchecked)
                             }
 
                             Controls.Label {
                                 Layout.fillWidth: true
-                                text: model.title
+                                text: delegate.title
                                 color: Design.text
-                                font.weight: model.isCategory ? Font.DemiBold : Font.Normal
+                                font.weight: delegate.isCategory ? Font.DemiBold : Font.Normal
                                 elide: Text.ElideRight
                             }
 
                             Badge {
                                 Layout.alignment: Qt.AlignVCenter
-                                visible: model.root
+                                visible: delegate.root
                                 text: qsTr("root")
                                 badgeColor: Design.warning
                             }
@@ -217,7 +236,7 @@ Item {
                             Controls.Label {
                                 Layout.preferredWidth: 100
                                 horizontalAlignment: Text.AlignRight
-                                text: model.size > 0 ? Format.bytes(model.size) : "—"
+                                text: delegate.size > 0 ? Format.bytes(delegate.size) : "—"
                                 color: Design.textMuted
                                 font.pointSize: Design.smallFontSize
                             }
