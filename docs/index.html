@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kleaner — оптимизатор и монитор системы Linux</title>
-<meta name="description" content="Kleaner — оптимизатор и монитор Linux на Qt 6: ресурсы, процессы, службы systemd, автозапуск, очистка системы и редактор /etc/hosts. Для Arch Linux.">
+<title>Kleaner — Linux System Optimizer</title>
+<meta name="description" content="Kleaner — Linux system optimizer and monitor built with Qt 6: resources, processes, systemd services, startup apps, system cleanup and an /etc/hosts editor. For Arch Linux.">
 <meta name="robots" content="index, follow">
 <meta name="google-site-verification" content="3NiXEhPto0HdCL29mcyWzzxfceoX-RypoAbln5yUmF8">
 <meta name="theme-color" content="#0f1115">
@@ -13,24 +13,27 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kleaner">
 <meta property="og:url" content="https://volrencs.github.io/Kleaner/">
-<meta property="og:title" content="Kleaner — оптимизатор и монитор системы Linux">
-<meta property="og:description" content="Мониторинг ресурсов, службы systemd, автозапуск, очистка системы и редактор hosts — в одном тёмном приложении для Arch Linux.">
+<meta property="og:title" content="Kleaner — Linux System Optimizer">
+<meta property="og:description" content="Resource monitoring, systemd services, startup apps, system cleanup and a hosts editor — in one dark application for Arch Linux.">
 <meta property="og:image" content="https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/dashboard.png">
 <meta property="og:image:alt" content="Kleaner dashboard">
-<meta property="og:locale" content="ru_RU">
-<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Kleaner — Linux System Optimizer">
 <meta name="twitter:description" content="Live resource monitoring, systemd services, startup apps, system cleaner and hosts editor for Arch Linux.">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/dashboard.png">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=11">
+<script>
+(function(){var d=document.documentElement;if(!window.matchMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)').matches)return;var ok=window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--gallery')&&CSS.supports('animation-range','10% 90%')&&CSS.supports('view-timeline-name','--gallery');d.classList.add('scrolly');d.classList.add(ok?'scrolly-native':'scrolly-js');})();
+</script>
 <link rel="icon" href="https://raw.githubusercontent.com/VolRencs/Kleaner/main/kleaner/resources/kleaner-circle.svg" type="image/svg+xml">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Kleaner",
-  "description": "Оптимизатор и монитор системы Linux на Qt 6 и KDE Frameworks 6: мониторинг ресурсов, управление процессами и службами systemd, автозапуск, очистка системы и редактор /etc/hosts.",
+  "description": "Linux system optimizer and monitor built with Qt 6 and KDE Frameworks 6: resource monitoring, process and systemd service management, startup apps, system cleanup and an /etc/hosts editor.",
   "url": "https://volrencs.github.io/Kleaner/",
   "downloadUrl": "https://github.com/VolRencs/Kleaner",
   "codeRepository": "https://github.com/VolRencs/Kleaner",
@@ -61,18 +64,18 @@
 <section class="hero">
   <div class="container hero-grid">
     <div class="hero-left">
-      <h1 data-i18n="hero.title" data-i18n-html>Мониторинг, службы и очистка <span class="blue">в одном приложении.</span></h1>
-      <p class="desc" data-i18n="hero.desc">Kleaner показывает загрузку CPU, памяти, дисков и сети, управляет службами systemd и автозапуском, очищает кэши и журналы. Приложение собрано на Qt 6 и KDE Frameworks 6 для Arch Linux.</p>
+      <h1 data-i18n="hero.title" data-i18n-html>Monitoring, services and cleanup <span class="blue">in a single app.</span></h1>
+      <p class="desc" data-i18n="hero.desc">Kleaner shows CPU, memory, disk and network usage, manages systemd services and startup entries, and cleans caches and logs. Built with Qt 6 and KDE Frameworks 6 for Arch Linux.</p>
       <div class="btns">
-        <a class="btn primary" href="https://github.com/VolRencs/Kleaner#installation"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4"/><path d="M5 19h14"/></svg> <b data-i18n="hero.install">Установка</b><small data-i18n="hero.forArch">для Arch Linux</small></a>
-        <a class="btn outline" href="https://github.com/VolRencs/Kleaner" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span data-i18n="hero.github">Исходный код</span></a>
+        <a class="btn primary" href="https://github.com/VolRencs/Kleaner#installation"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4"/><path d="M5 19h14"/></svg> <b data-i18n="hero.install">Install</b><small data-i18n="hero.forArch">for Arch Linux</small></a>
+        <a class="btn outline" href="https://github.com/VolRencs/Kleaner" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span data-i18n="hero.github">Source code</span></a>
       </div>
-      <p class="release"><span data-i18n="hero.release">Последний релиз:</span> <span data-kleaner-version>v1.3.2</span> &nbsp;•&nbsp; Qt 6.11+ &nbsp;•&nbsp; KDE Frameworks 6.30+</p>
+      <p class="release"><span data-i18n="hero.release">Latest release:</span> <span data-kleaner-version>v1.3.2</span> &nbsp;•&nbsp; Qt 6.11+ &nbsp;•&nbsp; KDE Frameworks 6.30+</p>
     </div>
     <div class="hero-right">
       <div class="laptop">
         <div class="laptop-screen">
-          <img src="screenshots/dashboard.png" alt="Kleaner — обзор системы" width="1240" height="800" loading="eager" fetchpriority="high">
+          <img src="screenshots/dashboard.png" alt="Kleaner — system overview" width="1240" height="800" loading="eager" fetchpriority="high">
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
       </div>
@@ -83,169 +86,184 @@
 <!-- FEATURES -->
 <section class="features">
   <div class="container">
-    <h2 data-i18n="feat.title">Возможности</h2>
-    <p class="sub" data-i18n="feat.sub">Девять страниц: мониторинг, процессы, службы, автозапуск, очистка, hosts и настройки.</p>
+    <h2 data-i18n="feat.title">Features</h2>
+    <p class="sub" data-i18n="feat.sub">Nine pages: monitoring, processes, services, startup, cleanup, hosts and settings.</p>
     <div class="grid8">
-      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l4-4"/><path d="M3 19h18"/></svg></div><h3 data-i18n="f1t">Мониторинг системы</h3><p data-i18n="f1d">CPU (общая и по ядрам), память, диск и сеть с обновлением раз в секунду.</p></div>
-      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l4-6 4 3 5-8 3 4"/><path d="M4 21h16"/></svg></div><h3 data-i18n="f2t">История метрик</h3><p data-i18n="f2d">Графики за 60 секунд по нагрузке, памяти, диску и сети.</p></div>
-      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg></div><h3 data-i18n="f3t">Процессы</h3><p data-i18n="f3d">Сортировка по столбцам, поиск по имени, пользователю и PID, завершение через SIGTERM и SIGKILL.</p></div>
-      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></div><h3 data-i18n="f4t">Службы systemd</h3><p data-i18n="f4d">Запуск, остановка, перезапуск и автозапуск юнитов через D-Bus и polkit.</p></div>
-      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div><h3 data-i18n="f5t">Автозапуск</h3><p data-i18n="f5d">Записи из ~/.config/autostart и /etc/xdg/autostart: включение, отключение и правка.</p></div>
-      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg></div><h3 data-i18n="f6t">Очистка системы</h3><p data-i18n="f6d">Корзина, кэши, /tmp, /var/log, systemd journal, кэш pacman и пакеты-сироты.</p></div>
-      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 4 5.6 4 9s-1.5 6.6-4 9c-2.5-2.4-4-5.6-4-9s1.5-6.6 4-9z"/></svg></div><h3 data-i18n="f7t">/etc/hosts</h3><p data-i18n="f7d">Таблица записей с проверкой IPv4/IPv6 и атомарной записью через KAuth.</p></div>
-      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9c0-.5-.4-1-1-1h-3a2 2 0 0 1-2-2V4c0-.6-.4-1-1-1z"/></svg></div><h3 data-i18n="f8t">Языки и оформление</h3><p data-i18n="f8d">Русский и украинский интерфейс, смена языка без перезапуска, тёмная тема.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l4-4"/><path d="M3 19h18"/></svg></div><h3 data-i18n="f1t">System monitoring</h3><p data-i18n="f1d">CPU (total and per core), memory, disk and network, refreshed every second.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l4-6 4 3 5-8 3 4"/><path d="M4 21h16"/></svg></div><h3 data-i18n="f2t">Metric history</h3><p data-i18n="f2d">60-second charts for load, memory, disk and network.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg></div><h3 data-i18n="f3t">Processes</h3><p data-i18n="f3d">Sort by columns, search by name, user or PID, terminate with SIGTERM or SIGKILL.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></div><h3 data-i18n="f4t">systemd services</h3><p data-i18n="f4d">Start, stop, restart and enable units over D-Bus and polkit.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div><h3 data-i18n="f5t">Startup apps</h3><p data-i18n="f5d">Entries from ~/.config/autostart and /etc/xdg/autostart: toggle and edit.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg></div><h3 data-i18n="f6t">System cleaner</h3><p data-i18n="f6d">Trash, caches, /tmp, /var/log, systemd journal, pacman cache and orphan packages.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 4 5.6 4 9s-1.5 6.6-4 9c-2.5-2.4-4-5.6-4-9s1.5-6.6 4-9z"/></svg></div><h3 data-i18n="f7t">/etc/hosts</h3><p data-i18n="f7d">Entry table with IPv4/IPv6 validation and an atomic write through KAuth.</p></div>
+      <div class="f"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9c0-.5-.4-1-1-1h-3a2 2 0 0 1-2-2V4c0-.6-.4-1-1-1z"/></svg></div><h3 data-i18n="f8t">Languages and appearance</h3><p data-i18n="f8d">Russian and Ukrainian interfaces, runtime language switching, dark theme.</p></div>
     </div>
   </div>
 </section>
 
-<!-- PAGES GALLERY -->
-<section class="pages">
-  <div class="container">
-    <p class="eyebrow" data-i18n="gal.eyebrow">СТРАНИЦЫ</p>
-    <h2 data-i18n="gal.title">Страницы приложения</h2>
-    <p class="sub" data-i18n="gal.sub">Скриншоты из обычной сессии: интерфейс и элементы управления.</p>
+<!-- PAGES GALLERY (pinned scrollytelling) -->
+<section class="gallery" aria-labelledby="pages-title">
+  <div class="container gallery-head">
+    <p class="eyebrow" data-i18n="gal.eyebrow">PAGES</p>
+    <h2 id="pages-title" data-i18n="gal.title">Application pages</h2>
+    <p class="sub" data-i18n="gal.sub">Screenshots from a regular session: the interface and its controls.</p>
+  </div>
 
-    <div class="page-row">
-      <div class="page-media">
-        <div class="laptop"><div class="laptop-screen"><img src="screenshots/dashboard.png" alt="Dashboard" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
-      </div>
-      <div class="page-text">
-        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l4-4"/><path d="M3 19h18"/></svg></div>
-        <h3 data-i18n="dash.t">Обзор</h3>
-        <p data-i18n="dash.d">Три кольцевых индикатора (CPU, память, корневой раздел) и таблица характеристик: хост, дистрибутив, ядро, модель CPU, пользователь и время работы. Ниже — накопители с занятым местом.</p>
-        <ul class="page-points">
-          <li data-i18n="dash.a">Кольцевые индикаторы: CPU, память, корневой раздел</li>
-          <li data-i18n="dash.b">Характеристики: хост, дистрибутив, ядро, CPU, пользователь, uptime</li>
-          <li data-i18n="dash.c">Накопители: точка монтирования, файловая система, занято/всего</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="page-row reverse">
-      <div class="page-media">
-        <div class="laptop"><div class="laptop-screen"><img src="screenshots/resources.png" alt="Resources" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
-      </div>
-      <div class="page-text">
-        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l4-6 4 3 5-8 3 4"/><path d="M4 21h16"/></svg></div>
-        <h3 data-i18n="res.t">Ресурсы</h3>
-        <p data-i18n="res.d">Пять общих графиков с историей за 60 секунд и раскладка нагрузки по ядрам. Данные накапливаются, пока приложение запущено, и не сбрасываются при переходе между страницами.</p>
-        <ul class="page-points">
-          <li data-i18n="res.a">CPU: загрузка и средняя нагрузка за 1/5/15 минут</li>
-          <li data-i18n="res.b">Память и swap</li>
-          <li data-i18n="res.c">Диск: чтение и запись; сеть: приём и передача</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="page-row">
-      <div class="page-media">
-        <div class="laptop"><div class="laptop-screen"><img src="screenshots/processes.png" alt="Processes" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
-      </div>
-      <div class="page-text">
-        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg></div>
-        <h3 data-i18n="proc.t">Процессы</h3>
-        <p data-i18n="proc.d">Таблица процессов: сортировка щелчком по столбцу, поиск по имени, пользователю и PID. Список обновляется раз в 2 секунды, позиция прокрутки и выделенная строка сохраняются.</p>
-        <ul class="page-points">
-          <li data-i18n="proc.a">Столбцы: имя, PID, пользователь, CPU, память, RSS, состояние, команда</li>
-          <li data-i18n="proc.b">Завершение (SIGTERM) и принудительное завершение (SIGKILL)</li>
-          <li data-i18n="proc.c">Обновление по кнопке или автоматически раз в 2 секунды</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="page-row reverse">
-      <div class="page-media">
-        <div class="laptop"><div class="laptop-screen"><img src="screenshots/services.png" alt="Services" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
-      </div>
-      <div class="page-text">
-        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></div>
-        <h3 data-i18n="svc.t">Службы</h3>
-        <p data-i18n="svc.d">Юниты systemd с описанием, состоянием и переключателем автозапуска. Запуск, остановка и перезапуск идут через D-Bus; пароль запрашивает polkit.</p>
-        <ul class="page-points">
-          <li data-i18n="svc.a">Запуск, остановка и перезапуск юнитов</li>
-          <li data-i18n="svc.b">Включение и отключение автозапуска (enable/disable)</li>
-          <li data-i18n="svc.c">Сортировка по имени, состоянию и автозапуску</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="page-row">
-      <div class="page-media">
-        <div class="laptop"><div class="laptop-screen"><img src="screenshots/startup.png" alt="Startup Apps" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
-      </div>
-      <div class="page-text">
-        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-        <h3 data-i18n="start.t">Автозапуск</h3>
-        <p data-i18n="start.d">Записи из ~/.config/autostart и /etc/xdg/autostart. Системные записи при отключении копируются в пользовательский каталог.</p>
-        <ul class="page-points">
-          <li data-i18n="start.a">Включение и отключение записей</li>
-          <li data-i18n="start.b">Добавление, редактирование и удаление .desktop</li>
-          <li data-i18n="start.c">Поля: имя, команда, комментарий, значок</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="page-row reverse">
-      <div class="page-media">
-        <div class="laptop"><div class="laptop-screen"><img src="screenshots/cleaner.png" alt="System Cleaner" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
-      </div>
-      <div class="page-text">
-        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg></div>
-        <h3 data-i18n="clean.t">Очистка системы</h3>
-        <p data-i18n="clean.d">Семь категорий с подсчётом размера. Отмечаете нужные пункты — приложение показывает итоговый объём и удаляет выбранное; выбор сохраняется между запусками.</p>
-        <ul class="page-points">
-          <li data-i18n="clean.a">Корзина, кэши приложений, отчёты о сбоях</li>
-          <li data-i18n="clean.b">Системные журналы: ротация и полная очистка архива journal</li>
-          <li data-i18n="clean.c">Кэш pacman и удаление пакетов-сирот</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="page-row">
-      <div class="page-media">
-        <div class="laptop"><div class="laptop-screen"><img src="screenshots/hosts.png" alt="Hosts" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
-      </div>
-      <div class="page-text">
-        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 4 5.6 4 9s-1.5 6.6-4 9c-2.5-2.4-4-5.6-4-9s1.5-6.6 4-9z"/></svg></div>
-        <h3 data-i18n="hosts.t">Хосты</h3>
-        <p data-i18n="hosts.d">Записи /etc/hosts в виде таблицы: адрес и имена хостов. Перед сохранением проверяются IPv4/IPv6 и имена, запись выполняется через KAuth.</p>
-        <ul class="page-points">
-          <li data-i18n="hosts.a">Просмотр, добавление, правка и удаление записей</li>
-          <li data-i18n="hosts.b">Проверка IPv4/IPv6 и имён хостов</li>
-          <li data-i18n="hosts.c">Сохранение через KAuth с подтверждением</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="page-row reverse">
-      <div class="page-media">
-        <div class="laptop"><div class="laptop-screen"><img src="screenshots/settings.png" alt="Settings" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
-      </div>
-      <div class="page-text">
-        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"/><circle cx="16" cy="8" r="2"/><circle cx="8" cy="16" r="2"/></svg></div>
-        <h3 data-i18n="set.t">Настройки</h3>
-        <p data-i18n="set.d">Стартовая страница, поведение при закрытии (спросить, свернуть в трей, выйти), значок в трее и язык интерфейса. Настройки хранятся в ~/.config/kleanerrc.</p>
-        <ul class="page-points">
-          <li data-i18n="set.a">Стартовая страница приложения</li>
-          <li data-i18n="set.b">Поведение при закрытии и значок в трее</li>
-          <li data-i18n="set.c">Язык интерфейса: системный, русский, украинский и другие</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="page-row">
-      <div class="page-media">
-        <div class="laptop"><div class="laptop-screen"><img src="screenshots/about.png" alt="About" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
-      </div>
-      <div class="page-text">
-        <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg></div>
-        <h3 data-i18n="about.t">О программе</h3>
-        <p data-i18n="about.d">Версия, лицензия, автор и ссылки: сайт, репозиторий и трекер.</p>
-        <ul class="page-points">
-          <li data-i18n="about.a">Версия и лицензия GPL-3.0</li>
-          <li data-i18n="about.b">Ссылки на сайт, GitHub и трекер</li>
-          <li data-i18n="about.c">Stacer указан как исходный проект</li>
-        </ul>
+  <div class="gallery-track">
+    <div class="gallery-stage">
+      <div class="stage-inner container">
+        <div class="stage-grid">
+          <article class="slide">
+            <div class="page-media">
+              <div class="laptop"><div class="laptop-screen"><img src="screenshots/dashboard.png" alt="Dashboard" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+            </div>
+            <div class="page-text">
+              <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l4-4"/><path d="M3 19h18"/></svg></div>
+              <h3 data-i18n="dash.t">Overview</h3>
+              <p data-i18n="dash.d">Three ring gauges (CPU, memory, root volume) and a spec table: host, distribution, kernel, CPU model, user and uptime. Below — mounted volumes with used space.</p>
+              <ul class="page-points">
+                <li data-i18n="dash.a">Ring gauges: CPU, memory, root volume</li>
+                <li data-i18n="dash.b">Spec table: host, distribution, kernel, CPU, user, uptime</li>
+                <li data-i18n="dash.c">Volumes: mount point, filesystem, used/total</li>
+              </ul>
+            </div>
+          </article>
+          <article class="slide">
+            <div class="page-media">
+              <div class="laptop"><div class="laptop-screen"><img src="screenshots/resources.png" alt="Resources" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+            </div>
+            <div class="page-text">
+              <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l4-6 4 3 5-8 3 4"/><path d="M4 21h16"/></svg></div>
+              <h3 data-i18n="res.t">Resources</h3>
+              <p data-i18n="res.d">Five overview charts with 60 seconds of history plus a per-core breakdown. Data accumulates while the app is running and is not reset when you switch pages.</p>
+              <ul class="page-points">
+                <li data-i18n="res.a">CPU: usage and 1/5/15-minute load average</li>
+                <li data-i18n="res.b">Memory and swap</li>
+                <li data-i18n="res.c">Disk: read and write; network: receive and transmit</li>
+              </ul>
+            </div>
+          </article>
+          <article class="slide">
+            <div class="page-media">
+              <div class="laptop"><div class="laptop-screen"><img src="screenshots/processes.png" alt="Processes" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+            </div>
+            <div class="page-text">
+              <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg></div>
+              <h3 data-i18n="proc.t">Processes</h3>
+              <p data-i18n="proc.d">Process table with click-to-sort columns and search by name, user or PID. The list refreshes every 2 seconds while the scroll position and selected row stay put.</p>
+              <ul class="page-points">
+                <li data-i18n="proc.a">Columns: name, PID, user, CPU, memory, RSS, state, command</li>
+                <li data-i18n="proc.b">Terminate (SIGTERM) and force-kill (SIGKILL)</li>
+                <li data-i18n="proc.c">Refresh by button or automatically every 2 seconds</li>
+              </ul>
+            </div>
+          </article>
+          <article class="slide">
+            <div class="page-media">
+              <div class="laptop"><div class="laptop-screen"><img src="screenshots/services.png" alt="Services" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+            </div>
+            <div class="page-text">
+              <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></div>
+              <h3 data-i18n="svc.t">Services</h3>
+              <p data-i18n="svc.d">systemd units with description, state and an autostart switch. Start, stop and restart go over D-Bus; polkit asks for a password when needed.</p>
+              <ul class="page-points">
+                <li data-i18n="svc.a">Start, stop and restart units</li>
+                <li data-i18n="svc.b">Enable and disable autostart</li>
+                <li data-i18n="svc.c">Sort by name, state or autostart</li>
+              </ul>
+            </div>
+          </article>
+          <article class="slide">
+            <div class="page-media">
+              <div class="laptop"><div class="laptop-screen"><img src="screenshots/startup.png" alt="Startup Apps" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+            </div>
+            <div class="page-text">
+              <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+              <h3 data-i18n="start.t">Startup apps</h3>
+              <p data-i18n="start.d">Entries from ~/.config/autostart and /etc/xdg/autostart. Disabling a system entry copies it into your user directory.</p>
+              <ul class="page-points">
+                <li data-i18n="start.a">Enable and disable entries</li>
+                <li data-i18n="start.b">Add, edit and remove .desktop files</li>
+                <li data-i18n="start.c">Fields: name, command, comment, icon</li>
+              </ul>
+            </div>
+          </article>
+          <article class="slide">
+            <div class="page-media">
+              <div class="laptop"><div class="laptop-screen"><img src="screenshots/cleaner.png" alt="System Cleaner" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+            </div>
+            <div class="page-text">
+              <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg></div>
+              <h3 data-i18n="clean.t">System cleaner</h3>
+              <p data-i18n="clean.d">Seven categories with size calculation. Tick the items you need, see the total size and remove them; selections persist across restarts.</p>
+              <ul class="page-points">
+                <li data-i18n="clean.a">Trash, application caches, crash reports</li>
+                <li data-i18n="clean.b">System logs: rotation and full journal archive cleanup</li>
+                <li data-i18n="clean.c">pacman cache and orphan package removal</li>
+              </ul>
+            </div>
+          </article>
+          <article class="slide">
+            <div class="page-media">
+              <div class="laptop"><div class="laptop-screen"><img src="screenshots/hosts.png" alt="Hosts" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+            </div>
+            <div class="page-text">
+              <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 4 5.6 4 9s-1.5 6.6-4 9c-2.5-2.4-4-5.6-4-9s1.5-6.6 4-9z"/></svg></div>
+              <h3 data-i18n="hosts.t">Hosts</h3>
+              <p data-i18n="hosts.d">A table of /etc/hosts entries: address and hostnames. IPv4/IPv6 and names are validated before saving; the write goes through KAuth.</p>
+              <ul class="page-points">
+                <li data-i18n="hosts.a">View, add, edit and delete entries</li>
+                <li data-i18n="hosts.b">IPv4/IPv6 and hostname validation</li>
+                <li data-i18n="hosts.c">Save through KAuth with confirmation</li>
+              </ul>
+            </div>
+          </article>
+          <article class="slide">
+            <div class="page-media">
+              <div class="laptop"><div class="laptop-screen"><img src="screenshots/settings.png" alt="Settings" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+            </div>
+            <div class="page-text">
+              <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"/><circle cx="16" cy="8" r="2"/><circle cx="8" cy="16" r="2"/></svg></div>
+              <h3 data-i18n="set.t">Settings</h3>
+              <p data-i18n="set.d">Startup page, close behavior (ask, minimize to tray, quit), tray icon and interface language. Settings are stored in ~/.config/kleanerrc.</p>
+              <ul class="page-points">
+                <li data-i18n="set.a">Application startup page</li>
+                <li data-i18n="set.b">Close behavior and tray icon</li>
+                <li data-i18n="set.c">Interface language: system, Russian, Ukrainian and more</li>
+              </ul>
+            </div>
+          </article>
+          <article class="slide">
+            <div class="page-media">
+              <div class="laptop"><div class="laptop-screen"><img src="screenshots/about.png" alt="About" loading="lazy"></div><div class="laptop-base" aria-hidden="true"></div></div>
+            </div>
+            <div class="page-text">
+              <div class="page-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg></div>
+              <h3 data-i18n="about.t">About</h3>
+              <p data-i18n="about.d">Version, license, author and links: website, repository and issue tracker.</p>
+              <ul class="page-points">
+                <li data-i18n="about.a">Version and GPL-3.0 license</li>
+                <li data-i18n="about.b">Website, GitHub and issue tracker links</li>
+                <li data-i18n="about.c">Stacer credited as the original project</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+        <nav class="stage-rail" aria-label="Application pages">
+          <button type="button"><span class="sr-only" data-i18n="dash.t">Overview</span></button>
+          <button type="button"><span class="sr-only" data-i18n="res.t">Resources</span></button>
+          <button type="button"><span class="sr-only" data-i18n="proc.t">Processes</span></button>
+          <button type="button"><span class="sr-only" data-i18n="svc.t">Services</span></button>
+          <button type="button"><span class="sr-only" data-i18n="start.t">Startup apps</span></button>
+          <button type="button"><span class="sr-only" data-i18n="clean.t">System cleaner</span></button>
+          <button type="button"><span class="sr-only" data-i18n="hosts.t">Hosts</span></button>
+          <button type="button"><span class="sr-only" data-i18n="set.t">Settings</span></button>
+          <button type="button"><span class="sr-only" data-i18n="about.t">About</span></button>
+        </nav>
+        <div class="stage-foot">
+          <span class="stage-count"><span data-stage-current>01</span> / 09</span>
+          <span class="stage-hint" data-i18n="gal.hint">Scroll to explore</span>
+        </div>
       </div>
     </div>
   </div>
@@ -255,15 +273,15 @@
 <section class="showcase">
   <div class="container show-grid">
     <div class="show-text">
-      <p class="eyebrow" data-i18n="show.eyebrow">ТЕХНИЧЕСКИЕ ДЕТАЛИ</p>
-      <h2 data-i18n="show.title" data-i18n-html>Qt 6, KDE Frameworks 6 <span class="blue">и Wayland.</span></h2>
-      <p class="desc" data-i18n="show.desc">Интерфейс — Qt Quick Controls с собственным тёмным стилем. Службы и процессы работают через системный D-Bus, очистка и /etc/hosts — через KAuth-helper с подтверждением polkit.</p>
+      <p class="eyebrow" data-i18n="show.eyebrow">IMPLEMENTATION</p>
+      <h2 data-i18n="show.title" data-i18n-html>Qt 6, KDE Frameworks 6 <span class="blue">and Wayland.</span></h2>
+      <p class="desc" data-i18n="show.desc">The interface is Qt Quick Controls with its own dark theme. Services and processes use the system D-Bus, while cleanup and /etc/hosts go through the KAuth helper with polkit confirmation.</p>
       <ul class="checks">
-        <li data-i18n="c1">Одно окно и один процесс, без встроенного терминала</li>
-        <li data-i18n="c2">Systemd — через D-Bus, файловые операции — через KAuth</li>
-        <li data-i18n="c3">Arch Linux: сборка через PKGBUILD или CMake</li>
+        <li data-i18n="c1">One window and one process, no embedded terminal</li>
+        <li data-i18n="c2">systemd over D-Bus, file operations through KAuth</li>
+        <li data-i18n="c3">Arch Linux: build with PKGBUILD or CMake</li>
       </ul>
-      <p class="fmts"><span class="fmts-lbl" data-i18n="show.tech">Технологии:</span> <span class="fmt">Qt 6</span><span class="fmt">KDE Frameworks 6</span><span class="fmt">QML</span><span class="fmt">KAuth</span><span class="fmt">systemd</span><span class="fmt">Wayland</span></p>
+      <p class="fmts"><span class="fmts-lbl" data-i18n="show.tech">Technologies:</span> <span class="fmt">Qt 6</span><span class="fmt">KDE Frameworks 6</span><span class="fmt">QML</span><span class="fmt">KAuth</span><span class="fmt">systemd</span><span class="fmt">Wayland</span></p>
     </div>
     <div class="show-art" aria-hidden="true">
       <svg viewBox="0 0 420 340" width="100%" height="auto" fill="none" role="presentation">
@@ -364,17 +382,17 @@
       </button>
     </div>
     <div class="fres">
-      <a href="https://github.com/VolRencs/Kleaner/releases" target="_blank" rel="noopener" data-i18n="foot.rel">Релизы</a>
-      <a href="https://github.com/VolRencs/Kleaner" target="_blank" rel="noopener" data-i18n="foot.src">Исходный код</a>
-      <a href="https://github.com/VolRencs/Kleaner/issues" target="_blank" rel="noopener" data-i18n="foot.iss">Сообщить об ошибке</a>
+      <a href="https://github.com/VolRencs/Kleaner/releases" target="_blank" rel="noopener" data-i18n="foot.rel">Releases</a>
+      <a href="https://github.com/VolRencs/Kleaner" target="_blank" rel="noopener" data-i18n="foot.src">Source code</a>
+      <a href="https://github.com/VolRencs/Kleaner/issues" target="_blank" rel="noopener" data-i18n="foot.iss">Report an issue</a>
     </div>
   </div>
   <div class="container foot-bot">
     <p>© 2026 VolRen.</p>
-    <p class="muted small" data-i18n="foot.right" data-i18n-html>Открытый код &nbsp;•&nbsp; Лицензия GPL-3.0 &nbsp;•&nbsp; Форк Stacer</p>
+    <p class="muted small" data-i18n="foot.right" data-i18n-html>Open source &nbsp;•&nbsp; GPL-3.0 License</p>
   </div>
 </footer>
 
-<script src="script.js?v=5"></script>
+<script src="script.js?v=10"></script>
 </body>
 </html>

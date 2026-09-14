@@ -45,6 +45,7 @@ const I18N = {
     'gal.eyebrow': 'СТРАНИЦЫ',
     'gal.title': 'Страницы приложения',
     'gal.sub': 'Скриншоты из обычной сессии: интерфейс и элементы управления.',
+    'gal.hint': 'Прокрутите, чтобы смотреть',
     'dash.t': 'Обзор',
     'dash.d': 'Три кольцевых индикатора (CPU, память, корневой раздел) и таблица характеристик: хост, дистрибутив, ядро, модель CPU, пользователь и время работы. Ниже — накопители с занятым местом.',
     'dash.a': 'Кольцевые индикаторы: CPU, память, корневой раздел',
@@ -98,7 +99,7 @@ const I18N = {
     'c3': 'Arch Linux: сборка через PKGBUILD или CMake',
     'show.tech': 'Технологии:',
     'foot.rel': 'Релизы', 'foot.src': 'Исходный код', 'foot.iss': 'Сообщить об ошибке',
-    'foot.right': 'Открытый код &nbsp;•&nbsp; Лицензия GPL-3.0 &nbsp;•&nbsp; Форк Stacer'
+    'foot.right': 'Открытый код &nbsp;•&nbsp; Лицензия GPL-3.0'
   },
   en: {
     'doc.title': 'Kleaner — Linux System Optimizer',
@@ -128,6 +129,7 @@ const I18N = {
     'gal.eyebrow': 'PAGES',
     'gal.title': 'Application pages',
     'gal.sub': 'Screenshots from a regular session: the interface and its controls.',
+    'gal.hint': 'Scroll to explore',
     'dash.t': 'Overview',
     'dash.d': 'Three ring gauges (CPU, memory, root volume) and a spec table: host, distribution, kernel, CPU model, user and uptime. Below — mounted volumes with used space.',
     'dash.a': 'Ring gauges: CPU, memory, root volume',
@@ -181,14 +183,14 @@ const I18N = {
     'c3': 'Arch Linux: build with PKGBUILD or CMake',
     'show.tech': 'Technologies:',
     'foot.rel': 'Releases', 'foot.src': 'Source code', 'foot.iss': 'Report an issue',
-    'foot.right': 'Open source &nbsp;•&nbsp; GPL-3.0 License &nbsp;•&nbsp; Fork of Stacer'
+    'foot.right': 'Open source &nbsp;•&nbsp; GPL-3.0 License'
   }
 };
-let lang = 'ru';
+let lang = 'en';
 try {
   const saved = localStorage.getItem('kleaner-lang');
   if (saved === 'en' || saved === 'ru') lang = saved;
-  else lang = (navigator.language || 'ru').toLowerCase().startsWith('en') ? 'en' : 'ru';
+  else lang = (navigator.language || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en';
 } catch (e) { /* private mode */ }
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let firstPaint = true;
@@ -224,7 +226,7 @@ document.querySelectorAll('[data-scroll-top]').forEach(b =>
 (function reveal() {
   if (reduceMotion.matches) return;
   if (CSS.supports && CSS.supports('animation-timeline: view()')) return;
-  const els = document.querySelectorAll('.features .f, .page-row, .show-text, .show-art, .foot-top > div');
+  const els = document.querySelectorAll('.features .f, .show-text, .show-art, .foot-top > div');
   if (!('IntersectionObserver' in window) || !els.length) return;
   els.forEach((el, k) => {
     el.classList.add('rv');
@@ -239,4 +241,64 @@ document.querySelectorAll('[data-scroll-top]').forEach(b =>
     });
   }, { threshold: 0.12 });
   els.forEach(el => io.observe(el));
+})();
+
+// Pinned scrollytelling gallery: rail state, dot navigation and a JS fallback
+// for browsers without scroll-driven animations (the head script picks the mode).
+(function scrollyGallery() {
+  const root = document.documentElement;
+  const section = document.querySelector('.gallery');
+  if (!section || !root.classList.contains('scrolly')) return;
+  const track = section.querySelector('.gallery-track');
+  const stage = section.querySelector('.gallery-stage');
+  const slides = Array.from(section.querySelectorAll('.slide'));
+  const dots = Array.from(section.querySelectorAll('.stage-rail button'));
+  const counter = section.querySelector('[data-stage-current]');
+  const hint = section.querySelector('.stage-hint');
+  const rail = section.querySelector('.stage-rail');
+  if (!track || !stage || !slides.length) return;
+  const jsMode = root.classList.contains('scrolly-js');
+  let current = -1;
+  let raf = 0;
+
+  const setActive = i => {
+    if (i === current) return;
+    current = i;
+    slides.forEach((s, k) => s.classList.toggle('is-active', k === i));
+    dots.forEach((d, k) => {
+      d.classList.toggle('is-active', k === i);
+      d.classList.toggle('is-passed', k < i);
+      d.setAttribute('aria-current', k === i ? 'true' : 'false');
+    });
+    if (counter) {
+      counter.textContent = String(i + 1).padStart(2, '0');
+      if (counter.animate) counter.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.22,.61,.36,1)' });
+    }
+    if (hint) hint.classList.toggle('is-hidden', i > 0);
+  };
+
+  const progress = () => {
+    const rect = track.getBoundingClientRect();
+    const span = rect.height - stage.offsetHeight;
+    if (span <= 0) return 0;
+    return Math.min(1, Math.max(0, -rect.top / span));
+  };
+
+  const update = () => {
+    raf = 0;
+    const p = progress();
+    setActive(Math.min(slides.length - 1, Math.floor(p * slides.length)));
+    if (jsMode && rail) rail.style.setProperty('--rail-fill', (p * 100).toFixed(2) + '%');
+  };
+  const schedule = () => { if (!raf) raf = requestAnimationFrame(update); };
+
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  update();
+
+  dots.forEach((dot, i) => dot.addEventListener('click', () => {
+    const top = track.getBoundingClientRect().top + window.scrollY;
+    const span = track.offsetHeight - stage.offsetHeight;
+    window.scrollTo({ top: top + span * ((i + 0.5) / slides.length), behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+  }));
 })();
