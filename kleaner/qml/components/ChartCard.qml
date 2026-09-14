@@ -20,12 +20,14 @@ AppCard {
     property real yMax: 100
     property bool automaticYRange: false
     property bool fillAreas: true
-    property real fillStrength: 0.38
+    // Opacity of the area fill drawn under every series, matching the KDE
+    // System Monitor default (lineChartFillOpacity = 10%).
+    property real fillOpacity: 0.10
     property real lineWidth: 1.8
     property real legendValueWidth: 80
     property int historySeconds: 60
     property int hoveredIndex: -1
-    property var valueFormatter: function(value) { return value.toFixed(2); }
+    property var valueFormatter: function(value) { return Format.number(value, 2); }
 
     // Values used for the header and the statistics line. A dedicated set can
     // be supplied when the card shows many series, e.g. per-core CPU usage
@@ -64,7 +66,7 @@ AppCard {
             Controls.Label {
                 Layout.alignment: Qt.AlignVCenter
                 text: root.valueFormatter(root.primaryValue)
-                color: Design.accent
+                color: root.primarySeries !== null ? root.primarySeries.color : Design.accent
                 font.weight: Font.DemiBold
             }
         }
@@ -200,7 +202,7 @@ AppCard {
             return left + plotWidth * index / (root.historySeconds - 1);
         };
 
-        ctx.font = Math.max(9, Math.round(Design.tinyFontSize * 1.35)) + "px sans-serif";
+        ctx.font = Math.max(9, Math.round(Design.tinyFontSize * 1.35)) + "px " + Design.fontFamily;
         ctx.lineWidth = 1;
 
         // Horizontal grid and value labels.
@@ -223,9 +225,9 @@ AppCard {
         ctx.textBaseline = "top";
         ctx.fillStyle = Design.textFaint;
         ctx.textAlign = "left";
-        ctx.fillText("-" + root.historySeconds + "s", left, h - bottom + 3);
+        ctx.fillText(qsTr("-%1s").arg(root.historySeconds), left, h - bottom + 3);
         ctx.textAlign = "center";
-        ctx.fillText("-" + Math.round(root.historySeconds / 2) + "s", left + plotWidth / 2, h - bottom + 3);
+        ctx.fillText(qsTr("-%1s").arg(Math.round(root.historySeconds / 2)), left + plotWidth / 2, h - bottom + 3);
         ctx.textAlign = "right";
         ctx.fillText(qsTr("now"), w - right, h - bottom + 3);
 
@@ -253,7 +255,7 @@ AppCard {
             const highlighted = s === root.hoveredIndex;
             const dimmed = root.hoveredIndex >= 0 && !highlighted;
             const lineColor = dimmed ? Qt.rgba(color.r, color.g, color.b, 0.25) : color;
-            const strength = root.fillStrength * (dimmed ? 0.3 : 1.0);
+            const strength = root.fillOpacity * (dimmed ? 0.3 : 1.0);
 
             if (values.length < 2) {
                 ctx.beginPath();
@@ -281,10 +283,7 @@ AppCard {
                 ctx.lineTo(firstX, top + plotHeight);
                 ctx.closePath();
 
-                const gradient = ctx.createLinearGradient(0, top, 0, top + plotHeight);
-                gradient.addColorStop(0, Qt.rgba(color.r, color.g, color.b, strength));
-                gradient.addColorStop(1, Qt.rgba(color.r, color.g, color.b, strength * 0.1));
-                ctx.fillStyle = gradient;
+                ctx.fillStyle = Qt.rgba(color.r, color.g, color.b, strength);
                 ctx.fill();
             }
 

@@ -11,8 +11,10 @@ import Kleaner
 Controls.Button {
     id: root
 
-    // Spins the button icon while an action is running.
+    // Replaces the icon with a Kirigami busy indicator while an action runs.
     property bool spinning: false
+    // Highlighted buttons turn red instead of blue for destructive actions.
+    property bool destructive: false
 
     implicitHeight: Design.controlHeight
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset,
@@ -26,12 +28,19 @@ Controls.Button {
     icon.width: 16
     icon.height: 16
 
+    readonly property color highlightColor: root.destructive ? Design.negative : Design.accent
+    // Tonal primary button: a tinted surface instead of a fully saturated fill,
+    // which is too bright against the dark window.
+    readonly property color highlightBase: Design.alpha(root.highlightColor, 0.16)
+    readonly property color highlightHover: Design.alpha(root.highlightColor, 0.24)
+    readonly property color highlightPressed: Design.alpha(root.highlightColor, 0.32)
+
     readonly property color foregroundColor: {
         if (!root.enabled) {
             return Design.textFaint;
         }
         if (root.highlighted) {
-            return Design.accentText;
+            return root.highlightColor;
         }
         if (root.flat) {
             return root.hovered || root.down ? Design.accent : Design.textMuted;
@@ -42,9 +51,9 @@ Controls.Button {
     readonly property color backgroundColor: {
         if (root.highlighted) {
             if (!root.enabled) {
-                return Design.alpha(Design.accent, 0.25);
+                return Design.alpha(root.highlightColor, 0.08);
             }
-            return root.down ? Design.accentPressed : root.hovered ? Design.accentHover : Design.accent;
+            return root.down ? root.highlightPressed : root.hovered ? root.highlightHover : root.highlightBase;
         }
         if (root.flat) {
             return root.down ? Design.alpha(Design.accent, 0.22)
@@ -84,23 +93,27 @@ Controls.Button {
             width: Math.min(contentRow.implicitWidth, parent.width)
             spacing: root.spacing
 
-            Kirigami.Icon {
-                id: buttonIcon
-
+            AppBusyIndicator {
                 Layout.alignment: Qt.AlignVCenter
-                visible: root.display !== Controls.AbstractButton.TextOnly && root.icon.name.length > 0
+                visible: root.spinning
+                         && root.display !== Controls.AbstractButton.TextOnly
+                         && root.icon.name.length > 0
+                implicitWidth: root.icon.width
+                implicitHeight: root.icon.height
+                color: root.foregroundColor
+                running: root.spinning && root.visible
+            }
+
+            Kirigami.Icon {
+                Layout.alignment: Qt.AlignVCenter
+                visible: !root.spinning
+                         && root.display !== Controls.AbstractButton.TextOnly
+                         && root.icon.name.length > 0
                 implicitWidth: root.icon.width
                 implicitHeight: root.icon.height
                 source: root.icon.name
                 color: root.foregroundColor
-
-                RotationAnimator on rotation {
-                    from: 0
-                    to: 360
-                    duration: 900
-                    loops: Animation.Infinite
-                    running: root.spinning && root.visible
-                }
+                smooth: true
             }
 
             Controls.Label {
@@ -121,10 +134,10 @@ Controls.Button {
         border.color: root.borderColor
 
         Behavior on color {
-            ColorAnimation { duration: 100 }
+            ColorAnimation { duration: Design.durationFast }
         }
         Behavior on border.color {
-            ColorAnimation { duration: 100 }
+            ColorAnimation { duration: Design.durationFast }
         }
     }
 

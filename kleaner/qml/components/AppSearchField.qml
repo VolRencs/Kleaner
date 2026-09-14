@@ -7,6 +7,10 @@ import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 import Kleaner
 
+// Search field with the Kleaner look. It keeps a plain TextField base instead
+// of Kirigami.ActionTextField so the custom background and clear action stay
+// pixel-identical, but adopts the same semantics as Kirigami.SearchField:
+// Ctrl+F focus, a clear action, search input hints and the search enter key.
 Controls.TextField {
     id: root
 
@@ -19,6 +23,11 @@ Controls.TextField {
     selectedTextColor: Design.accentText
     font.pointSize: Design.baseFontSize
 
+    inputMethodHints: Qt.ImhNoPredictiveText
+    EnterKey.type: Qt.EnterKeySearch
+    Accessible.searchEdit: true
+    Accessible.name: placeholderText
+
     background: Rectangle {
         radius: Design.radiusSmall
         color: Design.surface
@@ -28,7 +37,7 @@ Controls.TextField {
                                                       : Design.border
 
         Behavior on border.color {
-            ColorAnimation { duration: 120 }
+            ColorAnimation { duration: Design.durationNormal }
         }
     }
 
@@ -36,8 +45,8 @@ Controls.TextField {
         anchors.left: parent.left
         anchors.leftMargin: 12
         anchors.verticalCenter: parent.verticalCenter
-        width: 16
-        height: 16
+        width: Design.iconMedium
+        height: Design.iconMedium
         source: "search"
         color: root.activeFocus ? Design.accent : Design.textFaint
     }
@@ -58,6 +67,15 @@ Controls.TextField {
         onClicked: {
             root.text = "";
             root.forceActiveFocus();
+        }
+    }
+
+    Shortcut {
+        sequences: [StandardKey.Find]
+        enabled: root.visible && root.Window.active
+        onActivated: {
+            root.forceActiveFocus();
+            root.selectAll();
         }
     }
 }

@@ -10,8 +10,10 @@ import Kleaner
 
 pragma ComponentBehavior: Bound
 
-Item {
+Kirigami.Page {
     id: page
+
+    padding: Design.pagePadding
 
     onVisibleChanged: {
         if (visible) {
@@ -21,25 +23,25 @@ Item {
 
     Component.onCompleted: Services.reload()
 
+    function toggleSort(sortBy) {
+        if (Services.sortBy === sortBy) {
+            Services.reverse = !Services.reverse;
+        } else {
+            Services.sortBy = sortBy;
+            Services.reverse = false;
+        }
+    }
+
     Connections {
         target: Services
 
         function onError(message) {
-            inlineMessage.text = message;
-            inlineMessage.visible = true;
-            hideMessageTimer.restart();
+            inlineMessage.showError(message);
         }
-    }
-
-    Timer {
-        id: hideMessageTimer
-        interval: 5000
-        onTriggered: inlineMessage.visible = false
     }
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Design.pagePadding
         spacing: Design.space16
 
         PageHeader {
@@ -55,11 +57,9 @@ Item {
             }
         }
 
-        Kirigami.InlineMessage {
+        AppInlineMessage {
             id: inlineMessage
             Layout.fillWidth: true
-            visible: false
-            type: Kirigami.MessageType.Error
         }
 
         Kirigami.InlineMessage {
@@ -112,14 +112,7 @@ Item {
                         text: qsTr("Service")
                         sorted: Services.sortBy === Services.SortName
                         descending: Services.reverse
-                        onClicked: {
-                            if (Services.sortBy === Services.SortName) {
-                                Services.reverse = !Services.reverse;
-                            } else {
-                                Services.sortBy = Services.SortName;
-                                Services.reverse = false;
-                            }
-                        }
+                        onClicked: page.toggleSort(Services.SortName)
                     }
 
                     SortHeader {
@@ -127,14 +120,7 @@ Item {
                         text: qsTr("State")
                         sorted: Services.sortBy === Services.SortState
                         descending: Services.reverse
-                        onClicked: {
-                            if (Services.sortBy === Services.SortState) {
-                                Services.reverse = !Services.reverse;
-                            } else {
-                                Services.sortBy = Services.SortState;
-                                Services.reverse = false;
-                            }
-                        }
+                        onClicked: page.toggleSort(Services.SortState)
                     }
 
                     SortHeader {
@@ -142,14 +128,7 @@ Item {
                         text: qsTr("Autostart")
                         sorted: Services.sortBy === Services.SortStartup
                         descending: Services.reverse
-                        onClicked: {
-                            if (Services.sortBy === Services.SortStartup) {
-                                Services.reverse = !Services.reverse;
-                            } else {
-                                Services.sortBy = Services.SortStartup;
-                                Services.reverse = false;
-                            }
-                        }
+                        onClicked: page.toggleSort(Services.SortStartup)
                     }
 
                     Controls.Label {
@@ -162,20 +141,28 @@ Item {
                     }
                 }
 
-                Rectangle {
+                AppSeparator {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 1
-                    color: Design.border
                 }
 
-                Controls.Label {
+                Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     visible: serviceList.count === 0
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: qsTr("No services found.")
-                    color: Design.textMuted
+
+                    Kirigami.PlaceholderMessage {
+                        anchors.centerIn: parent
+                        width: Math.min(implicitWidth, parent.width - Design.space20 * 2)
+                        icon.name: "preferences-system-services"
+                        text: Services.available ? qsTr("No services found")
+                                                 : qsTr("systemd is not available")
+                        explanation: Services.available
+                                     ? (Services.filter.length > 0
+                                        ? qsTr("Try a different search term.")
+                                        : qsTr("No systemd units were reported by the system."))
+                                     : qsTr("This system does not run systemd.")
+                    }
                 }
 
                 ListView {
@@ -201,7 +188,7 @@ Item {
                         required property string activeState
 
                         width: serviceList.width
-                        height: 60
+                        height: Design.rowHeightComfortable
                         leftPadding: Design.space16
                         rightPadding: Design.space16
                         topPadding: 0
@@ -221,7 +208,7 @@ Item {
                                 color: delegate.hovered ? Design.surfaceHover : Design.surfaceHoverClear
 
                                 Behavior on color {
-                                    ColorAnimation { duration: 120 }
+                                    ColorAnimation { duration: Design.durationNormal }
                                 }
                             }
                         }
@@ -287,9 +274,18 @@ Item {
                                 implicitHeight: 32
 
                                 AppSwitch {
+                                    id: autostartSwitch
+
                                     anchors.centerIn: parent
                                     checked: delegate.autostart
                                     onClicked: Services.setEnabled(delegate.index, checked)
+
+                                    Binding {
+                                        target: autostartSwitch
+                                        property: "checked"
+                                        value: delegate.autostart
+                                        restoreMode: Binding.RestoreBindingOrValue
+                                    }
                                 }
                             }
 

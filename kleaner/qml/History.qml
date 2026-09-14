@@ -15,6 +15,10 @@ QtObject {
 
     readonly property int maximumHistory: 60
 
+    // Sampling is only needed while the charts are on screen. The Resources
+    // page toggles this so the sampler does not run in the background.
+    property bool active: false
+
     property var cpuUsage: []
     property var cpuCores: []
     property var load1: []
@@ -66,7 +70,7 @@ QtObject {
 
     readonly property Timer sampler: Timer {
         interval: 1000
-        running: true
+        running: history.active
         repeat: true
         triggeredOnStart: true
 

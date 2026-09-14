@@ -10,8 +10,8 @@ import Kleaner
 
 pragma ComponentBehavior: Bound
 
-Item {
-    id: page
+Kirigami.Page {
+    padding: Design.pagePadding
 
     onVisibleChanged: {
         if (visible) {
@@ -25,21 +25,12 @@ Item {
         target: StartupApps
 
         function onError(message) {
-            inlineMessage.text = message;
-            inlineMessage.visible = true;
-            hideMessageTimer.restart();
+            inlineMessage.showError(message);
         }
-    }
-
-    Timer {
-        id: hideMessageTimer
-        interval: 5000
-        onTriggered: inlineMessage.visible = false
     }
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Design.pagePadding
         spacing: Design.space16
 
         PageHeader {
@@ -56,6 +47,7 @@ Item {
             AppButton {
                 text: qsTr("Add")
                 icon.name: "list-add"
+                highlighted: true
                 onClicked: {
                     nameField.text = "";
                     execField.text = "";
@@ -76,11 +68,9 @@ Item {
             }
         }
 
-        Kirigami.InlineMessage {
+        AppInlineMessage {
             id: inlineMessage
             Layout.fillWidth: true
-            visible: false
-            type: Kirigami.MessageType.Error
         }
 
         AppSearchField {
@@ -96,12 +86,15 @@ Item {
             padding: 0
 
             contentItem: Item {
-                Controls.Label {
+                Kirigami.PlaceholderMessage {
                     anchors.centerIn: parent
+                    width: Math.min(implicitWidth, parent.width - Design.space20 * 2)
                     visible: startupList.count === 0
-                    horizontalAlignment: Text.AlignHCenter
-                    text: qsTr("No startup applications found.")
-                    color: Design.textMuted
+                    icon.name: "system-run"
+                    text: qsTr("No startup applications found")
+                    explanation: StartupApps.filter.length > 0
+                                 ? qsTr("Try a different search term.")
+                                 : qsTr("Applications that launch on login will appear here.")
                 }
 
                 ListView {
@@ -127,7 +120,7 @@ Item {
                         required property bool system
 
                         width: startupList.width
-                        height: 64
+                        height: Design.rowHeightLarge
                         leftPadding: Design.space16
                         rightPadding: Design.space16
                         topPadding: 0
@@ -147,7 +140,7 @@ Item {
                                 color: delegate.hovered ? Design.surfaceHover : Design.surfaceHoverClear
 
                                 Behavior on color {
-                                    ColorAnimation { duration: 120 }
+                                    ColorAnimation { duration: Design.durationNormal }
                                 }
                             }
                         }
@@ -164,8 +157,8 @@ Item {
 
                                 Kirigami.Icon {
                                     anchors.centerIn: parent
-                                    width: 22
-                                    height: 22
+                                    width: Design.iconXLarge
+                                    height: Design.iconXLarge
                                     source: delegate.iconName.length > 0 ? delegate.iconName : "application-x-executable"
                                 }
                             }
@@ -203,9 +196,18 @@ Item {
                                 implicitHeight: 32
 
                                 AppSwitch {
+                                    id: autostartSwitch
+
                                     anchors.centerIn: parent
                                     checked: delegate.autostart
                                     onClicked: StartupApps.setEnabled(delegate.index, checked)
+
+                                    Binding {
+                                        target: autostartSwitch
+                                        property: "checked"
+                                        value: delegate.autostart
+                                        restoreMode: Binding.RestoreBindingOrValue
+                                    }
                                 }
                             }
 
@@ -231,18 +233,37 @@ Item {
                                 display: Controls.AbstractButton.IconOnly
                                 icon.name: "edit-delete"
                                 text: qsTr("Remove")
-                                onClicked: StartupApps.remove(delegate.index)
+                                onClicked: {
+                                    removeDialog.pendingIndex = delegate.index;
+                                    removeDialog.pendingName = delegate.name;
+                                    removeDialog.open();
+                                }
                             }
 
                             Item {
+                                // Reserve the same space as the two row actions so
+                                // the switch keeps a single column.
                                 visible: delegate.system
-                                Layout.preferredWidth: 80
+                                Layout.preferredWidth: 2 * 40 + Design.space12
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    ConfirmDialog {
+        id: removeDialog
+
+        property int pendingIndex: -1
+        property string pendingName
+
+        title: qsTr("Remove Startup App")
+        message: qsTr("Remove “%1” from the list of startup applications?").arg(pendingName)
+        confirmText: qsTr("Remove")
+        destructive: true
+        onConfirmed: StartupApps.remove(pendingIndex)
     }
 
     AppDialog {
@@ -252,57 +273,36 @@ Item {
 
         title: editingRow >= 0 ? qsTr("Edit Startup App") : qsTr("Add Startup App")
 
-        contentItem: ColumnLayout {
-            spacing: Design.space8
+        onOpened: nameField.forceActiveFocus()
 
-            Controls.Label {
-                text: qsTr("Name")
-                color: Design.textMuted
-                font.pointSize: Design.smallFontSize
-            }
+        contentItem: Kirigami.FormLayout {
+            wideMode: true
 
             AppTextField {
                 id: nameField
                 Layout.fillWidth: true
+                Kirigami.FormData.label: qsTr("Name")
                 placeholderText: qsTr("Name")
-            }
-
-            Controls.Label {
-                Layout.topMargin: Design.space4
-                text: qsTr("Command")
-                color: Design.textMuted
-                font.pointSize: Design.smallFontSize
             }
 
             AppTextField {
                 id: execField
                 Layout.fillWidth: true
+                Kirigami.FormData.label: qsTr("Command")
                 placeholderText: qsTr("Command")
-            }
-
-            Controls.Label {
-                Layout.topMargin: Design.space4
-                text: qsTr("Comment")
-                color: Design.textMuted
-                font.pointSize: Design.smallFontSize
             }
 
             AppTextField {
                 id: commentField
                 Layout.fillWidth: true
+                Kirigami.FormData.label: qsTr("Comment")
                 placeholderText: qsTr("Comment")
-            }
-
-            Controls.Label {
-                Layout.topMargin: Design.space4
-                text: qsTr("Icon name")
-                color: Design.textMuted
-                font.pointSize: Design.smallFontSize
             }
 
             AppTextField {
                 id: iconField
                 Layout.fillWidth: true
+                Kirigami.FormData.label: qsTr("Icon name")
                 placeholderText: qsTr("Icon name")
             }
         }

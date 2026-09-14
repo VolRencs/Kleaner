@@ -10,10 +10,14 @@ import Kleaner
 
 pragma ComponentBehavior: Bound
 
-Item {
+Kirigami.Page {
     id: page
 
+    padding: Design.pagePadding
+
     property int selectedPid: -1
+
+    readonly property bool compactToolbar: width < 900
 
     onVisibleChanged: {
         Processes.paused = !visible;
@@ -64,9 +68,7 @@ Item {
         target: Processes
 
         function onError(message) {
-            inlineMessage.text = message;
-            inlineMessage.visible = true;
-            hideMessageTimer.restart();
+            inlineMessage.showError(message);
         }
 
         function onLoadingChanged() {
@@ -76,15 +78,8 @@ Item {
         }
     }
 
-    Timer {
-        id: hideMessageTimer
-        interval: 5000
-        onTriggered: inlineMessage.visible = false
-    }
-
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Design.pagePadding
         spacing: Design.space16
 
         PageHeader {
@@ -99,11 +94,9 @@ Item {
             }
         }
 
-        Kirigami.InlineMessage {
+        AppInlineMessage {
             id: inlineMessage
             Layout.fillWidth: true
-            visible: false
-            type: Kirigami.MessageType.Error
         }
 
         RowLayout {
@@ -120,15 +113,24 @@ Item {
             AppButton {
                 text: qsTr("End Process")
                 icon.name: "process-stop"
+                display: page.compactToolbar ? Controls.AbstractButton.IconOnly : Controls.AbstractButton.TextBesideIcon
                 enabled: page.selectedPid > 1
-                onClicked: Processes.killPid(page.selectedPid, false)
+                onClicked: {
+                    killDialog.pendingForce = false;
+                    killDialog.open();
+                }
             }
 
             AppButton {
                 text: qsTr("Force Kill")
-                icon.name: "application-exit"
+                icon.name: "edit-delete"
+                destructive: true
+                display: page.compactToolbar ? Controls.AbstractButton.IconOnly : Controls.AbstractButton.TextBesideIcon
                 enabled: page.selectedPid > 1
-                onClicked: Processes.killPid(page.selectedPid, true)
+                onClicked: {
+                    killDialog.pendingForce = true;
+                    killDialog.open();
+                }
             }
 
             Item {
@@ -136,7 +138,7 @@ Item {
             }
 
             Controls.Label {
-                visible: page.selectedPid > 1
+                visible: page.selectedPid > 1 && !page.compactToolbar
                 text: qsTr("PID %1 selected").arg(page.selectedPid)
                 color: Design.textMuted
                 font.pointSize: Design.smallFontSize
@@ -239,20 +241,25 @@ Item {
                     }
                 }
 
-                Rectangle {
+                AppSeparator {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 1
-                    color: Design.border
                 }
 
-                Controls.Label {
+                Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     visible: processList.count === 0
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: qsTr("No processes found.")
-                    color: Design.textMuted
+
+                    Kirigami.PlaceholderMessage {
+                        anchors.centerIn: parent
+                        width: Math.min(implicitWidth, parent.width - Design.space20 * 2)
+                        icon.name: "view-list-details"
+                        text: qsTr("No processes found")
+                        explanation: Processes.filter.length > 0
+                                     ? qsTr("Try a different search term.")
+                                     : qsTr("No running processes were reported by the system.")
+                    }
                 }
 
                 ListView {
@@ -280,7 +287,7 @@ Item {
                         required property string cmd
 
                         width: processList.width
-                        height: 42
+                        height: Design.rowHeightCompact
                         leftPadding: Design.space16
                         rightPadding: Design.space16
                         topPadding: 0
@@ -304,7 +311,7 @@ Item {
                                                                                : Design.surfaceHoverClear
 
                                 Behavior on color {
-                                    ColorAnimation { duration: 120 }
+                                    ColorAnimation { duration: Design.durationNormal }
                                 }
                             }
                         }
@@ -336,14 +343,14 @@ Item {
                             Controls.Label {
                                 Layout.preferredWidth: processList.width * 0.07
                                 horizontalAlignment: Text.AlignRight
-                                text: qsTr("%1%").arg(delegate.cpu.toFixed(1))
+                                text: qsTr("%1%").arg(Format.number(delegate.cpu, 1))
                                 color: delegate.cpu > 80 ? Design.negative : delegate.cpu > 40 ? Design.warning : Design.text
                             }
 
                             Controls.Label {
                                 Layout.preferredWidth: processList.width * 0.08
                                 horizontalAlignment: Text.AlignRight
-                                text: qsTr("%1%").arg(delegate.mem.toFixed(1))
+                                text: qsTr("%1%").arg(Format.number(delegate.mem, 1))
                                 color: delegate.mem > 80 ? Design.negative : delegate.mem > 40 ? Design.warning : Design.text
                             }
 
@@ -373,5 +380,19 @@ Item {
                 }
             }
         }
+    }
+
+    ConfirmDialog {
+        id: killDialog
+
+        property bool pendingForce: false
+
+        title: pendingForce ? qsTr("Force Kill Process") : qsTr("End Process")
+        message: pendingForce
+                 ? qsTr("Force kill process %1? Unsaved data in the application will be lost.").arg(page.selectedPid)
+                 : qsTr("End process %1? Unsaved data in the application may be lost.").arg(page.selectedPid)
+        confirmText: pendingForce ? qsTr("Force Kill") : qsTr("End Process")
+        destructive: pendingForce
+        onConfirmed: Processes.killPid(page.selectedPid, pendingForce)
     }
 }

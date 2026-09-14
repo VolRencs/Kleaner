@@ -4,195 +4,190 @@
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
+
+import org.kde.kirigami as Kirigami
 import Kleaner
 
-Item {
-    id: page
+Kirigami.ScrollablePage {
+    padding: Design.pagePadding
 
-    AppScrollView {
-        id: scroll
+    ColumnLayout {
+        width: parent.width
+        spacing: Design.space16
 
-        anchors.fill: parent
-        anchors.margins: Design.pagePadding
+        PageHeader {
+            Layout.fillWidth: true
+            Layout.bottomMargin: Design.space4
+            title: qsTr("Settings")
+            subtitle: qsTr("Configure how Kleaner starts and behaves")
+        }
 
-        ColumnLayout {
-            width: scroll.availableWidth
-            spacing: Design.space16
+        AppCard {
+            Layout.fillWidth: true
 
-            PageHeader {
-                Layout.fillWidth: true
-                Layout.bottomMargin: Design.space4
-                title: qsTr("Settings")
-                subtitle: qsTr("Configure how Kleaner starts and behaves")
-            }
+            contentItem: ColumnLayout {
+                spacing: Design.space12
 
-            AppCard {
-                Layout.fillWidth: true
+                Controls.Label {
+                    Layout.fillWidth: true
+                    text: qsTr("Startup")
+                    color: Design.text
+                    font.weight: Font.DemiBold
+                }
 
-                contentItem: ColumnLayout {
-                    spacing: Design.space12
+                SettingRow {
+                    Layout.fillWidth: true
+                    text: qsTr("Page shown on startup")
+                    description: qsTr("Which page Kleaner opens when launched.")
 
-                    Controls.Label {
-                        Layout.fillWidth: true
-                        text: qsTr("Startup")
-                        color: Design.text
-                        font.weight: Font.DemiBold
-                    }
+                    AppComboBox {
+                        id: startPageCombo
+                        Layout.preferredWidth: 220
+                        textRole: "text"
 
-                    SettingRow {
-                        Layout.fillWidth: true
-                        text: qsTr("Page shown on startup")
-                        description: qsTr("Which page Kleaner opens when launched.")
+                        property var options: [
+                            { text: qsTr("Dashboard"), value: "dashboard" },
+                            { text: qsTr("Resources"), value: "resources" },
+                            { text: qsTr("Processes"), value: "processes" },
+                            { text: qsTr("Services"), value: "services" },
+                            { text: qsTr("Startup Apps"), value: "startup" },
+                            { text: qsTr("System Cleaner"), value: "cleaner" },
+                            { text: qsTr("Hosts"), value: "hosts" }
+                        ]
 
-                        AppComboBox {
-                            id: startPageCombo
-                            Layout.preferredWidth: 220
-                            textRole: "text"
+                        model: options
+                        onActivated: Settings.startPage = options[currentIndex].value
 
-                            // See closeBehaviorCombo: the list is a JavaScript array,
-                            // so the current entry has to be matched by hand.
-                            property var options: [
-                                { text: qsTr("Dashboard"), value: "dashboard" },
-                                { text: qsTr("Resources"), value: "resources" },
-                                { text: qsTr("Processes"), value: "processes" },
-                                { text: qsTr("Services"), value: "services" },
-                                { text: qsTr("Startup Apps"), value: "startup" },
-                                { text: qsTr("System Cleaner"), value: "cleaner" },
-                                { text: qsTr("Hosts"), value: "hosts" }
-                            ]
-
-                            model: options
-                            currentIndex: {
-                                for (let i = 0; i < options.length; ++i) {
-                                    if (options[i].value === Settings.startPage) {
-                                        return i;
-                                    }
-                                }
-                                return 0;
-                            }
-                            onActivated: Settings.startPage = options[currentIndex].value
+                        // A plain currentIndex binding would be destroyed by
+                        // the combo box writing to it on activation.
+                        Binding {
+                            target: startPageCombo
+                            property: "currentIndex"
+                            value: Math.max(0, startPageCombo.indexOfValue(Settings.startPage))
+                            restoreMode: Binding.RestoreBindingOrValue
                         }
                     }
                 }
             }
+        }
 
-            AppCard {
-                Layout.fillWidth: true
+        AppCard {
+            Layout.fillWidth: true
 
-                contentItem: ColumnLayout {
-                    spacing: Design.space12
+            contentItem: ColumnLayout {
+                spacing: Design.space12
 
-                    Controls.Label {
-                        Layout.fillWidth: true
-                        text: qsTr("Window")
-                        color: Design.text
-                        font.weight: Font.DemiBold
-                    }
+                Controls.Label {
+                    Layout.fillWidth: true
+                    text: qsTr("Window")
+                    color: Design.text
+                    font.weight: Font.DemiBold
+                }
 
-                    SettingRow {
-                        Layout.fillWidth: true
-                        text: qsTr("When closing the window")
-                        description: Tray.available && Settings.useTray
-                                     ? qsTr("Choose whether Kleaner keeps running in the system tray.")
-                                     : qsTr("Choose whether Kleaner asks, minimizes to the tray or quits.")
+                SettingRow {
+                    Layout.fillWidth: true
+                    text: qsTr("When closing the window")
+                    description: Tray.available && Settings.useTray
+                    ? qsTr("Choose whether Kleaner keeps running in the system tray.")
+                    : qsTr("Choose whether Kleaner asks, minimizes to the tray or quits.")
 
-                        AppComboBox {
-                            id: closeBehaviorCombo
-                            Layout.preferredWidth: 220
-                            textRole: "text"
+                    AppComboBox {
+                        id: closeBehaviorCombo
+                        Layout.preferredWidth: 220
+                        textRole: "text"
 
-                            // Built from JavaScript, so valueRole/indexOfValue cannot be
-                            // used here: the item values come back as JS values and never
-                            // compare equal. Resolve the index manually instead.
-                            property var options: {
-                                const items = [
-                                    { text: qsTr("Ask every time"), value: "ask" },
-                                    { text: qsTr("Quit"), value: "quit" }
-                                ];
-                                if (Tray.available) {
-                                    items.splice(1, 0, { text: qsTr("Keep running in the tray"), value: "tray" });
-                                }
-                                return items;
+                        property var options: {
+                            const items = [
+                                { text: qsTr("Ask every time"), value: "ask" },
+                                { text: qsTr("Quit"), value: "quit" }
+                            ];
+                            if (Tray.available) {
+                                items.splice(1, 0, { text: qsTr("Keep running in the tray"), value: "tray" });
                             }
+                            return items;
+                        }
 
-                            model: options
-                            currentIndex: {
-                                for (let i = 0; i < options.length; ++i) {
-                                    if (options[i].value === Settings.closeBehavior) {
-                                        return i;
-                                    }
-                                }
-                                return 0;
-                            }
-                            onActivated: Settings.closeBehavior = options[currentIndex].value
+                        model: options
+                        onActivated: Settings.closeBehavior = options[currentIndex].value
+
+                        Binding {
+                            target: closeBehaviorCombo
+                            property: "currentIndex"
+                            value: Math.max(0, closeBehaviorCombo.indexOfValue(Settings.closeBehavior))
+                            restoreMode: Binding.RestoreBindingOrValue
                         }
                     }
+                }
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        visible: Tray.available
-                        Layout.preferredHeight: 1
-                        color: Design.border
-                    }
+                AppSeparator {
+                    Layout.fillWidth: true
+                    visible: Tray.available
+                    Layout.preferredHeight: 1
+                }
 
-                    SettingRow {
-                        Layout.fillWidth: true
-                        visible: Tray.available
-                        text: qsTr("System tray")
-                        description: qsTr("Show an icon in the system tray while Kleaner is running.")
+                SettingRow {
+                    Layout.fillWidth: true
+                    visible: Tray.available
+                    text: qsTr("System tray")
+                    description: qsTr("Show an icon in the system tray while Kleaner is running.")
 
-                        AppSwitch {
-                            checked: Settings.useTray
-                            onClicked: Settings.useTray = checked
+                    AppSwitch {
+                        id: traySwitch
+
+                        checked: Settings.useTray
+                        onClicked: Settings.useTray = checked
+
+                        Binding {
+                            target: traySwitch
+                            property: "checked"
+                            value: Settings.useTray
+                            restoreMode: Binding.RestoreBindingOrValue
                         }
                     }
                 }
             }
+        }
 
-            AppCard {
-                Layout.fillWidth: true
+        AppCard {
+            Layout.fillWidth: true
 
-                contentItem: ColumnLayout {
-                    spacing: Design.space12
+            contentItem: ColumnLayout {
+                spacing: Design.space12
 
-                    Controls.Label {
-                        Layout.fillWidth: true
-                        text: qsTr("Language")
-                        color: Design.text
-                        font.weight: Font.DemiBold
-                    }
+                Controls.Label {
+                    Layout.fillWidth: true
+                    text: qsTr("Language")
+                    color: Design.text
+                    font.weight: Font.DemiBold
+                }
 
-                    SettingRow {
-                        Layout.fillWidth: true
-                        text: qsTr("Interface language")
-                        description: qsTr("Changes the language of the application interface.")
+                SettingRow {
+                    Layout.fillWidth: true
+                    text: qsTr("Interface language")
+                    description: qsTr("Changes the language of the application interface.")
 
-                        AppComboBox {
-                            id: languageCombo
-                            Layout.preferredWidth: 220
-                            textRole: "text"
+                    AppComboBox {
+                        id: languageCombo
+                        Layout.preferredWidth: 220
+                        textRole: "text"
 
-                            // See closeBehaviorCombo: the list is assembled in JavaScript,
-                            // so the current entry has to be matched by hand.
-                            property var options: {
-                                const items = [{ text: qsTr("System language"), value: "" }];
-                                const languages = Settings.availableLanguages();
-                                for (let i = 0; i < languages.length; ++i) {
-                                    items.push({ text: languages[i].name, value: languages[i].code });
-                                }
-                                return items;
+                        property var options: {
+                            const items = [{ text: qsTr("System language"), value: "" }];
+                            const languages = Settings.availableLanguages();
+                            for (let i = 0; i < languages.length; ++i) {
+                                items.push({ text: languages[i].name, value: languages[i].code });
                             }
+                            return items;
+                        }
 
-                            model: options
-                            currentIndex: {
-                                for (let i = 0; i < options.length; ++i) {
-                                    if (options[i].value === Settings.language) {
-                                        return i;
-                                    }
-                                }
-                                return 0;
-                            }
-                            onActivated: Settings.language = options[currentIndex].value
+                        model: options
+                        onActivated: Settings.language = options[currentIndex].value
+
+                        Binding {
+                            target: languageCombo
+                            property: "currentIndex"
+                            value: Math.max(0, languageCombo.indexOfValue(Settings.language))
+                            restoreMode: Binding.RestoreBindingOrValue
                         }
                     }
                 }

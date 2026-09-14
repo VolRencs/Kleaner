@@ -26,8 +26,9 @@ The project targets **Arch Linux** only.
 
 - **Dashboard** — live CPU, memory and disk gauges, system information, storage
   usage and live metrics.
-- **Resources** — rolling 60-second history charts for CPU usage (total and
-  per core), load average, memory/swap, disk I/O and network throughput.
+- **Resources** — rolling 60-second history charts for CPU usage (per core,
+  with the total load in the header), load average, memory/swap, disk I/O and
+  network throughput. History is only sampled while the charts are visible.
 - **Processes** — sortable and filterable process list (CPU, memory, RSS,
   state, …) with terminate and force-kill actions. The list updates every two
   seconds without stealing your scroll position.
@@ -50,7 +51,7 @@ The project targets **Arch Linux** only.
 - Arch Linux with systemd
 - Wayland session (Plasma or another compositor)
 - A polkit authentication agent
-- `qqc2-desktop-style` and an icon theme (`breeze-icons` recommended)
+- An icon theme (`breeze-icons` recommended)
 
 ## Installation
 
@@ -72,7 +73,7 @@ sudo pacman -S --needed \
   base-devel cmake ninja extra-cmake-modules \
   qt6-base qt6-declarative qt6-svg qt6-tools \
   kirigami kcoreaddons kconfig kdbusaddons \
-  kstatusnotifieritem kio kauth qqc2-desktop-style breeze-icons
+  kstatusnotifieritem kio kauth breeze-icons
 
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
 cmake --build build

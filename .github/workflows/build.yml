@@ -38,7 +38,7 @@ jobs:
             base-devel cmake ninja ccache clang extra-cmake-modules \
             qt6-base qt6-declarative qt6-svg qt6-tools \
             kirigami kcoreaddons kconfig kdbusaddons \
-            kstatusnotifieritem kio kauth qqc2-desktop-style breeze-icons \
+            kstatusnotifieritem kio kauth breeze-icons \
             appstream desktop-file-utils
 
       - name: Configure
@@ -102,7 +102,7 @@ jobs:
             base-devel cmake ninja extra-cmake-modules \
             qt6-base qt6-declarative qt6-svg qt6-tools \
             kirigami kcoreaddons kconfig kdbusaddons \
-            kstatusnotifieritem kio kauth qqc2-desktop-style breeze-icons
+            kstatusnotifieritem kio kauth breeze-icons
 
       - name: Build Arch package
         run: |

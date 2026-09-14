@@ -17,6 +17,8 @@ class Settings : public QObject
     Q_PROPERTY(QString closeBehavior READ closeBehavior WRITE setCloseBehavior NOTIFY changed)
     Q_PROPERTY(bool useTray READ useTray WRITE setUseTray NOTIFY changed)
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged)
+    Q_PROPERTY(int windowWidth READ windowWidth WRITE setWindowWidth NOTIFY changed)
+    Q_PROPERTY(int windowHeight READ windowHeight WRITE setWindowHeight NOTIFY changed)
 
   public:
     explicit Settings(QObject *parent = nullptr);
@@ -32,6 +34,12 @@ class Settings : public QObject
 
     [[nodiscard]] QString language() const;
     void setLanguage(const QString &language);
+
+    [[nodiscard]] int windowWidth() const;
+    void setWindowWidth(int width);
+
+    [[nodiscard]] int windowHeight() const;
+    void setWindowHeight(int height);
 
     [[nodiscard]] Q_INVOKABLE QVariantList availableLanguages() const;
 

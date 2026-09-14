@@ -5,6 +5,8 @@
 
 #include <KFormat>
 
+#include <QLocale>
+
 Format::Format(QObject *parent) :
     QObject(parent)
 {
@@ -17,7 +19,12 @@ QString Format::bytes(qulonglong value) const
 
 QString Format::percent(double value, int decimals) const
 {
-    return QString::number(value, 'f', qBound(0, decimals, 4)) + QLatin1Char('%');
+    return QLocale().toString(value, 'f', qBound(0, decimals, 4)) + QLatin1Char('%');
+}
+
+QString Format::number(double value, int decimals) const
+{
+    return QLocale().toString(value, 'f', qBound(0, decimals, 4));
 }
 
 QString Format::duration(qulonglong seconds) const

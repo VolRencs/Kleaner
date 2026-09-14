@@ -99,12 +99,11 @@ int main(int argc, char *argv[])
     // instead of building the whole application state first.
     KDBusService dbusService(KDBusService::Unique);
 
-    const QString desktopStylePath = QLibraryInfo::path(QLibraryInfo::QmlImportsPath) + QStringLiteral("/org/kde/desktop");
-    if (QFileInfo::exists(desktopStylePath)) {
-        QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
-    } else {
-        QQuickStyle::setStyle(QStringLiteral("Basic"));
-    }
+    // Kleaner styles itself completely, so the Qt Quick Controls style is
+    // pinned instead of depending on the Qt installation layout or the
+    // platform style. This keeps the build-tree and installed binaries
+    // visually identical.
+    QQuickStyle::setStyle(QStringLiteral("Basic"));
 
     applyDarkPalette();
 

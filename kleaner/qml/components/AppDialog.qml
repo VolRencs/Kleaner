@@ -13,7 +13,9 @@ Controls.Dialog {
     padding: Design.space20
     spacing: Design.space12
 
-    width: Math.max(420, implicitWidth)
+    // Fixed width: binding it to implicitWidth makes wrapping content items
+    // feed their own width back into the dialog and produces a binding loop.
+    width: 420
     height: Math.max(140, implicitHeight)
 
     header: Controls.Label {

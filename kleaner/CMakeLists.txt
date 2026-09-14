@@ -44,21 +44,23 @@ qt_add_qml_module(kleaner
         qml/Design.qml
         qml/History.qml
         qml/components/AppButton.qml
+        qml/components/AppBusyIndicator.qml
         qml/components/AppCard.qml
         qml/components/AppCheckBox.qml
         qml/components/AppComboBox.qml
         qml/components/AppDialog.qml
         qml/components/AppDialogFooter.qml
         qml/components/AppScrollBar.qml
-        qml/components/AppScrollView.qml
         qml/components/AppSearchField.qml
-        qml/components/AppSpinner.qml
+        qml/components/AppSeparator.qml
         qml/components/AppSwitch.qml
         qml/components/AppTextField.qml
         qml/components/Badge.qml
         qml/components/ChartCard.qml
+        qml/components/ConfirmDialog.qml
         qml/components/Gauge.qml
         qml/components/InfoRow.qml
+        qml/components/AppInlineMessage.qml
         qml/components/NavItem.qml
         qml/components/PageHeader.qml
         qml/components/SettingRow.qml

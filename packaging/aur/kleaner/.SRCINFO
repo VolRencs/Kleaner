@@ -20,7 +20,6 @@ pkgbase = kleaner
 	depends = kstatusnotifieritem
 	depends = kio
 	depends = kauth
-	depends = qqc2-desktop-style
 	optdepends = breeze-icons: icon theme for the KDE desktop
 	conflicts = kleaner-git
 	options = !lto

@@ -6,7 +6,6 @@ pragma Singleton
 import QtQuick
 
 import org.kde.kirigami as Kirigami
-import Kleaner
 
 QtObject {
     id: design
@@ -39,7 +38,6 @@ QtObject {
     // Accents
     readonly property color accent: "#3daee9"
     readonly property color accentHover: "#5cbef1"
-    readonly property color accentPressed: "#2f93c9"
     readonly property color accentText: "#08131a"
     readonly property color accentSoft: design.alpha(design.accent, 0.16)
     // Transparent accent for animations: keeps the RGB channels stable so
@@ -77,7 +75,27 @@ QtObject {
     readonly property int sidebarWidth: 238
     readonly property int sidebarCompactWidth: 72
 
+    // Standard row heights for list delegates.
+    readonly property int rowHeightCompact: 42
+    readonly property int rowHeightTree: 46
+    readonly property int rowHeightNormal: 52
+    readonly property int rowHeightComfortable: 60
+    readonly property int rowHeightLarge: 64
+
+    // Icon sizes.
+    readonly property int iconMedium: 16
+    readonly property int iconLarge: 20
+    readonly property int iconXLarge: 22
+
+    // Motion. Kept in one place instead of scattering literals across the UI.
+    readonly property int durationFast: 100
+    readonly property int durationNormal: 120
+    readonly property int durationSlow: 140
+    readonly property int durationPage: 180
+    readonly property int durationGauge: 650
+
     // Typography
+    readonly property string fontFamily: Kirigami.Theme.defaultFont.family
     readonly property real baseFontSize: Kirigami.Theme.defaultFont.pointSize > 0
                                              ? Kirigami.Theme.defaultFont.pointSize
                                              : 10

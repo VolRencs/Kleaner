@@ -25,10 +25,11 @@ Item {
     Canvas {
         id: canvas
 
-        // Larger than the gauge itself so the glow is not clipped by the canvas bounds.
+        // Larger than the gauge itself so the glow is not clipped by the canvas
+        // bounds, but small enough to stay inside the surrounding card padding.
         anchors.centerIn: parent
-        width: root.width + root.thickness * 5
-        height: root.height + root.thickness * 5
+        width: root.width + root.thickness * 3
+        height: root.height + root.thickness * 3
 
         onWidthChanged: requestPaint()
         onHeightChanged: requestPaint()
@@ -83,7 +84,7 @@ Item {
 
     Behavior on progress {
         NumberAnimation {
-            duration: 650
+            duration: Design.durationGauge
             easing.type: Easing.OutCubic
         }
     }

@@ -18,6 +18,22 @@ Controls.ComboBox {
     rightPadding: 34
     font.pointSize: Design.baseFontSize
 
+    // Index of the first entry whose `value` property matches, or -1. Used to
+    // drive the current index from settings without breaking on user input.
+    function indexOfValue(value) {
+        const items = root.model;
+        if (items === undefined || items === null) {
+            return -1;
+        }
+        for (let i = 0; i < items.length; ++i) {
+            const item = items[i];
+            if (item !== null && item !== undefined && item.value === value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     contentItem: Controls.Label {
         text: root.displayText
         color: root.enabled ? Design.text : Design.textFaint
@@ -51,14 +67,13 @@ Controls.ComboBox {
                                                       : Design.border
 
         Behavior on border.color {
-            ColorAnimation { duration: 120 }
+            ColorAnimation { duration: Design.durationNormal }
         }
     }
 
     delegate: Controls.ItemDelegate {
         id: itemDelegate
 
-        required property var model
         required property int index
 
         // The popup pads its content, so the delegate must match the list
@@ -74,7 +89,17 @@ Controls.ComboBox {
         highlighted: root.highlightedIndex === index
 
         contentItem: Controls.Label {
-            text: root.textRole.length > 0 ? model[root.textRole] : modelData
+            text: {
+                const entries = root.model;
+                if (entries === undefined || entries === null) {
+                    return "";
+                }
+                const entry = entries[itemDelegate.index];
+                if (entry === undefined || entry === null) {
+                    return "";
+                }
+                return root.textRole.length > 0 ? entry[root.textRole] : entry;
+            }
             color: itemDelegate.highlighted ? Design.text : Design.textMuted
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -92,17 +117,27 @@ Controls.ComboBox {
                                                                        : Design.surfaceHoverClear
 
                 Behavior on color {
-                    ColorAnimation { duration: 120 }
+                    ColorAnimation { duration: Design.durationNormal }
                 }
             }
         }
     }
 
     popup: Controls.Popup {
-        y: root.height + 4
+        id: popup
+
+        readonly property real popupHeight: Math.min((contentItem ? contentItem.implicitHeight : 0) + padding * 2, root.Window.height - 40)
+        readonly property real sceneY: root.mapToItem(null, 0, 0).y
+        // The popup position is relative to the combo box. Flip it above when
+        // it would run past the bottom of the window and there is room on top;
+        // otherwise clamp the height so it always fits on screen.
+        readonly property bool openAbove: sceneY + root.height + 4 + popupHeight > root.Window.height
+                                          && sceneY - popupHeight - 4 >= 0
+
+        y: openAbove ? -popupHeight - 4 : root.height + 4
+        height: popupHeight
         width: root.width
         padding: 4
-        implicitHeight: Math.min(contentItem.implicitHeight + padding * 2, root.Window.height - 40)
         font: root.font
 
         background: Rectangle {
@@ -118,6 +153,8 @@ Controls.ComboBox {
             model: root.popup.visible ? root.delegateModel : null
             currentIndex: root.highlightedIndex
             boundsBehavior: Flickable.StopAtBounds
+
+            Controls.ScrollBar.vertical: AppScrollBar {}
         }
     }
 }

@@ -23,7 +23,7 @@ T.ScrollBar {
 
     // Only reserve space when there is something to scroll.
     visible: policy === T.ScrollBar.AlwaysOn || (size > 0.0 && size < 1.0)
-    opacity: active || pressed ? 1.0 : 0.55
+    opacity: root.pressed ? 1.0 : (root.active || root.hovered ? 0.75 : 0.45)
 
     background: null
 
@@ -31,16 +31,14 @@ T.ScrollBar {
         implicitWidth: 6
         implicitHeight: 6
         radius: Math.min(width, height) / 2
-        color: root.pressed ? Design.accent
-                            : root.hovered ? Design.borderStrong
-                                           : Design.border
+        color: root.pressed ? Design.accent : Design.textMuted
 
         Behavior on color {
-            ColorAnimation { duration: 120 }
+            ColorAnimation { duration: Design.durationNormal }
         }
     }
 
     Behavior on opacity {
-        NumberAnimation { duration: 150 }
+        NumberAnimation { duration: Design.durationSlow }
     }
 }

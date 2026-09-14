@@ -3,6 +3,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QLocale>
 #include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QtTest>
@@ -89,8 +90,11 @@ void CoreTest::formatBytesScalesUnits()
 void CoreTest::formatPercentRounds()
 {
     Format format;
-    QCOMPARE(format.percent(12.34, 1), QStringLiteral("12.3%"));
-    QCOMPARE(format.percent(100.0, 0), QStringLiteral("100%"));
+    // The formatter follows the current locale, so the expected text has to as
+    // well instead of hardcoding the C locale decimal separator.
+    QCOMPARE(format.percent(12.34, 1), QLocale().toString(12.34, 'f', 1) + QStringLiteral("%"));
+    QCOMPARE(format.percent(100.0, 0), QLocale().toString(100.0, 'f', 0) + QStringLiteral("%"));
+    QCOMPARE(format.number(12.34, 2), QLocale().toString(12.34, 'f', 2));
 }
 
 void CoreTest::formatDurationClampsHugeValues()

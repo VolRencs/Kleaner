@@ -10,14 +10,36 @@ import Kleaner
 
 pragma ComponentBehavior: Bound
 
-Item {
-    id: page
+Kirigami.Page {
+    padding: Design.pagePadding
 
     Component.onCompleted: Cleaner.scan()
 
+    Connections {
+        target: Cleaner
+
+        function onCleaningChanged() {
+            if (Cleaner.cleaning) {
+                statusMessage.show(qsTr("Cleaning…"), Kirigami.MessageType.Information, false);
+            }
+        }
+
+        function onLastResultChanged() {
+            if (Cleaner.cleaning) {
+                return;
+            }
+            if (Cleaner.lastError.length > 0) {
+                statusMessage.showError(Cleaner.lastError);
+            } else if (Cleaner.lastFreedBytes > 0 || Cleaner.lastRemovedCount > 0) {
+                statusMessage.showPositive(qsTr("Freed %1 · %2 items removed")
+                                           .arg(Format.bytes(Cleaner.lastFreedBytes))
+                                           .arg(Cleaner.lastRemovedCount));
+            }
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Design.pagePadding
         spacing: Design.space16
 
         PageHeader {
@@ -43,7 +65,7 @@ Item {
                         anchors.centerIn: parent
                         width: 26
                         height: 26
-                        source: Cleaner.scanning ? "search" : "edit-clear"
+                        source: Cleaner.scanning ? "search" : "edit-clear-all"
                         color: Design.accent
                     }
                 }
@@ -71,7 +93,7 @@ Item {
                     }
                 }
 
-                AppSpinner {
+                AppBusyIndicator {
                     Layout.alignment: Qt.AlignVCenter
                     running: Cleaner.scanning
                     visible: running
@@ -112,10 +134,10 @@ Item {
                 AppButton {
                     Layout.alignment: Qt.AlignVCenter
                     text: qsTr("Clean")
-                    icon.name: "edit-delete"
+                    icon.name: "edit-clear-all"
                     highlighted: true
                     enabled: !Cleaner.scanning && !Cleaner.cleaning && Cleaner.hasCheckedItems
-                    onClicked: Cleaner.clean()
+                    onClicked: cleanDialog.open()
                 }
             }
         }
@@ -126,12 +148,19 @@ Item {
             padding: 0
 
             contentItem: Item {
-                Controls.Label {
+                Kirigami.PlaceholderMessage {
                     anchors.centerIn: parent
+                    width: Math.min(implicitWidth, parent.width - Design.space20 * 2)
                     visible: cleanerList.count === 0 && !Cleaner.scanning
-                    horizontalAlignment: Text.AlignHCenter
-                    text: qsTr("Press Scan to look for removable files.")
-                    color: Design.textMuted
+                    icon.name: "edit-clear-all"
+                    text: qsTr("Nothing to clean yet")
+                    explanation: qsTr("Scan the system to look for caches, logs and other removable files.")
+
+                    helpfulAction: Kirigami.Action {
+                        text: qsTr("Scan")
+                        icon.name: "search"
+                        onTriggered: Cleaner.scan()
+                    }
                 }
 
                 ListView {
@@ -159,7 +188,7 @@ Item {
                         required property bool isCategory
 
                         width: cleanerList.width
-                        height: 46
+                        height: Design.rowHeightTree
                         leftPadding: Design.space16
                         rightPadding: Design.space16
                         topPadding: 0
@@ -179,7 +208,7 @@ Item {
                                 color: delegate.hovered ? Design.surfaceHover : Design.surfaceHoverClear
 
                                 Behavior on color {
-                                    ColorAnimation { duration: 120 }
+                                    ColorAnimation { duration: Design.durationNormal }
                                 }
                             }
                         }
@@ -210,12 +239,21 @@ Item {
                             }
 
                             AppCheckBox {
+                                id: cleanerCheck
+
                                 Layout.alignment: Qt.AlignVCenter
                                 tristate: delegate.isCategory
                                 checkState: delegate.checkState
                                 // With tristate the first click yields PartiallyChecked, so use
                                 // the state instead of `checked` to actually select the category.
                                 onClicked: Cleaner.setChecked(delegate.index, checkState !== Qt.Unchecked)
+
+                                Binding {
+                                    target: cleanerCheck
+                                    property: "checkState"
+                                    value: delegate.checkState
+                                    restoreMode: Binding.RestoreBindingOrValue
+                                }
                             }
 
                             Controls.Label {
@@ -246,37 +284,19 @@ Item {
             }
         }
 
-        RowLayout {
+        AppInlineMessage {
+            id: statusMessage
             Layout.fillWidth: true
-            spacing: Design.space8
-            visible: Cleaner.cleaning || Cleaner.lastError.length > 0
-                     || Cleaner.lastRemovedCount > 0 || Cleaner.lastFreedBytes > 0
-
-            Kirigami.Icon {
-                Layout.alignment: Qt.AlignVCenter
-                implicitWidth: 16
-                implicitHeight: 16
-                source: Cleaner.cleaning ? "edit-clear"
-                      : Cleaner.lastError.length > 0 ? "dialog-error"
-                                                     : "dialog-ok-apply"
-                color: Cleaner.lastError.length > 0 ? Design.negative : Design.positive
-            }
-
-            Controls.Label {
-                Layout.fillWidth: true
-                wrapMode: Text.WordWrap
-                color: Cleaner.lastError.length > 0 ? Design.negative : Design.textMuted
-                font.pointSize: Design.smallFontSize
-                text: {
-                    if (Cleaner.cleaning) {
-                        return qsTr("Cleaning…");
-                    }
-                    if (Cleaner.lastError.length > 0) {
-                        return Cleaner.lastError;
-                    }
-                    return qsTr("Freed %1 · %2 items removed").arg(Format.bytes(Cleaner.lastFreedBytes)).arg(Cleaner.lastRemovedCount);
-                }
-            }
         }
+    }
+
+    ConfirmDialog {
+        id: cleanDialog
+
+        title: qsTr("Clean Selected Files")
+        message: qsTr("Remove the selected files (%1)? This cannot be undone.").arg(Format.bytes(Cleaner.checkedSize))
+        confirmText: qsTr("Clean")
+        destructive: true
+        onConfirmed: Cleaner.clean()
     }
 }

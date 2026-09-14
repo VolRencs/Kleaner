@@ -3,70 +3,66 @@
 
 import QtQuick
 import QtQuick.Controls as Controls
+import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 import Kleaner
 
-Item {
+// Focusable, keyboard-operable navigation entry.
+Controls.ItemDelegate {
     id: root
 
     property string iconName
-    property string text
     property bool selected: false
     property bool compact: false
 
-    signal clicked()
-
     implicitHeight: 40
+    leftPadding: 12
+    rightPadding: 12
+    topPadding: 0
+    bottomPadding: 0
+    hoverEnabled: true
+    activeFocusOnTab: true
 
-    Rectangle {
-        id: background
+    Accessible.name: root.text
+    Accessible.role: Accessible.PageTab
+    Accessible.checked: root.selected
 
-        anchors.fill: parent
+    background: Rectangle {
         radius: Design.radiusItem
         color: root.selected ? Design.accentSoft
-                             : mouseArea.containsMouse ? Design.surfaceHover
-                                                       : Design.surfaceHoverClear
+                             : (root.hovered || root.activeFocus) ? Design.surfaceHover
+                                                                  : Design.surfaceHoverClear
 
         Behavior on color {
-            ColorAnimation { duration: 120 }
-        }
-
-        Row {
-            anchors.fill: parent
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            spacing: 12
-
-            Kirigami.Icon {
-                anchors.verticalCenter: parent.verticalCenter
-                width: 20
-                height: 20
-                source: root.iconName
-                color: root.selected ? Design.accent : Design.textMuted
-            }
-
-            Controls.Label {
-                anchors.verticalCenter: parent.verticalCenter
-                visible: !root.compact
-                text: root.text
-                color: root.selected ? Design.text : Design.textMuted
-                font.pointSize: Design.baseFontSize
-                font.weight: root.selected ? Font.DemiBold : Font.Normal
-            }
+            ColorAnimation { duration: Design.durationNormal }
         }
     }
 
-    MouseArea {
-        id: mouseArea
+    contentItem: RowLayout {
+        spacing: 12
 
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
+        Kirigami.Icon {
+            Layout.alignment: Qt.AlignVCenter
+            implicitWidth: Design.iconLarge
+            implicitHeight: Design.iconLarge
+            source: root.iconName
+            color: root.selected ? Design.accent : Design.textMuted
+        }
+
+        Controls.Label {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
+            visible: !root.compact
+            text: root.text
+            color: root.selected ? Design.text : Design.textMuted
+            font.pointSize: Design.baseFontSize
+            font.weight: root.selected ? Font.DemiBold : Font.Normal
+            elide: Text.ElideRight
+        }
     }
 
-    Controls.ToolTip.visible: root.compact && mouseArea.containsMouse
+    Controls.ToolTip.visible: root.compact && root.hovered
     Controls.ToolTip.text: root.text
     Controls.ToolTip.delay: 400
 }

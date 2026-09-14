@@ -2,6 +2,39 @@
 
 All notable changes to Kleaner are documented in this file.
 
+## 1.3.0 — 2026-09-14
+
+The interface was rebuilt on top of the Kirigami application framework and the
+whole application now shares one consistent, style-independent look.
+
+- The window is now a `Kirigami.ApplicationWindow` with a `PageRow`, a permanent
+  non-modal sidebar and a `PagePool`, so pages keep their state (scroll
+  position, filters, selections) when switching between them. The hand-made
+  scroll view and its re-parented scrollbar were removed.
+- The Qt Quick Controls style is pinned to `Basic`, so the application looks
+  identical no matter where it is launched from or which platform style is
+  installed.
+- One dark theme instead of three competing palettes: the full Kirigami colour
+  set is derived from the `Design` tokens, and the app palette lives only in
+  `main.cpp`.
+- New shared controls: styled inline messages with a rounded close button,
+  confirmation dialogs with a destructive button variant, separators, and
+  placeholder messages with helpful actions for every empty state.
+- Buttons received a tonal primary variant, and the refresh buttons show a
+  Kirigami busy indicator instead of a rotated, badly scaled icon.
+- Dialogs use `Kirigami.FormLayout`, open with the first field focused and
+  wrap long text; the settings combo boxes no longer lose their bindings.
+- Charts now fill every series with the same translucent area as KDE System
+  Monitor, use the system font and locale-aware numbers, and only sample the
+  resource history while the charts are visible.
+- The system cleaner reports progress and results through the shared inline
+  message, destructive actions ask for confirmation, and the hosts editor
+  tracks unsaved changes.
+- Window size is remembered between sessions, the window title reflects the
+  current page, search fields support Ctrl+F, and the language selector shows
+  "English" instead of "American English".
+- Russian and Ukrainian translations were updated for all new strings.
+
 ## 1.2.2 — 2026-09-14
 
 - Fixed the system cleaner getting stuck on "Cleaning…" when more than one

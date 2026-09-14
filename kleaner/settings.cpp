@@ -79,6 +79,34 @@ void Settings::setLanguage(const QString &language)
     Q_EMIT languageChanged();
 }
 
+int Settings::windowWidth() const
+{
+    return m_group.readEntry(QStringLiteral("WindowWidth"), 1240);
+}
+
+void Settings::setWindowWidth(int width)
+{
+    if (this->windowWidth() == width) {
+        return;
+    }
+    m_group.writeEntry(QStringLiteral("WindowWidth"), width);
+    Q_EMIT changed();
+}
+
+int Settings::windowHeight() const
+{
+    return m_group.readEntry(QStringLiteral("WindowHeight"), 800);
+}
+
+void Settings::setWindowHeight(int height)
+{
+    if (this->windowHeight() == height) {
+        return;
+    }
+    m_group.writeEntry(QStringLiteral("WindowHeight"), height);
+    Q_EMIT changed();
+}
+
 QVariantList Settings::availableLanguages() const
 {
     QVariantList languages;
@@ -91,7 +119,11 @@ QVariantList Settings::availableLanguages() const
         seen.insert(code);
 
         const QLocale locale(QString(code).replace(QLatin1Char('-'), QLatin1Char('_')));
-        QString name = locale.nativeLanguageName();
+        // nativeLanguageName() reports "American English" for plain "en";
+        // users expect the neutral language name in the selector.
+        QString name = locale.language() == QLocale::English
+                           ? QLocale::languageToString(QLocale::English)
+                           : locale.nativeLanguageName();
         if (name.isEmpty()) {
             name = QLocale::languageToString(locale.language());
         }

@@ -8,10 +8,14 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import Kleaner
 
-Controls.ApplicationWindow {
+pragma ComponentBehavior: Bound
+
+Kirigami.ApplicationWindow {
     id: root
 
-    title: "Kleaner"
+    title: root.pageTitles[root.currentPage] !== undefined
+           ? "Kleaner — " + root.pageTitles[root.currentPage]
+           : "Kleaner"
     visible: true
     width: 1240
     height: 800
@@ -19,33 +23,31 @@ Controls.ApplicationWindow {
     minimumHeight: 540
     color: Design.window
 
-    palette.active.window: Design.window
-    palette.active.windowText: Design.text
-    palette.active.base: Design.surface
-    palette.active.alternateBase: Design.surfaceHover
-    palette.active.text: Design.text
-    palette.active.button: Design.surfaceHover
-    palette.active.buttonText: Design.text
-    palette.active.brightText: "#ffffff"
-    palette.active.highlight: Design.accent
-    palette.active.highlightedText: "#08131a"
-    palette.active.placeholderText: Design.textFaint
-    palette.disabled.windowText: Design.textFaint
-    palette.disabled.text: Design.textFaint
-    palette.disabled.buttonText: Design.textFaint
-    palette.disabled.highlight: Design.border
-    palette.disabled.highlightedText: Design.textFaint
-
-    // Kleaner ships a single, consistent dark appearance.
+    // Kleaner ships a single, consistent dark appearance. The QApplication
+    // palette is applied in main.cpp; the Kirigami theme is completed here so
+    // stock Kirigami components (messages, dialogs, placeholders) pick up the
+    // exact same colours instead of the platform colour scheme.
     Kirigami.Theme.inherit: false
     Kirigami.Theme.backgroundColor: Design.window
     Kirigami.Theme.alternateBackgroundColor: Design.surface
     Kirigami.Theme.textColor: Design.text
     Kirigami.Theme.disabledTextColor: Design.textFaint
+    Kirigami.Theme.activeTextColor: Design.text
+    Kirigami.Theme.activeBackgroundColor: Design.surfaceHover
     Kirigami.Theme.highlightColor: Design.accent
+    Kirigami.Theme.highlightedTextColor: Design.accentText
+    Kirigami.Theme.focusColor: Design.accent
+    Kirigami.Theme.hoverColor: Design.surfaceHover
+    Kirigami.Theme.linkColor: Design.accent
+    Kirigami.Theme.linkBackgroundColor: Design.accentSoft
+    Kirigami.Theme.visitedLinkColor: Design.violet
+    Kirigami.Theme.visitedLinkBackgroundColor: Design.alpha(Design.violet, 0.16)
     Kirigami.Theme.positiveTextColor: Design.positive
     Kirigami.Theme.neutralTextColor: Design.warning
     Kirigami.Theme.negativeTextColor: Design.negative
+    Kirigami.Theme.positiveBackgroundColor: Design.alpha(Design.positive, 0.14)
+    Kirigami.Theme.neutralBackgroundColor: Design.alpha(Design.warning, 0.14)
+    Kirigami.Theme.negativeBackgroundColor: Design.alpha(Design.negative, 0.14)
 
     readonly property var pageUrls: ({
         "dashboard": "pages/DashboardPage.qml",
@@ -59,6 +61,44 @@ Controls.ApplicationWindow {
         "about": "pages/AboutKleanerPage.qml"
     })
 
+    readonly property var pageTitles: ({
+        "dashboard": qsTr("Dashboard"),
+        "resources": qsTr("Resources"),
+        "processes": qsTr("Processes"),
+        "services": qsTr("Services"),
+        "startup": qsTr("Startup Apps"),
+        "cleaner": qsTr("System Cleaner"),
+        "hosts": qsTr("Hosts"),
+        "settings": qsTr("Settings"),
+        "about": qsTr("About")
+    })
+
+    // Sidebar structure: sections with their entries, as before.
+    readonly property var navSections: [
+        {
+            title: qsTr("MONITOR"),
+            items: [
+                { id: "dashboard", icon: "go-home", text: qsTr("Dashboard") },
+                { id: "resources", icon: "utilities-system-monitor", text: qsTr("Resources") },
+                { id: "processes", icon: "view-list-details", text: qsTr("Processes") }
+            ]
+        },
+        {
+            title: qsTr("SYSTEM"),
+            items: [
+                { id: "services", icon: "preferences-system-services", text: qsTr("Services") },
+                { id: "startup", icon: "system-run", text: qsTr("Startup Apps") }
+            ]
+        },
+        {
+            title: qsTr("TOOLS"),
+            items: [
+                { id: "cleaner", icon: "edit-clear", text: qsTr("System Cleaner") },
+                { id: "hosts", icon: "network-server", text: qsTr("Hosts") }
+            ]
+        }
+    ]
+
     property string currentPage: root.pageUrls[Settings.startPage] !== undefined ? Settings.startPage : "dashboard"
     property bool forceQuit: false
 
@@ -69,32 +109,43 @@ Controls.ApplicationWindow {
         return Qt.resolvedUrl(relative);
     }
 
-    function navigate(id) {
-        const target = root.pageUrls[id] !== undefined ? id : "dashboard";
-        if (target === root.currentPage && stack.currentItem !== null) {
-            return;
-        }
-        root.currentPage = target;
-        stack.replace(root.pageUrl(target));
+    Kirigami.PagePool {
+        id: pool
     }
 
-    RowLayout {
-        anchors.fill: parent
-        spacing: 0
+    pageStack.globalToolBar.style: Kirigami.ApplicationHeaderStyle.None
+    pageStack.separatorVisible: false
+    pageStack.leftSidebar: sidebarDrawer
 
-        Rectangle {
-            id: sidebar
+    // Push the configured start page once; binding initialPage would reset the
+    // stack every time currentPage changes. Restore the saved window size at
+    // the same time, as a plain binding would fight user resizing.
+    Component.onCompleted: {
+        root.width = Settings.windowWidth;
+        root.height = Settings.windowHeight;
+        pageStack.initialPage = pool.loadPage(root.pageUrl(root.currentPage));
+    }
 
-            Layout.fillHeight: true
-            Layout.preferredWidth: root.compactSidebar ? Design.sidebarCompactWidth : Design.sidebarWidth
-            color: Design.sidebar
+    // Permanent, non-modal sidebar that pushes the page content like the old
+    // hand-made RowLayout did, but managed by PageRow's own layout.
+    Kirigami.OverlayDrawer {
+        id: sidebarDrawer
 
-            Behavior on Layout.preferredWidth {
-                NumberAnimation {
-                    duration: 180
-                    easing.type: Easing.InOutQuad
-                }
+        edge: Qt.LeftEdge
+        modal: false
+        interactive: false
+        position: 1
+        width: root.compactSidebar ? Design.sidebarCompactWidth : Design.sidebarWidth
+
+        Behavior on width {
+            NumberAnimation {
+                duration: Design.durationPage
+                easing.type: Easing.InOutQuad
             }
+        }
+
+        background: Rectangle {
+            color: Design.sidebar
 
             Rectangle {
                 anchors.right: parent.right
@@ -102,7 +153,9 @@ Controls.ApplicationWindow {
                 height: parent.height
                 color: Design.border
             }
+        }
 
+        contentItem: Item {
             ColumnLayout {
                 anchors.fill: parent
                 anchors.topMargin: Design.space20
@@ -138,16 +191,20 @@ Controls.ApplicationWindow {
                             spacing: 0
 
                             Controls.Label {
+                                Layout.fillWidth: true
                                 text: "Kleaner"
                                 color: Design.text
                                 font.pointSize: Design.baseFontSize * 1.15
                                 font.weight: Font.Bold
+                                elide: Text.ElideRight
                             }
 
                             Controls.Label {
+                                Layout.fillWidth: true
                                 text: qsTr("System Optimizer")
                                 color: Design.textFaint
                                 font.pointSize: Design.tinyFontSize
+                                elide: Text.ElideRight
                             }
                         }
                     }
@@ -163,136 +220,73 @@ Controls.ApplicationWindow {
                     }
                 }
 
-                Controls.Label {
-                    Layout.leftMargin: 10
-                    Layout.topMargin: Design.space8
-                    Layout.bottomMargin: 4
-                    visible: !root.compactSidebar
-                    text: qsTr("MONITOR")
-                    color: Design.textFaint
-                    font.pointSize: Design.tinyFontSize
-                    font.weight: Font.DemiBold
-                    font.letterSpacing: 1
-                }
+                Repeater {
+                    model: root.navSections
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.topMargin: Design.space8
-                    Layout.bottomMargin: 4
-                    Layout.leftMargin: 10
-                    Layout.rightMargin: 10
-                    Layout.preferredHeight: 1
-                    color: Design.border
-                    visible: root.compactSidebar
-                }
+                    delegate: ColumnLayout {
+                        id: section
 
-                NavItem {
-                    Layout.fillWidth: true
-                    compact: root.compactSidebar
-                    iconName: "go-home"
-                    text: qsTr("Dashboard")
-                    selected: root.currentPage === "dashboard"
-                    onClicked: root.navigate("dashboard")
-                }
+                        required property var modelData
+                        required property int index
 
-                NavItem {
-                    Layout.fillWidth: true
-                    compact: root.compactSidebar
-                    iconName: "utilities-system-monitor"
-                    text: qsTr("Resources")
-                    selected: root.currentPage === "resources"
-                    onClicked: root.navigate("resources")
-                }
+                        Layout.fillWidth: true
+                        spacing: 2
 
-                NavItem {
-                    Layout.fillWidth: true
-                    compact: root.compactSidebar
-                    iconName: "view-list-details"
-                    text: qsTr("Processes")
-                    selected: root.currentPage === "processes"
-                    onClicked: root.navigate("processes")
-                }
+                        Controls.Label {
+                            Layout.fillWidth: true
+                            Layout.leftMargin: 10
+                            Layout.topMargin: section.index === 0 ? Design.space8 : Design.space16
+                            Layout.bottomMargin: 4
+                            visible: !root.compactSidebar
+                            text: section.modelData.title
+                            color: Design.textFaint
+                            font.pointSize: Design.tinyFontSize
+                            font.weight: Font.DemiBold
+                            font.letterSpacing: 1
+                            elide: Text.ElideRight
+                        }
 
-                Controls.Label {
-                    Layout.leftMargin: 10
-                    Layout.topMargin: Design.space16
-                    Layout.bottomMargin: 4
-                    visible: !root.compactSidebar
-                    text: qsTr("SYSTEM")
-                    color: Design.textFaint
-                    font.pointSize: Design.tinyFontSize
-                    font.weight: Font.DemiBold
-                    font.letterSpacing: 1
-                }
+                        AppSeparator {
+                            Layout.fillWidth: true
+                            Layout.topMargin: section.index === 0 ? Design.space8 : Design.space16
+                            Layout.bottomMargin: 4
+                            Layout.leftMargin: 10
+                            Layout.rightMargin: 10
+                            Layout.preferredHeight: 1
+                            visible: root.compactSidebar
+                        }
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.topMargin: Design.space16
-                    Layout.bottomMargin: 4
-                    Layout.leftMargin: 10
-                    Layout.rightMargin: 10
-                    Layout.preferredHeight: 1
-                    color: Design.border
-                    visible: root.compactSidebar
-                }
+                        Repeater {
+                            model: section.modelData.items
 
-                NavItem {
-                    Layout.fillWidth: true
-                    compact: root.compactSidebar
-                    iconName: "preferences-system-services"
-                    text: qsTr("Services")
-                    selected: root.currentPage === "services"
-                    onClicked: root.navigate("services")
-                }
+                            delegate: NavItem {
+                                id: navItem
 
-                NavItem {
-                    Layout.fillWidth: true
-                    compact: root.compactSidebar
-                    iconName: "system-run"
-                    text: qsTr("Startup Apps")
-                    selected: root.currentPage === "startup"
-                    onClicked: root.navigate("startup")
-                }
+                                required property var modelData
 
-                Controls.Label {
-                    Layout.leftMargin: 10
-                    Layout.topMargin: Design.space16
-                    Layout.bottomMargin: 4
-                    visible: !root.compactSidebar
-                    text: qsTr("TOOLS")
-                    color: Design.textFaint
-                    font.pointSize: Design.tinyFontSize
-                    font.weight: Font.DemiBold
-                    font.letterSpacing: 1
-                }
+                                Layout.fillWidth: true
+                                compact: root.compactSidebar
+                                iconName: navItem.modelData.icon
+                                text: navItem.modelData.text
+                                selected: navAction.checked
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.topMargin: Design.space16
-                    Layout.bottomMargin: 4
-                    Layout.leftMargin: 10
-                    Layout.rightMargin: 10
-                    Layout.preferredHeight: 1
-                    color: Design.border
-                    visible: root.compactSidebar
-                }
+                                Kirigami.PagePoolAction {
+                                    id: navAction
 
-                NavItem {
-                    Layout.fillWidth: true
-                    compact: root.compactSidebar
-                    iconName: "edit-clear"
-                    text: qsTr("System Cleaner")
-                    selected: root.currentPage === "cleaner"
-                    onClicked: root.navigate("cleaner")
-                }
+                                    pagePool: pool
+                                    pageStack: root.pageStack
+                                    checkable: true
+                                    text: navItem.text
+                                    icon.name: navItem.iconName
+                                    page: root.pageUrl(navItem.modelData.id)
 
-                NavItem {
-                    Layout.fillWidth: true
-                    compact: root.compactSidebar
-                    iconName: "network-server"
-                    text: qsTr("Hosts")
-                    selected: root.currentPage === "hosts"
-                    onClicked: root.navigate("hosts")
+                                    onTriggered: root.currentPage = navItem.modelData.id
+                                }
+
+                                onClicked: navAction.trigger()
+                            }
+                        }
+                    }
                 }
 
                 Item {
@@ -300,71 +294,70 @@ Controls.ApplicationWindow {
                     Layout.fillHeight: true
                 }
 
-                Rectangle {
+                AppSeparator {
                     Layout.fillWidth: true
                     Layout.topMargin: Design.space8
                     Layout.bottomMargin: Design.space8
                     Layout.preferredHeight: 1
-                    color: Design.border
                 }
 
                 NavItem {
+                    id: settingsItem
+
                     Layout.fillWidth: true
                     compact: root.compactSidebar
                     iconName: "settings-configure"
                     text: qsTr("Settings")
-                    selected: root.currentPage === "settings"
-                    onClicked: root.navigate("settings")
+                    selected: settingsAction.checked
+                    onClicked: settingsAction.trigger()
+
+                    Kirigami.PagePoolAction {
+                        id: settingsAction
+
+                        pagePool: pool
+                        pageStack: root.pageStack
+                        checkable: true
+                        text: settingsItem.text
+                        icon.name: settingsItem.iconName
+                        page: root.pageUrl("settings")
+
+                        onTriggered: root.currentPage = "settings"
+                    }
                 }
 
                 NavItem {
+                    id: aboutItem
+
                     Layout.fillWidth: true
                     compact: root.compactSidebar
                     iconName: "help-about"
                     text: qsTr("About")
-                    selected: root.currentPage === "about"
-                    onClicked: root.navigate("about")
-                }
-            }
-        }
+                    selected: aboutAction.checked
+                    onClicked: aboutAction.trigger()
 
-        Controls.StackView {
-            id: stack
+                    Kirigami.PagePoolAction {
+                        id: aboutAction
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+                        pagePool: pool
+                        pageStack: root.pageStack
+                        checkable: true
+                        text: aboutItem.text
+                        icon.name: aboutItem.iconName
+                        page: root.pageUrl("about")
 
-            Component.onCompleted: stack.replace(root.pageUrl(root.currentPage))
-
-            replaceEnter: Transition {
-                NumberAnimation {
-                    property: "opacity"
-                    from: 0
-                    to: 1
-                    duration: 180
-                    easing.type: Easing.OutCubic
-                }
-                NumberAnimation {
-                    property: "y"
-                    from: 14
-                    to: 0
-                    duration: 220
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            replaceExit: Transition {
-                NumberAnimation {
-                    property: "opacity"
-                    from: 1
-                    to: 0
-                    duration: 120
+                        onTriggered: root.currentPage = "about"
+                    }
                 }
             }
         }
     }
 
     onClosing: function(close) {
+        if (root.visibility !== Window.Maximized && root.visibility !== Window.FullScreen) {
+            Settings.windowWidth = root.width;
+            Settings.windowHeight = root.height;
+        }
+
         if (root.forceQuit || Settings.closeBehavior === "quit") {
             Settings.sync();
             close.accepted = true;

@@ -14,5 +14,6 @@ class Format : public QObject
 
     [[nodiscard]] Q_INVOKABLE QString bytes(qulonglong value) const;
     [[nodiscard]] Q_INVOKABLE QString percent(double value, int decimals = 1) const;
+    [[nodiscard]] Q_INVOKABLE QString number(double value, int decimals = 2) const;
     [[nodiscard]] Q_INVOKABLE QString duration(qulonglong seconds) const;
 };

@@ -10,10 +10,22 @@ import Kleaner
 
 pragma ComponentBehavior: Bound
 
-Item {
+Kirigami.Page {
     id: page
 
+    padding: Design.pagePadding
+
     readonly property var hostEntries: Hosts.entries
+
+    // Snapshot of the last loaded/saved state used to detect unsaved edits.
+    property string savedState: ""
+
+    readonly property bool dirty: page.savedState.length > 0
+                                  && JSON.stringify(page.hostEntries) !== page.savedState
+
+    function captureSavedState() {
+        page.savedState = JSON.stringify(Hosts.entries);
+    }
 
     function isValidAddress(text) {
         const value = text.trim();
@@ -48,28 +60,26 @@ Item {
         return true;
     }
 
-    Component.onCompleted: Hosts.reload()
+    Component.onCompleted: {
+        Hosts.reload();
+        page.captureSavedState();
+    }
 
     Connections {
         target: Hosts
 
         function onSaved(ok, error) {
-            inlineMessage.type = ok ? Kirigami.MessageType.Positive : Kirigami.MessageType.Error;
-            inlineMessage.text = ok ? qsTr("/etc/hosts saved.") : error;
-            inlineMessage.visible = true;
-            hideMessageTimer.restart();
+            if (ok) {
+                page.captureSavedState();
+                inlineMessage.showPositive(qsTr("/etc/hosts saved."));
+            } else {
+                inlineMessage.showError(error);
+            }
         }
-    }
-
-    Timer {
-        id: hideMessageTimer
-        interval: 6000
-        onTriggered: inlineMessage.visible = false
     }
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Design.pagePadding
         spacing: Design.space16
 
         PageHeader {
@@ -86,6 +96,7 @@ Item {
             AppButton {
                 text: qsTr("Add entry")
                 icon.name: "list-add"
+                highlighted: true
                 onClicked: {
                     ipField.text = "";
                     namesField.text = "";
@@ -98,14 +109,14 @@ Item {
                 text: qsTr("Save changes")
                 icon.name: "document-save"
                 highlighted: true
+                enabled: page.dirty
                 onClicked: Hosts.save()
             }
         }
 
-        Kirigami.InlineMessage {
+        AppInlineMessage {
             id: inlineMessage
             Layout.fillWidth: true
-            visible: false
         }
 
         AppCard {
@@ -114,12 +125,24 @@ Item {
             padding: 0
 
             contentItem: Item {
-                Controls.Label {
+                Kirigami.PlaceholderMessage {
                     anchors.centerIn: parent
+                    width: Math.min(implicitWidth, parent.width - Design.space20 * 2)
                     visible: hostsList.count === 0
-                    horizontalAlignment: Text.AlignHCenter
-                    text: qsTr("No host entries found.")
-                    color: Design.textMuted
+                    icon.name: "network-server"
+                    text: qsTr("No host entries found")
+                    explanation: qsTr("/etc/hosts has no hostname mappings yet.")
+
+                    helpfulAction: Kirigami.Action {
+                        text: qsTr("Add entry")
+                        icon.name: "list-add"
+                        onTriggered: {
+                            ipField.text = "";
+                            namesField.text = "";
+                            hostDialog.editingIndex = -1;
+                            hostDialog.open();
+                        }
+                    }
                 }
 
                 ListView {
@@ -140,7 +163,7 @@ Item {
                         required property int index
 
                         width: hostsList.width
-                        height: 52
+                        height: Design.rowHeightNormal
                         leftPadding: Design.space16
                         rightPadding: Design.space16
                         topPadding: 0
@@ -160,7 +183,7 @@ Item {
                                 color: delegate.hovered ? Design.surfaceHover : Design.surfaceHoverClear
 
                                 Behavior on color {
-                                    ColorAnimation { duration: 120 }
+                                    ColorAnimation { duration: Design.durationNormal }
                                 }
                             }
                         }
@@ -203,9 +226,9 @@ Item {
                                 icon.name: "edit-delete"
                                 text: qsTr("Delete")
                                 onClicked: {
-                                    const entries = page.hostEntries.slice();
-                                    entries.splice(delegate.index, 1);
-                                    Hosts.setEntries(entries);
+                                    deleteDialog.pendingIndex = delegate.index;
+                                    deleteDialog.pendingNames = delegate.modelData.names;
+                                    deleteDialog.open();
                                 }
                             }
                         }
@@ -222,32 +245,23 @@ Item {
 
         title: editingIndex >= 0 ? qsTr("Edit Host Entry") : qsTr("Add Host Entry")
 
-        contentItem: ColumnLayout {
-            spacing: Design.space8
+        onOpened: ipField.forceActiveFocus()
 
-            Controls.Label {
-                text: qsTr("IP address")
-                color: Design.textMuted
-                font.pointSize: Design.smallFontSize
-            }
+        contentItem: Kirigami.FormLayout {
+            wideMode: true
 
             AppTextField {
                 id: ipField
                 Layout.fillWidth: true
+                Kirigami.FormData.label: qsTr("IP address")
                 placeholderText: "192.168.1.10"
                 font.family: "monospace"
-            }
-
-            Controls.Label {
-                Layout.topMargin: Design.space4
-                text: qsTr("Hostnames (space separated)")
-                color: Design.textMuted
-                font.pointSize: Design.smallFontSize
             }
 
             AppTextField {
                 id: namesField
                 Layout.fillWidth: true
+                Kirigami.FormData.label: qsTr("Hostnames (space separated)")
                 placeholderText: qsTr("hostname alias")
             }
         }
@@ -279,6 +293,23 @@ Item {
                     hostDialog.close();
                 }
             }
+        }
+    }
+
+    ConfirmDialog {
+        id: deleteDialog
+
+        property int pendingIndex: -1
+        property string pendingNames
+
+        title: qsTr("Delete Host Entry")
+        message: qsTr("Delete the host entry “%1”?").arg(pendingNames)
+        confirmText: qsTr("Delete")
+        destructive: true
+        onConfirmed: {
+            const entries = page.hostEntries.slice();
+            entries.splice(deleteDialog.pendingIndex, 1);
+            Hosts.setEntries(entries);
         }
     }
 }

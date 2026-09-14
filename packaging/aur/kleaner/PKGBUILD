@@ -17,7 +17,6 @@ depends=(
     'kstatusnotifieritem'
     'kio'
     'kauth'
-    'qqc2-desktop-style'
 )
 makedepends=('cmake' 'ninja' 'extra-cmake-modules' 'qt6-tools')
 optdepends=('breeze-icons: icon theme for the KDE desktop')
