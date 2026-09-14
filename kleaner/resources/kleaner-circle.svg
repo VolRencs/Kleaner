@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Kleaner</title>
+  <defs>
+    <linearGradient id="kleanerDisk" x1="42" y1="26" x2="218" y2="232" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2a3140"/>
+      <stop offset="0.55" stop-color="#1a1f29"/>
+      <stop offset="1" stop-color="#0d1015"/>
+    </linearGradient>
+    <linearGradient id="kleanerSheen" x1="70" y1="40" x2="170" y2="190" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="kleanerKAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#17a9ef"/>
+      <stop offset="100%" stop-color="#0b57e8"/>
+    </linearGradient>
+    <clipPath id="kleanerClip">
+      <circle cx="128" cy="128" r="116"/>
+    </clipPath>
+  </defs>
+
+  <circle cx="128" cy="128" r="116" fill="url(#kleanerDisk)"/>
+  <g clip-path="url(#kleanerClip)">
+    <circle cx="128" cy="128" r="116" fill="url(#kleanerSheen)"/>
+  </g>
+
+  <g transform="translate(56.8228 50.7823) scale(0.704725) matrix(.1 0 0 -.1 0 218)">
+    <path fill="#ffffff" fill-rule="nonzero" d="M1338 2066c-49-18-63-31-398-355-157-152-316-305-354-341l-69-65 7 366c6 330 5 368-9 383-14 14-44 16-196 16-105 0-188-4-200-10-19-10-19-31-19-909 0-823 1-900 17-912 19-17 294-25 358-12l40 9 6 229c7 260 13 292 80 395 50 77 224 256 459 473 461 425 781 729 775 736-3 2-108 6-233 8-173 2-236-1-264-11"/>
+    <path fill="url(#kleanerKAccent)" d="M1022 1149C827 976 776 892 775 750c0-73 4-93 28-142 109-223 453-400 960-497 142-27 157-27 157 2 0 39-48 191-88 279-73 158-183 318-340 496-96 108-342 362-351 362-3 0-57-45-119-101"/>
+  </g>
+</svg>

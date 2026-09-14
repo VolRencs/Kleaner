@@ -1,8 +1,30 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "cleaner_model.h"
+
+#include <QCoreApplication>
+
+#include <utility>
+
+#include <KConfigGroup>
+#include <KSharedConfig>
+
+namespace
+{
+constexpr auto selectionGroup = "Cleaner";
+constexpr auto selectionKey = "SelectedPaths";
+}
 
 CleanerModel::CleanerModel(QObject *parent) :
     QAbstractListModel(parent)
 {
+    loadSelection();
+
+    if (QCoreApplication::instance()) {
+        connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, this, &CleanerModel::saveSelection);
+    }
+
     connect(&m_cleaner, &Cleaner::scanningChanged, this, &CleanerModel::scanningChanged);
     connect(&m_cleaner, &Cleaner::scanned, this, [this](const QVariantList &categories) {
         m_categories.clear();
@@ -23,8 +45,17 @@ CleanerModel::CleanerModel(QObject *parent) :
                 entry.path = entryMap.value(QStringLiteral("path")).toString();
                 entry.size = entryMap.value(QStringLiteral("size")).toULongLong();
                 entry.root = entryMap.value(QStringLiteral("root")).toBool();
+                entry.checked = m_checkedPaths.contains(entry.path);
                 category.entries.append(entry);
             }
+
+            bool allChecked = !category.entries.isEmpty();
+            bool anyChecked = false;
+            for (const Category::Entry &entry : std::as_const(category.entries)) {
+                allChecked = allChecked && entry.checked;
+                anyChecked = anyChecked || entry.checked;
+            }
+            category.check = allChecked ? Qt::Checked : (anyChecked ? Qt::PartiallyChecked : Qt::Unchecked);
 
             m_categories.append(category);
         }
@@ -34,6 +65,10 @@ CleanerModel::CleanerModel(QObject *parent) :
         Q_EMIT scanFinished();
     });
     connect(&m_cleaner, &Cleaner::cleaned, this, [this](int count, const QString &error) {
+        if (error.isEmpty()) {
+            m_checkedPaths.clear();
+            saveSelection();
+        }
         Q_EMIT cleanFinished(error.isEmpty(), error, count);
     });
 }
@@ -61,9 +96,6 @@ QVariant CleanerModel::data(const QModelIndex &index, int role) const
         }
         return category.entries.at(row.entry).title;
     }
-    if (role == PathRole) {
-        return row.entry < 0 ? QString() : category.entries.at(row.entry).path;
-    }
     if (role == SizeRole) {
         return row.entry < 0 ? category.size : category.entries.at(row.entry).size;
     }
@@ -88,9 +120,6 @@ QVariant CleanerModel::data(const QModelIndex &index, int role) const
     if (role == IsCategoryRole) {
         return row.entry < 0;
     }
-    if (role == CategoryIdRole) {
-        return category.id;
-    }
     return {};
 }
 
@@ -98,7 +127,6 @@ QHash<int, QByteArray> CleanerModel::roleNames() const
 {
     return {
         { TitleRole, "title" },
-        { PathRole, "path" },
         { SizeRole, "size" },
         { DepthRole, "depth" },
         { ExpandableRole, "expandable" },
@@ -106,7 +134,6 @@ QHash<int, QByteArray> CleanerModel::roleNames() const
         { CheckedRole, "checkState" },
         { RootRole, "root" },
         { IsCategoryRole, "isCategory" },
-        { CategoryIdRole, "categoryId" },
     };
 }
 
@@ -120,6 +147,11 @@ qulonglong CleanerModel::checkedSize() const
     return m_checkedSize;
 }
 
+bool CleanerModel::hasCheckedItems() const
+{
+    return m_hasCheckedItems;
+}
+
 void CleanerModel::scan()
 {
     m_cleaner.scan();
@@ -130,13 +162,34 @@ void CleanerModel::toggleExpand(int row)
     if (row < 0 || row >= m_rows.size()) {
         return;
     }
-    const Row &r = m_rows.at(row);
+    const Row r = m_rows.at(row);
     if (r.entry >= 0) {
         return;
     }
 
-    m_categories[r.category].expanded = !m_categories.at(r.category).expanded;
-    rebuild();
+    Category &category = m_categories[r.category];
+    const int entryCount = category.entries.size();
+
+    if (category.expanded) {
+        if (entryCount > 0) {
+            beginRemoveRows(QModelIndex(), row + 1, row + entryCount);
+            m_rows.remove(row + 1, entryCount);
+            endRemoveRows();
+        }
+        category.expanded = false;
+        return;
+    }
+
+    category.expanded = true;
+    if (entryCount == 0) {
+        return;
+    }
+
+    beginInsertRows(QModelIndex(), row + 1, row + entryCount);
+    for (int i = 0; i < entryCount; ++i) {
+        m_rows.insert(row + 1 + i, Row { r.category, i });
+    }
+    endInsertRows();
 }
 
 void CleanerModel::setChecked(int row, bool checked)
@@ -145,51 +198,83 @@ void CleanerModel::setChecked(int row, bool checked)
         return;
     }
 
-    const Row &r = m_rows.at(row);
+    const Row r = m_rows.at(row);
     Category &category = m_categories[r.category];
 
     if (r.entry < 0) {
         category.check = checked ? Qt::Checked : Qt::Unchecked;
         for (Category::Entry &entry : category.entries) {
             entry.checked = checked;
+            if (checked) {
+                m_checkedPaths.insert(entry.path);
+            } else {
+                m_checkedPaths.remove(entry.path);
+            }
+        }
+        if (category.expanded && !category.entries.isEmpty()) {
+            Q_EMIT dataChanged(index(row + 1), index(row + category.entries.size()), { CheckedRole });
         }
     } else {
-        category.entries[r.entry].checked = checked;
+        Category::Entry &entry = category.entries[r.entry];
+        entry.checked = checked;
+        if (checked) {
+            m_checkedPaths.insert(entry.path);
+        } else {
+            m_checkedPaths.remove(entry.path);
+        }
 
         bool allChecked = !category.entries.isEmpty();
         bool anyChecked = false;
-        for (const Category::Entry &entry : std::as_const(category.entries)) {
-            allChecked = allChecked && entry.checked;
-            anyChecked = anyChecked || entry.checked;
+        for (const Category::Entry &current : std::as_const(category.entries)) {
+            allChecked = allChecked && current.checked;
+            anyChecked = anyChecked || current.checked;
         }
         category.check = allChecked ? Qt::Checked : (anyChecked ? Qt::PartiallyChecked : Qt::Unchecked);
     }
 
-    rebuild();
+    Q_EMIT dataChanged(index(row), index(row), { CheckedRole });
+    saveSelection();
     updateCheckedSize();
 }
 
 void CleanerModel::clean()
 {
     QStringList paths;
+    QStringList orphanPackages;
+    bool vacuumJournal = false;
+
+    const auto collect = [&paths, &orphanPackages, &vacuumJournal](const CleanerModel::Category::Entry &entry) {
+        if (entry.path.startsWith(QLatin1String("journal:"))) {
+            vacuumJournal = true;
+        } else if (entry.path.startsWith(QLatin1String("pkg:"))) {
+            const QString package = entry.path.mid(4).trimmed();
+            if (!package.isEmpty()) {
+                orphanPackages.append(package);
+            }
+        } else {
+            paths.append(entry.path);
+        }
+    };
+
     for (const Category &category : std::as_const(m_categories)) {
         if (category.check == Qt::Unchecked) {
             continue;
         }
+
         if (category.check == Qt::Checked) {
             for (const Category::Entry &entry : category.entries) {
-                paths.append(entry.path);
+                collect(entry);
             }
         } else {
             for (const Category::Entry &entry : category.entries) {
                 if (entry.checked) {
-                    paths.append(entry.path);
+                    collect(entry);
                 }
             }
         }
     }
 
-    m_cleaner.clean(paths);
+    m_cleaner.clean(paths, orphanPackages, vacuumJournal);
 }
 
 void CleanerModel::rebuild()
@@ -213,17 +298,35 @@ void CleanerModel::rebuild()
 void CleanerModel::updateCheckedSize()
 {
     qulonglong total = 0;
+    bool hasChecked = false;
     for (const Category &category : std::as_const(m_categories)) {
         for (const Category::Entry &entry : category.entries) {
             if (entry.checked) {
                 total += entry.size;
+                hasChecked = true;
             }
         }
     }
 
-    if (total == m_checkedSize) {
-        return;
+    if (total != m_checkedSize) {
+        m_checkedSize = total;
+        Q_EMIT checkedSizeChanged();
     }
-    m_checkedSize = total;
-    Q_EMIT checkedSizeChanged();
+    if (hasChecked != m_hasCheckedItems) {
+        m_hasCheckedItems = hasChecked;
+        Q_EMIT hasCheckedItemsChanged();
+    }
+}
+
+void CleanerModel::loadSelection()
+{
+    const KConfigGroup group(KSharedConfig::openConfig(QStringLiteral("kleanerrc")), QLatin1String(selectionGroup));
+    const QStringList paths = group.readEntry(QLatin1String(selectionKey), QStringList());
+    m_checkedPaths = QSet<QString>(paths.begin(), paths.end());
+}
+
+void CleanerModel::saveSelection()
+{
+    KConfigGroup group(KSharedConfig::openConfig(QStringLiteral("kleanerrc")), QLatin1String(selectionGroup));
+    group.writeEntry(QLatin1String(selectionKey), QStringList(m_checkedPaths.begin(), m_checkedPaths.end()));
 }

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #pragma once
 
 #include <QObject>
@@ -14,7 +17,7 @@ class Cleaner : public QObject
     bool scanning() const;
 
     Q_INVOKABLE void scan();
-    Q_INVOKABLE void clean(const QStringList &paths);
+    Q_INVOKABLE void clean(const QStringList &paths, const QStringList &orphanPackages = {}, bool vacuumJournal = false);
 
     static qulonglong directorySize(const QString &path);
 
@@ -24,7 +27,7 @@ class Cleaner : public QObject
     void cleaned(int count, const QString &error);
 
   private:
-    QVariantList buildCategories() const;
+    static QVariantList buildCategories();
     static QString trashDirectory();
 
     bool m_scanning = false;

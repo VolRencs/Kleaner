@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #pragma once
 
 #include <QObject>
@@ -33,5 +36,4 @@ class StartupApps : public QObject
 
   private:
     static StartupApp readEntry(const QString &path, bool system);
-    static bool writeKey(const QString &path, const QString &key, const QString &value);
 };

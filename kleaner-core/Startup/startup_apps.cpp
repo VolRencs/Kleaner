@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "startup_apps.h"
 
 #include <QDir>
@@ -5,6 +8,8 @@
 #include <QFileInfo>
 #include <QLocale>
 #include <QRegularExpression>
+#include <QSaveFile>
+#include <QSet>
 #include <QStandardPaths>
 #include <QTextStream>
 #include <QVariantMap>
@@ -13,6 +18,76 @@
 
 namespace
 {
+QString sanitizeValue(const QString &value)
+{
+    QString result = value;
+    result.remove(QLatin1Char('\r'));
+    result.remove(QLatin1Char('\n'));
+    return result.trimmed();
+}
+
+bool writeKeys(const QString &path, const QHash<QString, QString> &updates)
+{
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return false;
+    }
+    const QStringList lines = QString::fromUtf8(file.readAll()).split(QLatin1Char('\n'));
+    file.close();
+
+    QStringList output;
+    output.reserve(lines.size() + updates.size());
+
+    bool inDesktopEntry = false;
+    QSet<QString> replaced;
+    for (const QString &rawLine : lines) {
+        QString line = rawLine;
+        const QString trimmed = line.trimmed();
+
+        if (trimmed.startsWith(QLatin1Char('['))) {
+            inDesktopEntry = trimmed == QLatin1String("[Desktop Entry]");
+        }
+
+        if (inDesktopEntry) {
+            const int separator = trimmed.indexOf(QLatin1Char('='));
+            if (separator > 0) {
+                const QString key = trimmed.left(separator).trimmed();
+                if (updates.contains(key)) {
+                    line = key + QLatin1Char('=') + updates.value(key);
+                    replaced.insert(key);
+                }
+            }
+        }
+        output.append(line);
+    }
+
+    bool headerEnsured = false;
+    for (auto it = updates.constBegin(); it != updates.constEnd(); ++it) {
+        if (replaced.contains(it.key())) {
+            continue;
+        }
+        if (!headerEnsured) {
+            if (output.isEmpty() || !output.last().trimmed().isEmpty()) {
+                output.append(QString());
+            }
+            output.append(QStringLiteral("[Desktop Entry]"));
+            headerEnsured = true;
+        }
+        output.append(it.key() + QLatin1Char('=') + it.value());
+    }
+
+    QSaveFile outputFile(path);
+    if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+    const QByteArray data = output.join(QLatin1Char('\n')).toUtf8();
+    if (outputFile.write(data) != data.size()) {
+        outputFile.cancelWriting();
+        return false;
+    }
+    return outputFile.commit();
+}
+
 QString desktopValue(const QHash<QString, QString> &values, const QString &key)
 {
     const QString language = QLocale::system().name();
@@ -135,50 +210,6 @@ QVariantList StartupApps::load() const
     return result;
 }
 
-bool StartupApps::writeKey(const QString &path, const QString &key, const QString &value)
-{
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return false;
-    }
-    const QStringList lines = QString::fromUtf8(file.readAll()).split(QLatin1Char('\n'));
-    file.close();
-
-    QStringList output;
-    output.reserve(lines.size() + 1);
-
-    bool inDesktopEntry = false;
-    bool replaced = false;
-    for (const QString &rawLine : lines) {
-        QString line = rawLine;
-        const QString trimmed = line.trimmed();
-
-        if (trimmed.startsWith(QLatin1Char('['))) {
-            inDesktopEntry = trimmed == QLatin1String("[Desktop Entry]");
-        }
-
-        if (inDesktopEntry && !replaced && trimmed.startsWith(key + QLatin1Char('='))) {
-            line = key + QLatin1Char('=') + value;
-            replaced = true;
-        }
-        output.append(line);
-    }
-
-    if (!replaced) {
-        if (output.isEmpty() || output.last().trimmed().isEmpty()) {
-            output.append(QStringLiteral("[Desktop Entry]"));
-        }
-        output.append(key + QLatin1Char('=') + value);
-    }
-
-    QFile outputFile(path);
-    if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
-        return false;
-    }
-    outputFile.write(output.join(QLatin1Char('\n')).toUtf8());
-    return true;
-}
-
 bool StartupApps::setEnabled(const QString &path, bool enabled)
 {
     QString target = path;
@@ -194,12 +225,14 @@ bool StartupApps::setEnabled(const QString &path, bool enabled)
         target = userPath;
     }
 
-    if (!writeKey(target, QStringLiteral("Hidden"), enabled ? QStringLiteral("false") : QStringLiteral("true"))) {
-        return false;
+    QHash<QString, QString> updates;
+    updates.insert(QStringLiteral("Hidden"), enabled ? QStringLiteral("false") : QStringLiteral("true"));
+    if (enabled) {
+        updates.insert(QStringLiteral("X-GNOME-Autostart-enabled"), QStringLiteral("true"));
     }
 
-    if (enabled) {
-        writeKey(target, QStringLiteral("X-GNOME-Autostart-enabled"), QStringLiteral("true"));
+    if (!writeKeys(target, updates)) {
+        return false;
     }
 
     Q_EMIT changed();
@@ -212,15 +245,18 @@ bool StartupApps::save(const QString &path, const QString &name, const QString &
         return false;
     }
 
-    bool ok = writeKey(path, QStringLiteral("Name"), name);
-    ok = writeKey(path, QStringLiteral("Comment"), comment) && ok;
-    ok = writeKey(path, QStringLiteral("Exec"), exec) && ok;
-    ok = writeKey(path, QStringLiteral("Icon"), icon) && ok;
+    QHash<QString, QString> updates;
+    updates.insert(QStringLiteral("Name"), sanitizeValue(name));
+    updates.insert(QStringLiteral("Comment"), sanitizeValue(comment));
+    updates.insert(QStringLiteral("Exec"), sanitizeValue(exec));
+    updates.insert(QStringLiteral("Icon"), sanitizeValue(icon));
 
-    if (ok) {
-        Q_EMIT changed();
+    if (!writeKeys(path, updates)) {
+        return false;
     }
-    return ok;
+
+    Q_EMIT changed();
+    return true;
 }
 
 QString StartupApps::create(const QString &name, const QString &comment, const QString &exec, const QString &icon)
@@ -241,25 +277,31 @@ QString StartupApps::create(const QString &name, const QString &comment, const Q
 
     const QString path = QDir(userAutostartDir()).filePath(fileName);
 
-    QFile file(path);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+    QSaveFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return {};
     }
 
     QTextStream stream(&file);
     stream << "[Desktop Entry]\n";
     stream << "Type=Application\n";
-    stream << "Name=" << name << "\n";
-    if (!comment.isEmpty()) {
-        stream << "Comment=" << comment << "\n";
+    stream << "Name=" << sanitizeValue(name) << "\n";
+    const QString cleanComment = sanitizeValue(comment);
+    if (!cleanComment.isEmpty()) {
+        stream << "Comment=" << cleanComment << "\n";
     }
-    stream << "Exec=" << exec << "\n";
-    if (!icon.isEmpty()) {
-        stream << "Icon=" << icon << "\n";
+    stream << "Exec=" << sanitizeValue(exec) << "\n";
+    const QString cleanIcon = sanitizeValue(icon);
+    if (!cleanIcon.isEmpty()) {
+        stream << "Icon=" << cleanIcon << "\n";
     }
     stream << "Terminal=false\n";
     stream << "Hidden=false\n";
-    file.close();
+    stream.flush();
+
+    if (stream.status() != QTextStream::Ok || !file.commit()) {
+        return {};
+    }
 
     Q_EMIT changed();
     return path;

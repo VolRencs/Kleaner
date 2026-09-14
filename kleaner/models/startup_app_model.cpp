@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "startup_app_model.h"
 
 StartupAppModel::StartupAppModel(QObject *parent) :
@@ -35,8 +38,6 @@ QVariant StartupAppModel::data(const QModelIndex &index, int role) const
         return app.value(QStringLiteral("enabled"));
     case SystemRole:
         return app.value(QStringLiteral("system"));
-    case PathRole:
-        return app.value(QStringLiteral("path"));
     default:
         return {};
     }
@@ -51,7 +52,6 @@ QHash<int, QByteArray> StartupAppModel::roleNames() const
         { IconRole, "icon" },
         { EnabledRole, "enabled" },
         { SystemRole, "system" },
-        { PathRole, "path" },
     };
 }
 

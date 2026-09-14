@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "system_info.h"
 
 #include "Utils/helpers.h"
@@ -98,8 +101,7 @@ void SystemInfo::readOsRelease()
 void SystemInfo::readCpuModel()
 {
     const QList<QByteArray> lines = Procfs::lines(QStringLiteral("/proc/cpuinfo"));
-    static const QRegularExpression re(QStringLiteral("^(model name|Processor|Hardware|cpu model)\\s*:\\s*(.+)$"),
-                                       QRegularExpression::CaseInsensitiveOption);
+    static const QRegularExpression re(QStringLiteral("^(model name|Processor|Hardware|cpu model)\\s*:\\s*(.+)$"));
     for (const QByteArray &line : lines) {
         const QRegularExpressionMatch match = re.match(QString::fromLatin1(line));
         if (match.hasMatch()) {

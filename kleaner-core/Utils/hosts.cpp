@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "hosts.h"
 
 #include <QFile>
@@ -15,6 +18,11 @@ Hosts::Hosts(QObject *parent) :
     reload();
 }
 
+QVariantList Hosts::entriesProperty() const
+{
+    return m_entries;
+}
+
 void Hosts::reload()
 {
     m_lines.clear();
@@ -22,7 +30,9 @@ void Hosts::reload()
 
     QFile file(QStringLiteral("/etc/hosts"));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        Q_EMIT loaded({});
+        m_entries = {};
+        Q_EMIT entriesChanged();
+        Q_EMIT loaded(m_entries);
         return;
     }
 
@@ -39,7 +49,9 @@ void Hosts::reload()
         }
     }
 
-    Q_EMIT loaded(entries());
+    m_entries = entries();
+    Q_EMIT entriesChanged();
+    Q_EMIT loaded(m_entries);
 }
 
 QVariantList Hosts::entries() const
@@ -67,16 +79,24 @@ QVariantList Hosts::entries() const
     return result;
 }
 
-void Hosts::save(const QVariantList &entries)
+void Hosts::setEntries(const QVariantList &entries)
+{
+    m_entries = entries;
+    Q_EMIT entriesChanged();
+}
+
+void Hosts::save()
 {
     QMap<int, QString> replacements;
     QStringList appended;
 
-    for (const QVariant &variant : entries) {
+    for (const QVariant &variant : std::as_const(m_entries)) {
         const QVariantMap entry = variant.toMap();
         const QString ip = entry.value(QStringLiteral("ip")).toString().trimmed();
         const QString names = entry.value(QStringLiteral("names")).toString().trimmed();
-        if (ip.isEmpty() || names.isEmpty()) {
+
+        // Incomplete rows keep their original line instead of being dropped.
+        if (ip.isEmpty() || names.isEmpty() || ip.contains(QLatin1Char('\n')) || names.contains(QLatin1Char('\n'))) {
             continue;
         }
 
@@ -94,9 +114,7 @@ void Hosts::save(const QVariantList &entries)
     output.reserve(m_lines.size() + appended.size());
     for (int i = 0; i < m_lines.size(); ++i) {
         if (m_hostLines.contains(i)) {
-            if (replacements.contains(i)) {
-                output.append(replacements.value(i));
-            }
+            output.append(replacements.contains(i) ? replacements.value(i) : m_lines.at(i));
             continue;
         }
         output.append(m_lines.at(i));

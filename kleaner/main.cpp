@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "models/cleaner_model.h"
 #include "models/process_model.h"
 #include "models/service_model.h"
@@ -18,14 +21,64 @@
 #include <QIcon>
 #include <QLibraryInfo>
 #include <QLocale>
+#include <QPalette>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QQuickWindow>
-#include <QStandardPaths>
 #include <QTimer>
 #include <QTranslator>
 
+#include <utility>
+
 #include <KDBusService>
+
+namespace
+{
+void applyDarkPalette()
+{
+    const QColor window(0x0f, 0x11, 0x15);
+    const QColor surface(0x16, 0x1a, 0x21);
+    const QColor surfaceHover(0x1c, 0x21, 0x2b);
+    const QColor elevated(0x1a, 0x1f, 0x28);
+    const QColor border(0x23, 0x2a, 0x35);
+    const QColor text(0xee, 0xf1, 0xf6);
+    const QColor textFaint(0x5f, 0x6a, 0x7c);
+    const QColor accent(0x3d, 0xae, 0xe9);
+    const QColor accentDark(0x08, 0x13, 0x1a);
+    const QColor highlightText(0xa7, 0x8b, 0xfa);
+
+    QPalette palette;
+    palette.setColor(QPalette::Window, window);
+    palette.setColor(QPalette::WindowText, text);
+    palette.setColor(QPalette::Base, surface);
+    palette.setColor(QPalette::AlternateBase, surfaceHover);
+    palette.setColor(QPalette::ToolTipBase, elevated);
+    palette.setColor(QPalette::ToolTipText, text);
+    palette.setColor(QPalette::Text, text);
+    palette.setColor(QPalette::Button, surfaceHover);
+    palette.setColor(QPalette::ButtonText, text);
+    palette.setColor(QPalette::BrightText, Qt::white);
+    palette.setColor(QPalette::Light, border);
+    palette.setColor(QPalette::Midlight, surfaceHover);
+    palette.setColor(QPalette::Mid, border);
+    palette.setColor(QPalette::Dark, window);
+    palette.setColor(QPalette::Shadow, Qt::black);
+    palette.setColor(QPalette::Highlight, accent);
+    palette.setColor(QPalette::HighlightedText, accentDark);
+    palette.setColor(QPalette::Link, accent);
+    palette.setColor(QPalette::LinkVisited, highlightText);
+    palette.setColor(QPalette::PlaceholderText, textFaint);
+    palette.setColor(QPalette::Accent, accent);
+
+    palette.setColor(QPalette::Disabled, QPalette::WindowText, textFaint);
+    palette.setColor(QPalette::Disabled, QPalette::Text, textFaint);
+    palette.setColor(QPalette::Disabled, QPalette::ButtonText, textFaint);
+    palette.setColor(QPalette::Disabled, QPalette::Highlight, border);
+    palette.setColor(QPalette::Disabled, QPalette::HighlightedText, textFaint);
+
+    QApplication::setPalette(palette);
+}
+}
 
 int main(int argc, char *argv[])
 {
@@ -34,9 +87,9 @@ int main(int argc, char *argv[])
 
     app.setApplicationName(QStringLiteral(KLEANER_DESKTOP_NAME));
     app.setApplicationDisplayName(QStringLiteral("Kleaner"));
-    app.setApplicationVersion(QStringLiteral("1.7.0"));
+    app.setApplicationVersion(QStringLiteral(KLEANER_VERSION));
     app.setDesktopFileName(QStringLiteral(KLEANER_DESKTOP_NAME));
-    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("kleaner"), QIcon(QStringLiteral(":/kleaner.svg"))));
+    app.setWindowIcon(QIcon::fromTheme(QStringLiteral(KLEANER_DESKTOP_NAME), QIcon(QStringLiteral(":/kleaner-circle.svg"))));
 
     const QString desktopStylePath = QLibraryInfo::path(QLibraryInfo::QmlImportsPath) + QStringLiteral("/org/kde/desktop");
     if (QFileInfo::exists(desktopStylePath)) {
@@ -45,19 +98,34 @@ int main(int argc, char *argv[])
         QQuickStyle::setStyle(QStringLiteral("Basic"));
     }
 
+    applyDarkPalette();
+
+    Settings settings;
+
     QTranslator translator;
-    const QString language = QLocale::system().name();
-    const QStringList translationCandidates = {
-        QStandardPaths::locate(QStandardPaths::AppDataLocation, QStringLiteral("translations/kleaner_%1.qm").arg(language)),
-        QCoreApplication::applicationDirPath() + QStringLiteral("/translations/kleaner_%1.qm").arg(language),
-        QCoreApplication::applicationDirPath() + QStringLiteral("/../translations/kleaner_%1.qm").arg(language),
-    };
-    for (const QString &candidate : translationCandidates) {
-        if (!candidate.isEmpty() && translator.load(candidate)) {
-            QCoreApplication::installTranslator(&translator);
-            break;
+    auto applyLanguage = [&settings, &translator] {
+        QCoreApplication::removeTranslator(&translator);
+
+        const QString configured = settings.language();
+        QStringList codes;
+        if (configured.isEmpty()) {
+            codes.append(QLocale::system().name());
+            codes.append(QLocale::system().name().section(QLatin1Char('_'), 0, 0));
+        } else {
+            codes.append(configured);
         }
-    }
+
+        for (const QString &directory : Settings::translationDirectories()) {
+            for (const QString &code : std::as_const(codes)) {
+                const QString path = directory + QStringLiteral("/kleaner_%1.qm").arg(code);
+                if (QFileInfo::exists(path) && translator.load(path)) {
+                    QCoreApplication::installTranslator(&translator);
+                    return;
+                }
+            }
+        }
+    };
+    applyLanguage();
 
     CpuInfo cpuInfo;
     MemoryInfo memoryInfo;
@@ -65,7 +133,6 @@ int main(int argc, char *argv[])
     DiskInfo diskInfo;
     SystemInfo systemInfo;
     Format format;
-    Settings settings;
     Tray tray;
     Hosts hosts;
     CleanerModel cleanerModel;
@@ -108,6 +175,11 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    QObject::connect(&settings, &Settings::languageChanged, &engine, [&applyLanguage, &engine] {
+        applyLanguage();
+        engine.retranslate();
+    });
+
     QTimer updateTimer;
     updateTimer.setInterval(1000);
     QObject::connect(&updateTimer, &QTimer::timeout, &app, [&] {
@@ -116,7 +188,6 @@ int main(int argc, char *argv[])
         networkInfo.update();
         diskInfo.update();
         systemInfo.update();
-        processModel.update();
     });
     updateTimer.start();
 

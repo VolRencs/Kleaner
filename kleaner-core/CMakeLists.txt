@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 VolRen
+# SPDX-License-Identifier: GPL-3.0-only
+
 find_package(Qt6 6.11 REQUIRED COMPONENTS Concurrent)
 find_package(KF6 6.30 REQUIRED COMPONENTS Auth KIO)
 

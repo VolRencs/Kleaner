@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 VolRen
+# SPDX-License-Identifier: GPL-3.0-only
+
 find_package(Qt6 6.11 REQUIRED COMPONENTS Quick QuickControls2 Svg Widgets LinguistTools)
 find_package(KF6 6.30 REQUIRED COMPONENTS Kirigami QuickCharts Config DBusAddons StatusNotifierItem)
 
@@ -35,13 +38,34 @@ target_link_libraries(kleaner
         kleaner-core
 )
 
+set_source_files_properties(qml/Design.qml qml/History.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
 qt_add_qml_module(kleaner
     URI Kleaner
     VERSION 1.0
     QML_FILES
         qml/Main.qml
-        qml/components/Donut.qml
+        qml/Design.qml
+        qml/History.qml
+        qml/components/AppButton.qml
+        qml/components/AppCard.qml
+        qml/components/AppCheckBox.qml
+        qml/components/AppComboBox.qml
+        qml/components/AppDialog.qml
+        qml/components/AppDialogFooter.qml
+        qml/components/AppScrollBar.qml
+        qml/components/AppSearchField.qml
+        qml/components/AppSpinner.qml
+        qml/components/AppSwitch.qml
+        qml/components/AppTextField.qml
+        qml/components/Badge.qml
         qml/components/ChartCard.qml
+        qml/components/Gauge.qml
+        qml/components/InfoRow.qml
+        qml/components/NavItem.qml
+        qml/components/PageHeader.qml
+        qml/components/SettingRow.qml
+        qml/components/SortHeader.qml
         qml/pages/DashboardPage.qml
         qml/pages/ResourcesPage.qml
         qml/pages/ProcessesPage.qml
@@ -57,8 +81,8 @@ qt_add_resources(kleaner "kleaner-resources"
     PREFIX "/"
     BASE "${CMAKE_CURRENT_SOURCE_DIR}/resources"
     FILES
-        resources/kleaner.svg
-        resources/kleaner-logo.svg
+        resources/kleaner-circle.svg
+        resources/kleaner-k.svg
 )
 
 file(GLOB KLEANER_TS_FILES "${CMAKE_SOURCE_DIR}/translations/*.ts")
@@ -85,13 +109,13 @@ include("${KF6Auth_DIR}/KF6AuthMacros.cmake")
 set(KLEANER_HELPER_EXEC "${KAUTH_HELPER_INSTALL_ABSOLUTE_DIR}/kleaner-kauth-helper")
 
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/helper/fr.quentium.kleaner.actions.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/fr.quentium.kleaner.actions"
+    "${CMAKE_CURRENT_SOURCE_DIR}/helper/org.volren.kleaner.actions.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/org.volren.kleaner.actions"
     @ONLY
 )
 
 kauth_install_helper_files(kleaner-kauth-helper ${KLEANER_HELPER_ID} root)
-kauth_install_actions(${KLEANER_HELPER_ID} "${CMAKE_CURRENT_BINARY_DIR}/fr.quentium.kleaner.actions")
+kauth_install_actions(${KLEANER_HELPER_ID} "${CMAKE_CURRENT_BINARY_DIR}/org.volren.kleaner.actions")
 
 install(TARGETS kleaner-kauth-helper DESTINATION ${KAUTH_HELPER_INSTALL_DIR})
 

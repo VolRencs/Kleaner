@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "process_info.h"
 
 #include "Utils/helpers.h"
@@ -77,11 +80,11 @@ QVector<Process> ProcessInfo::read()
             process.vsize = fields.at(20).toULongLong();
             const qulonglong rssPages = fields.at(21).toULongLong();
             process.rss = rssPages * static_cast<qulonglong>(Helpers::pageSizeKiB()) * 1024ULL;
-            process.cpu = deltaTotal > 0 ? 100.0 * static_cast<double>(utime + stime - m_previousCpu.value(pid)) / static_cast<double>(deltaTotal) : 0.0;
-            if (process.cpu < 0.0) {
-                process.cpu = 0.0;
-            }
-            currentCpu.insert(pid, utime + stime);
+            const quint64 currentTicks = utime + stime;
+            const quint64 previousTicks = m_previousCpu.value(pid);
+            const quint64 deltaTicks = currentTicks >= previousTicks ? currentTicks - previousTicks : 0;
+            process.cpu = deltaTotal > 0 ? 100.0 * static_cast<double>(deltaTicks) / static_cast<double>(deltaTotal) : 0.0;
+            currentCpu.insert(pid, currentTicks);
         } else {
             process.state = QChar::fromLatin1('?');
         }

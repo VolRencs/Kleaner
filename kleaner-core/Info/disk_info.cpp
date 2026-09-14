@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "disk_info.h"
 
 #include "Utils/procfs.h"
@@ -24,7 +27,7 @@ bool isPhysicalBlockDevice(const QString &name)
 {
     static const QStringList prefixes = {
         QStringLiteral("loop"), QStringLiteral("ram"), QStringLiteral("zram"),
-        QStringLiteral("sr"), QStringLiteral("fd"), QStringLiteral("dm-")
+        QStringLiteral("sr"), QStringLiteral("fd"), QStringLiteral("dm-"), QStringLiteral("md")
     };
     for (const QString &prefix : prefixes) {
         if (name.startsWith(prefix)) {

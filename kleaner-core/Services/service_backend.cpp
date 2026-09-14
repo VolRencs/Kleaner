@@ -1,14 +1,28 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "service_backend.h"
 
 #include <QDBusArgument>
 #include <QDBusConnection>
 #include <QDBusMessage>
+#include <QFileInfo>
+#include <QSet>
 
 namespace
 {
 constexpr auto systemdService = "org.freedesktop.systemd1";
 constexpr auto systemdPath = "/org/freedesktop/systemd1";
 constexpr auto systemdManager = "org.freedesktop.systemd1.Manager";
+
+QDBusMessage systemdCall(const QString &method)
+{
+    QDBusMessage message = QDBusMessage::createMethodCall(QString::fromLatin1(systemdService), QString::fromLatin1(systemdPath),
+                                                          QString::fromLatin1(systemdManager), method);
+    // Let polkit prompt for authentication instead of failing with "access denied".
+    message.setInteractiveAuthorizationAllowed(true);
+    return message;
+}
 }
 
 ServiceBackend::ServiceBackend(QObject *parent) :
@@ -41,25 +55,30 @@ void ServiceBackend::reload()
         return;
     }
 
+    const quint64 generation = ++m_generation;
     m_unitFilesLoaded = false;
     m_unitsLoaded = false;
     m_pendingServices.clear();
 
-    auto *filesWatcher = new QDBusPendingCallWatcher(m_interface->asyncCall(QStringLiteral("ListUnitFiles")), this);
-    connect(filesWatcher, &QDBusPendingCallWatcher::finished, this, [this](QDBusPendingCallWatcher *watcher) {
-        handleListUnitFiles(watcher);
+    auto *filesWatcher = new QDBusPendingCallWatcher(QDBusConnection::systemBus().asyncCall(systemdCall(QStringLiteral("ListUnitFiles"))), this);
+    connect(filesWatcher, &QDBusPendingCallWatcher::finished, this, [this, generation](QDBusPendingCallWatcher *watcher) {
+        handleListUnitFiles(watcher, generation);
     });
 
-    auto *unitsWatcher = new QDBusPendingCallWatcher(m_interface->asyncCall(QStringLiteral("ListUnits")), this);
-    connect(unitsWatcher, &QDBusPendingCallWatcher::finished, this, [this](QDBusPendingCallWatcher *watcher) {
-        handleListUnits(watcher);
+    auto *unitsWatcher = new QDBusPendingCallWatcher(QDBusConnection::systemBus().asyncCall(systemdCall(QStringLiteral("ListUnits"))), this);
+    connect(unitsWatcher, &QDBusPendingCallWatcher::finished, this, [this, generation](QDBusPendingCallWatcher *watcher) {
+        handleListUnits(watcher, generation);
     });
 }
 
-void ServiceBackend::handleListUnitFiles(QDBusPendingCallWatcher *watcher)
+void ServiceBackend::handleListUnitFiles(QDBusPendingCallWatcher *watcher, quint64 generation)
 {
     const QDBusMessage message = watcher->reply();
     watcher->deleteLater();
+
+    if (generation != m_generation) {
+        return;
+    }
 
     if (message.type() == QDBusMessage::ErrorMessage) {
         Q_EMIT error(message.errorMessage());
@@ -70,26 +89,52 @@ void ServiceBackend::handleListUnitFiles(QDBusPendingCallWatcher *watcher)
     const QVariantList arguments = message.arguments();
     if (arguments.isEmpty()) {
         m_unitFilesLoaded = true;
-        finishReload();
+        finishReload(generation);
         return;
     }
 
     const QDBusArgument array = arguments.first().value<QDBusArgument>();
+    QSet<QString> seenUnits;
     array.beginArray();
     while (!array.atEnd()) {
-        QString name;
+        QString path;
         QString state;
         array.beginStructure();
-        array >> name >> state;
+        array >> path >> state;
         array.endStructure();
 
-        if (!name.endsWith(QLatin1String(".service")) || name.contains(QLatin1Char('@'))) {
+        // Alias symlinks point at a canonical unit that is listed separately.
+        if (state == QLatin1String("alias")) {
+            continue;
+        }
+
+        // ListUnitFiles reports file paths; systemd methods need the unit name.
+        const QString unit = QFileInfo(path).fileName();
+        if (!unit.endsWith(QLatin1String(".service")) || unit.contains(QLatin1Char('@')) || seenUnits.contains(unit)) {
+            continue;
+        }
+        seenUnits.insert(unit);
+
+        // ListUnits may already have added this unit (the two D-Bus replies race).
+        // Update it in place instead of appending a duplicate.
+        bool found = false;
+        for (int i = 0; i < m_pendingServices.size(); ++i) {
+            QVariantMap service = m_pendingServices.at(i).toMap();
+            if (service.value(QStringLiteral("unit")).toString() == unit) {
+                service.insert(QStringLiteral("enabled"), state == QLatin1String("enabled") || state == QLatin1String("enabled-runtime"));
+                service.insert(QStringLiteral("unitFileState"), state);
+                m_pendingServices[i] = service;
+                found = true;
+                break;
+            }
+        }
+        if (found) {
             continue;
         }
 
         m_pendingServices.append(QVariantMap {
-            { QStringLiteral("name"), name.chopped(8) },
-            { QStringLiteral("unit"), name },
+            { QStringLiteral("name"), unit.chopped(8) },
+            { QStringLiteral("unit"), unit },
             { QStringLiteral("description"), QString() },
             { QStringLiteral("enabled"), state == QLatin1String("enabled") || state == QLatin1String("enabled-runtime") },
             { QStringLiteral("active"), false },
@@ -100,13 +145,17 @@ void ServiceBackend::handleListUnitFiles(QDBusPendingCallWatcher *watcher)
     array.endArray();
 
     m_unitFilesLoaded = true;
-    finishReload();
+    finishReload(generation);
 }
 
-void ServiceBackend::handleListUnits(QDBusPendingCallWatcher *watcher)
+void ServiceBackend::handleListUnits(QDBusPendingCallWatcher *watcher, quint64 generation)
 {
     const QDBusMessage message = watcher->reply();
     watcher->deleteLater();
+
+    if (generation != m_generation) {
+        return;
+    }
 
     if (message.type() == QDBusMessage::ErrorMessage) {
         Q_EMIT error(message.errorMessage());
@@ -117,7 +166,7 @@ void ServiceBackend::handleListUnits(QDBusPendingCallWatcher *watcher)
     const QVariantList arguments = message.arguments();
     if (arguments.isEmpty()) {
         m_unitsLoaded = true;
-        finishReload();
+        finishReload(generation);
         return;
     }
 
@@ -172,12 +221,12 @@ void ServiceBackend::handleListUnits(QDBusPendingCallWatcher *watcher)
     array.endArray();
 
     m_unitsLoaded = true;
-    finishReload();
+    finishReload(generation);
 }
 
-void ServiceBackend::finishReload()
+void ServiceBackend::finishReload(quint64 generation)
 {
-    if (!m_unitFilesLoaded || !m_unitsLoaded) {
+    if (generation != m_generation || !m_unitFilesLoaded || !m_unitsLoaded) {
         return;
     }
 
@@ -193,11 +242,14 @@ void ServiceBackend::setEnabled(const QString &unit, bool enabled)
 
     const QString method = enabled ? QStringLiteral("EnableUnitFiles") : QStringLiteral("DisableUnitFiles");
 
-    QDBusPendingCall call = enabled
-        ? m_interface->asyncCall(method, QStringList { unit }, false, false)
-        : m_interface->asyncCall(method, QStringList { unit }, false);
+    QDBusMessage message = systemdCall(method);
+    if (enabled) {
+        message << QStringList { unit } << false << false;
+    } else {
+        message << QStringList { unit } << false;
+    }
 
-    auto *watcher = new QDBusPendingCallWatcher(call, this);
+    auto *watcher = new QDBusPendingCallWatcher(QDBusConnection::systemBus().asyncCall(message), this);
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](QDBusPendingCallWatcher *self) {
         const QDBusMessage message = self->reply();
         self->deleteLater();
@@ -230,7 +282,10 @@ void ServiceBackend::runUnitMethod(const QString &method, const QString &unit)
         return;
     }
 
-    auto *watcher = new QDBusPendingCallWatcher(m_interface->asyncCall(method, unit, QStringLiteral("replace")), this);
+    QDBusMessage message = systemdCall(method);
+    message << unit << QStringLiteral("replace");
+
+    auto *watcher = new QDBusPendingCallWatcher(QDBusConnection::systemBus().asyncCall(message), this);
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](QDBusPendingCallWatcher *self) {
         const QDBusMessage message = self->reply();
         self->deleteLater();

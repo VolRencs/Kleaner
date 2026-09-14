@@ -1,6 +1,10 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #pragma once
 
 #include <QAbstractListModel>
+#include <QSet>
 #include <QVariantList>
 
 #include "Cleaner/cleaner.h"
@@ -10,11 +14,11 @@ class CleanerModel : public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(bool scanning READ scanning NOTIFY scanningChanged)
     Q_PROPERTY(qulonglong checkedSize READ checkedSize NOTIFY checkedSizeChanged)
+    Q_PROPERTY(bool hasCheckedItems READ hasCheckedItems NOTIFY hasCheckedItemsChanged)
 
   public:
     enum Roles {
         TitleRole = Qt::UserRole + 1,
-        PathRole,
         SizeRole,
         DepthRole,
         ExpandableRole,
@@ -22,7 +26,6 @@ class CleanerModel : public QAbstractListModel
         CheckedRole,
         RootRole,
         IsCategoryRole,
-        CategoryIdRole,
     };
     Q_ENUM(Roles)
 
@@ -34,6 +37,7 @@ class CleanerModel : public QAbstractListModel
 
     bool scanning() const;
     qulonglong checkedSize() const;
+    bool hasCheckedItems() const;
 
     Q_INVOKABLE void scan();
     Q_INVOKABLE void toggleExpand(int row);
@@ -43,6 +47,7 @@ class CleanerModel : public QAbstractListModel
   Q_SIGNALS:
     void scanningChanged();
     void checkedSizeChanged();
+    void hasCheckedItemsChanged();
     void scanFinished();
     void cleanFinished(bool ok, const QString &message, int count);
 
@@ -70,9 +75,13 @@ class CleanerModel : public QAbstractListModel
 
     void rebuild();
     void updateCheckedSize();
+    void loadSelection();
+    void saveSelection();
 
     Cleaner m_cleaner;
     QVector<Category> m_categories;
     QVector<Row> m_rows;
+    QSet<QString> m_checkedPaths;
     qulonglong m_checkedSize = 0;
+    bool m_hasCheckedItems = false;
 };

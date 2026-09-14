@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #pragma once
 
 #include <QDBusInterface>
@@ -8,7 +11,7 @@
 class ServiceBackend : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool available READ available NOTIFY availableChanged)
+    Q_PROPERTY(bool available READ available CONSTANT)
 
   public:
     explicit ServiceBackend(QObject *parent = nullptr);
@@ -23,19 +26,19 @@ class ServiceBackend : public QObject
     Q_INVOKABLE void restart(const QString &unit);
 
   Q_SIGNALS:
-    void availableChanged();
     void loaded(const QVariantList &services);
     void error(const QString &message);
 
   private:
-    void handleListUnitFiles(QDBusPendingCallWatcher *watcher);
-    void handleListUnits(QDBusPendingCallWatcher *watcher);
-    void finishReload();
+    void handleListUnitFiles(QDBusPendingCallWatcher *watcher, quint64 generation);
+    void handleListUnits(QDBusPendingCallWatcher *watcher, quint64 generation);
+    void finishReload(quint64 generation);
     void runUnitMethod(const QString &method, const QString &unit);
 
     QDBusInterface *m_interface = nullptr;
     bool m_available = false;
 
+    quint64 m_generation = 0;
     bool m_unitFilesLoaded = false;
     bool m_unitsLoaded = false;
     QVariantList m_pendingServices;

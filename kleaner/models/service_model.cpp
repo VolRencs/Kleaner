@@ -1,4 +1,9 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "service_model.h"
+
+#include <algorithm>
 
 ServiceModel::ServiceModel(QObject *parent) :
     QAbstractListModel(parent)
@@ -8,7 +13,6 @@ ServiceModel::ServiceModel(QObject *parent) :
         applyFilter();
     });
     connect(&m_backend, &ServiceBackend::error, this, &ServiceModel::error);
-    connect(&m_backend, &ServiceBackend::availableChanged, this, &ServiceModel::availableChanged);
 }
 
 int ServiceModel::rowCount(const QModelIndex &parent) const
@@ -29,8 +33,6 @@ QVariant ServiceModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case NameRole:
         return service.value(QStringLiteral("name"));
-    case UnitRole:
-        return service.value(QStringLiteral("unit"));
     case DescriptionRole:
         return service.value(QStringLiteral("description"));
     case EnabledRole:
@@ -39,8 +41,6 @@ QVariant ServiceModel::data(const QModelIndex &index, int role) const
         return service.value(QStringLiteral("active"));
     case ActiveStateRole:
         return service.value(QStringLiteral("activeState"));
-    case UnitFileStateRole:
-        return service.value(QStringLiteral("unitFileState"));
     default:
         return {};
     }
@@ -50,12 +50,10 @@ QHash<int, QByteArray> ServiceModel::roleNames() const
 {
     return {
         { NameRole, "name" },
-        { UnitRole, "unit" },
         { DescriptionRole, "description" },
         { EnabledRole, "enabled" },
         { ActiveRole, "active" },
         { ActiveStateRole, "activeState" },
-        { UnitFileStateRole, "unitFileState" },
     };
 }
 
@@ -77,6 +75,36 @@ void ServiceModel::setFilter(const QString &filter)
 bool ServiceModel::available() const
 {
     return m_backend.available();
+}
+
+int ServiceModel::sortBy() const
+{
+    return m_sortBy;
+}
+
+void ServiceModel::setSortBy(int sortBy)
+{
+    if (m_sortBy == sortBy) {
+        return;
+    }
+    m_sortBy = sortBy;
+    Q_EMIT sortByChanged();
+    applyFilter();
+}
+
+bool ServiceModel::reverse() const
+{
+    return m_reverse;
+}
+
+void ServiceModel::setReverse(bool reverse)
+{
+    if (m_reverse == reverse) {
+        return;
+    }
+    m_reverse = reverse;
+    Q_EMIT reverseChanged();
+    applyFilter();
 }
 
 void ServiceModel::reload()
@@ -132,6 +160,29 @@ void ServiceModel::applyFilter()
             }
         }
     }
+
+    std::stable_sort(filtered.begin(), filtered.end(), [this](const QVariant &a, const QVariant &b) {
+        const QVariantMap left = a.toMap();
+        const QVariantMap right = b.toMap();
+        int comparison = 0;
+        switch (m_sortBy) {
+        case SortState:
+            comparison = left.value(QStringLiteral("active")).toBool() == right.value(QStringLiteral("active")).toBool()
+                ? QString::localeAwareCompare(left.value(QStringLiteral("name")).toString(), right.value(QStringLiteral("name")).toString())
+                : (left.value(QStringLiteral("active")).toBool() ? -1 : 1);
+            break;
+        case SortStartup:
+            comparison = left.value(QStringLiteral("enabled")).toBool() == right.value(QStringLiteral("enabled")).toBool()
+                ? QString::localeAwareCompare(left.value(QStringLiteral("name")).toString(), right.value(QStringLiteral("name")).toString())
+                : (left.value(QStringLiteral("enabled")).toBool() ? -1 : 1);
+            break;
+        case SortName:
+        default:
+            comparison = QString::localeAwareCompare(left.value(QStringLiteral("name")).toString(), right.value(QStringLiteral("name")).toString());
+            break;
+        }
+        return m_reverse ? comparison > 0 : comparison < 0;
+    });
 
     beginResetModel();
     m_view = filtered;

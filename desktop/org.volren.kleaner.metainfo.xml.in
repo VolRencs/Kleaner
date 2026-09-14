@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 VolRen -->
+<component type="desktop-application">
+    <id>org.volren.kleaner.desktop</id>
+
+    <name>Kleaner</name>
+    <summary>Linux System Optimizer and Monitoring</summary>
+
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>GPL-3.0-only</project_license>
+    <content_rating type="oars-1.1"/>
+
+    <developer id="org.volren">
+        <name>VolRen</name>
+    </developer>
+
+    <translation type="qt">kleaner</translation>
+
+    <description>
+        <p>Kleaner is an open source system optimizer and application monitor that helps users to manage entire system with different aspects, its an all in one system utility.</p>
+        <p>Built with Qt 6 and KDE Frameworks 6, the interface is a native Wayland application with live resource graphs, process and systemd service management, startup application control and a system cleaner. It is a fork of Stacer.</p>
+    </description>
+
+    <launchable type="desktop-id">org.volren.kleaner.desktop</launchable>
+
+    <icon type="stock">org.volren.kleaner</icon>
+
+    <branding>
+        <color type="primary" scheme_preference="light">#025ff9</color>
+        <color type="primary" scheme_preference="dark">#075fbb</color>
+    </branding>
+
+    <categories>
+        <category>Utility</category>
+        <category>System</category>
+        <category>Monitor</category>
+    </categories>
+
+    <keywords>
+        <keyword>optimize</keyword>
+        <keyword>monitor</keyword>
+        <keyword>services</keyword>
+    </keywords>
+
+    <url type="homepage">https://volrencs.github.io/Kleaner/</url>
+    <url type="bugtracker">https://github.com/VolRencs/Kleaner/issues</url>
+    <url type="vcs-browser">https://github.com/VolRencs/Kleaner</url>
+
+    <screenshots>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/dashboard.png</image>
+            <caption>Dashboard with live system overview</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/processes.png</image>
+            <caption>Process list with sorting and filtering</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/VolRencs/Kleaner/main/docs/screenshots/cleaner.png</image>
+            <caption>System cleaner</caption>
+        </screenshot>
+    </screenshots>
+
+    <provides>
+        <binary>kleaner</binary>
+    </provides>
+
+    <releases>
+        <release version="@PROJECT_VERSION@" date="2026-09-14">
+            <description>
+                <p>First release of Kleaner: a complete rewrite of the Stacer interface on Qt 6 and KDE Frameworks 6 with a modern dark UI, service management, startup entries, a system cleaner with pacman/journal support and full Russian and Ukrainian translations.</p>
+            </description>
+        </release>
+    </releases>
+</component>

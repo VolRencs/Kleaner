@@ -1,9 +1,22 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "process_model.h"
 
 #include <QFutureWatcher>
+#include <QSet>
 #include <QtConcurrent>
 
 #include <algorithm>
+
+namespace
+{
+bool sameProcess(const Process &a, const Process &b)
+{
+    return a.pid == b.pid && a.name == b.name && a.user == b.user && a.state == b.state && qFuzzyCompare(a.cpu + 1.0, b.cpu + 1.0)
+        && qFuzzyCompare(a.mem + 1.0, b.mem + 1.0) && a.rss == b.rss && a.vsize == b.vsize && a.nice == b.nice && a.cmd == b.cmd;
+}
+}
 
 ProcessModel::ProcessModel(QObject *parent) :
     QAbstractListModel(parent)
@@ -40,10 +53,6 @@ QVariant ProcessModel::data(const QModelIndex &index, int role) const
         return process.mem;
     case RssRole:
         return process.rss;
-    case VsizeRole:
-        return process.vsize;
-    case NiceRole:
-        return process.nice;
     case CmdRole:
         return process.cmd;
     default:
@@ -61,8 +70,6 @@ QHash<int, QByteArray> ProcessModel::roleNames() const
         { CpuRole, "cpu" },
         { MemRole, "mem" },
         { RssRole, "rss" },
-        { VsizeRole, "vsize" },
-        { NiceRole, "nice" },
         { CmdRole, "cmd" },
     };
 }
@@ -79,7 +86,7 @@ void ProcessModel::setFilter(const QString &filter)
     }
     m_filter = filter;
     Q_EMIT filterChanged();
-    applyFilterAndSort();
+    applyFilterAndSort(true);
 }
 
 int ProcessModel::sortBy() const
@@ -94,7 +101,7 @@ void ProcessModel::setSortBy(int sortBy)
     }
     m_sortBy = sortBy;
     Q_EMIT sortByChanged();
-    applyFilterAndSort();
+    applyFilterAndSort(true);
 }
 
 bool ProcessModel::reverse() const
@@ -108,8 +115,8 @@ void ProcessModel::setReverse(bool reverse)
         return;
     }
     m_reverse = reverse;
-    Q_EMIT sortByChanged();
-    applyFilterAndSort();
+    Q_EMIT reverseChanged();
+    applyFilterAndSort(true);
 }
 
 bool ProcessModel::loading() const
@@ -133,20 +140,36 @@ void ProcessModel::setPaused(bool paused)
 
 void ProcessModel::update()
 {
-    if (m_loading || m_paused) {
+    fetchProcesses(false, false);
+}
+
+void ProcessModel::refresh()
+{
+    fetchProcesses(true, true);
+}
+
+void ProcessModel::fetchProcesses(bool reorder, bool showLoading)
+{
+    if (m_fetching || m_paused) {
         return;
     }
 
-    m_loading = true;
-    Q_EMIT loadingChanged();
+    m_fetching = true;
+    if (showLoading) {
+        m_loading = true;
+        Q_EMIT loadingChanged();
+    }
 
     auto *watcher = new QFutureWatcher<QVector<Process>>(this);
-    connect(watcher, &QFutureWatcher<QVector<Process>>::finished, this, [this, watcher] {
+    connect(watcher, &QFutureWatcher<QVector<Process>>::finished, this, [this, watcher, reorder, showLoading] {
         m_all = watcher->result();
         watcher->deleteLater();
-        m_loading = false;
-        Q_EMIT loadingChanged();
-        applyFilterAndSort();
+        m_fetching = false;
+        if (showLoading) {
+            m_loading = false;
+            Q_EMIT loadingChanged();
+        }
+        applyFilterAndSort(reorder);
     });
 
     watcher->setFuture(QtConcurrent::run([this] {
@@ -154,7 +177,7 @@ void ProcessModel::update()
     }));
 }
 
-void ProcessModel::applyFilterAndSort()
+void ProcessModel::applyFilterAndSort(bool reorder)
 {
     QVector<Process> filtered;
     filtered.reserve(m_all.size());
@@ -170,7 +193,9 @@ void ProcessModel::applyFilterAndSort()
         }
     }
 
-    std::sort(filtered.begin(), filtered.end(), [this](const Process &a, const Process &b) {
+    // Keep the view stable: equal values keep their previous relative order, so
+    // idle processes do not jump around on every refresh.
+    std::stable_sort(filtered.begin(), filtered.end(), [this](const Process &a, const Process &b) {
         int comparison = 0;
         switch (m_sortBy) {
         case SortMemory:
@@ -185,6 +210,12 @@ void ProcessModel::applyFilterAndSort()
         case SortUser:
             comparison = QString::localeAwareCompare(a.user, b.user);
             break;
+        case SortRss:
+            comparison = a.rss < b.rss ? -1 : (a.rss > b.rss ? 1 : 0);
+            break;
+        case SortState:
+            comparison = a.state < b.state ? -1 : (a.state > b.state ? 1 : 0);
+            break;
         case SortCpu:
         default:
             comparison = a.cpu < b.cpu ? -1 : (a.cpu > b.cpu ? 1 : 0);
@@ -193,14 +224,72 @@ void ProcessModel::applyFilterAndSort()
         return m_reverse ? comparison > 0 : comparison < 0;
     });
 
-    beginResetModel();
-    m_view = filtered;
-    endResetModel();
+    QHash<int, int> wanted;
+    wanted.reserve(filtered.size());
+    for (int i = 0; i < filtered.size(); ++i) {
+        wanted.insert(filtered.at(i).pid, i);
+    }
+
+    // Remove processes that disappeared without resetting the model.
+    for (int row = m_view.size() - 1; row >= 0; --row) {
+        if (!wanted.contains(m_view.at(row).pid)) {
+            beginRemoveRows(QModelIndex(), row, row);
+            m_view.removeAt(row);
+            endRemoveRows();
+        }
+    }
+
+    // Append processes that appeared for the first time.
+    QSet<int> currentPids;
+    currentPids.reserve(m_view.size());
+    for (const Process &current : std::as_const(m_view)) {
+        currentPids.insert(current.pid);
+    }
+    for (const Process &process : std::as_const(filtered)) {
+        if (!currentPids.contains(process.pid)) {
+            beginInsertRows(QModelIndex(), m_view.size(), m_view.size());
+            m_view.append(process);
+            currentPids.insert(process.pid);
+            endInsertRows();
+        }
+    }
+
+    // Move rows into their sorted positions. Automatic refresh keeps the
+    // current order so the view and its scrollbar stay perfectly still.
+    if (reorder) {
+        for (int target = 0; target < filtered.size(); ++target) {
+            const int pid = filtered.at(target).pid;
+            int source = target;
+            while (source < m_view.size() && m_view.at(source).pid != pid) {
+                ++source;
+            }
+            if (source == target || source >= m_view.size()) {
+                continue;
+            }
+            beginMoveRows(QModelIndex(), source, source, QModelIndex(), target);
+            m_view.move(source, target);
+            endMoveRows();
+        }
+    }
+
+    // Refresh values of the rows that stayed in place.
+    for (int i = 0; i < m_view.size(); ++i) {
+        const int filteredRow = reorder ? i : wanted.value(m_view.at(i).pid, -1);
+        if (filteredRow < 0 || filteredRow >= filtered.size()) {
+            continue;
+        }
+        const Process &updated = filtered.at(filteredRow);
+        if (!sameProcess(m_view.at(i), updated)) {
+            m_view[i] = updated;
+            const QModelIndex modelIndex = index(i, 0);
+            Q_EMIT dataChanged(modelIndex, modelIndex);
+        }
+    }
 }
 
 bool ProcessModel::killPid(int pid, bool force)
 {
-    if (pid <= 1) {
+    if (pid <= 1 || !hasPid(pid)) {
         return false;
     }
     if (!m_info.killProcess(pid, force)) {
@@ -210,10 +299,12 @@ bool ProcessModel::killPid(int pid, bool force)
     return true;
 }
 
-int ProcessModel::pidAt(int row) const
+bool ProcessModel::hasPid(int pid) const
 {
-    if (row < 0 || row >= m_view.size()) {
-        return -1;
+    for (const Process &process : m_view) {
+        if (process.pid == pid) {
+            return true;
+        }
     }
-    return m_view.at(row).pid;
+    return false;
 }

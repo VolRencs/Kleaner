@@ -1,13 +1,14 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 
-Kirigami.Page {
+Item {
     id: page
-
-    title: qsTr("Services")
 
     onVisibleChanged: {
         if (visible) {
@@ -19,6 +20,7 @@ Kirigami.Page {
 
     Connections {
         target: Services
+
         function onError(message) {
             inlineMessage.text = message;
             inlineMessage.visible = true;
@@ -34,7 +36,21 @@ Kirigami.Page {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Kirigami.Units.smallSpacing
+        anchors.margins: Design.pagePadding
+        spacing: Design.space16
+
+        PageHeader {
+            Layout.fillWidth: true
+            title: qsTr("Services")
+            subtitle: qsTr("Manage systemd units on this machine")
+
+            Badge {
+                Layout.alignment: Qt.AlignVCenter
+                visible: Services.available
+                text: qsTr("%1 units").arg(serviceList.count)
+                badgeColor: Design.textMuted
+            }
+        }
 
         Kirigami.InlineMessage {
             id: inlineMessage
@@ -52,15 +68,16 @@ Kirigami.Page {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Kirigami.Units.smallSpacing
+            spacing: Design.space8
 
-            Kirigami.SearchField {
+            AppSearchField {
                 Layout.fillWidth: true
                 placeholderText: qsTr("Search services…")
+                text: Services.filter
                 onTextChanged: Services.filter = text
             }
 
-            Controls.Button {
+            AppButton {
                 icon.name: "view-refresh"
                 display: Controls.AbstractButton.IconOnly
                 text: qsTr("Refresh")
@@ -68,97 +85,217 @@ Kirigami.Page {
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: Kirigami.Units.smallSpacing
-
-            Controls.Label {
-                Layout.fillWidth: true
-                text: qsTr("Service")
-                font.bold: true
-            }
-            Controls.Label {
-                Layout.preferredWidth: page.width * 0.3
-                text: qsTr("Description")
-                font.bold: true
-                elide: Text.ElideRight
-            }
-            Controls.Label {
-                Layout.preferredWidth: page.width * 0.12
-                text: qsTr("Startup")
-                font.bold: true
-                horizontalAlignment: Text.AlignHCenter
-            }
-            Controls.Label {
-                Layout.preferredWidth: page.width * 0.16
-                text: qsTr("State")
-                font.bold: true
-                horizontalAlignment: Text.AlignHCenter
-            }
-        }
-
-        Controls.Label {
-            Layout.fillWidth: true
-            visible: serviceList.count === 0
-            horizontalAlignment: Text.AlignHCenter
-            text: qsTr("No services found.")
-            color: Kirigami.Theme.disabledTextColor
-        }
-
-        ListView {
-            id: serviceList
-
+        AppCard {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            clip: true
-            model: Services
-            boundsBehavior: Flickable.StopAtBounds
+            padding: 0
 
-            ScrollBar.vertical: Controls.ScrollBar {}
+            contentItem: ColumnLayout {
+                spacing: 0
 
-            delegate: Controls.ItemDelegate {
-                width: serviceList.width
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.leftMargin: Design.space16
+                    Layout.rightMargin: Design.space16
+                    Layout.topMargin: Design.space12
+                    Layout.bottomMargin: Design.space8
+                    spacing: Design.space12
 
-                contentItem: RowLayout {
-                    spacing: Kirigami.Units.smallSpacing
-
-                    Controls.Label {
+                    SortHeader {
                         Layout.fillWidth: true
-                        text: model.name
-                        font.bold: true
-                        elide: Text.ElideRight
+                        alignLeft: true
+                        text: qsTr("Service")
+                        sorted: Services.sortBy === Services.SortName
+                        descending: Services.reverse
+                        onClicked: {
+                            if (Services.sortBy === Services.SortName) {
+                                Services.reverse = !Services.reverse;
+                            } else {
+                                Services.sortBy = Services.SortName;
+                                Services.reverse = false;
+                            }
+                        }
+                    }
+
+                    SortHeader {
+                        Layout.preferredWidth: 110
+                        text: qsTr("State")
+                        sorted: Services.sortBy === Services.SortState
+                        descending: Services.reverse
+                        onClicked: {
+                            if (Services.sortBy === Services.SortState) {
+                                Services.reverse = !Services.reverse;
+                            } else {
+                                Services.sortBy = Services.SortState;
+                                Services.reverse = false;
+                            }
+                        }
+                    }
+
+                    SortHeader {
+                        Layout.preferredWidth: 110
+                        text: qsTr("Autostart")
+                        sorted: Services.sortBy === Services.SortStartup
+                        descending: Services.reverse
+                        onClicked: {
+                            if (Services.sortBy === Services.SortStartup) {
+                                Services.reverse = !Services.reverse;
+                            } else {
+                                Services.sortBy = Services.SortStartup;
+                                Services.reverse = false;
+                            }
+                        }
                     }
 
                     Controls.Label {
-                        Layout.preferredWidth: page.width * 0.3
-                        text: model.description
-                        color: Kirigami.Theme.disabledTextColor
-                        elide: Text.ElideRight
+                        Layout.preferredWidth: 96
+                        horizontalAlignment: Text.AlignHCenter
+                        text: qsTr("Actions")
+                        color: Design.textFaint
+                        font.pointSize: Design.tinyFontSize
+                        font.weight: Font.DemiBold
                     }
+                }
 
-                    Controls.Switch {
-                        Layout.preferredWidth: page.width * 0.12
-                        checked: model.enabled
-                        onClicked: Services.setEnabled(index, checked)
-                    }
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: Design.border
+                }
 
-                    RowLayout {
-                        Layout.preferredWidth: page.width * 0.16
-                        spacing: 0
+                Controls.Label {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    visible: serviceList.count === 0
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    text: qsTr("No services found.")
+                    color: Design.textMuted
+                }
 
-                        Controls.Button {
-                            Layout.fillWidth: true
-                            display: Controls.AbstractButton.IconOnly
-                            icon.name: model.active ? "media-playback-stop" : "media-playback-start"
-                            text: model.active ? qsTr("Stop") : qsTr("Start")
-                            onClicked: model.active ? Services.stop(index) : Services.start(index)
+                ListView {
+                    id: serviceList
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    visible: count > 0
+                    clip: true
+                    model: Services
+                    boundsBehavior: Flickable.StopAtBounds
+
+                    Controls.ScrollBar.vertical: AppScrollBar {}
+
+                    delegate: Controls.ItemDelegate {
+                        id: delegate
+
+                        width: serviceList.width
+                        height: 60
+                        leftPadding: Design.space16
+                        rightPadding: Design.space16
+                        topPadding: 0
+                        bottomPadding: 0
+                        hoverEnabled: true
+
+                        background: Rectangle {
+                            color: delegate.hovered ? Design.surfaceHover : "transparent"
+
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                width: parent.width
+                                height: 1
+                                color: Design.border
+                                opacity: 0.6
+                            }
                         }
 
-                        Controls.Button {
-                            display: Controls.AbstractButton.IconOnly
-                            icon.name: "view-refresh"
-                            text: qsTr("Restart")
-                            onClicked: Services.restart(index)
+                        contentItem: RowLayout {
+                            spacing: Design.space12
+
+                            Rectangle {
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.preferredWidth: 36
+                                Layout.preferredHeight: 36
+                                radius: Design.radiusSmall
+                                color: Design.surfaceHover
+
+                                Kirigami.Icon {
+                                    anchors.centerIn: parent
+                                    width: 18
+                                    height: 18
+                                    source: "preferences-system-services"
+                                    color: model.active ? Design.positive : Design.textFaint
+                                }
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+
+                                Controls.Label {
+                                    Layout.fillWidth: true
+                                    text: model.name
+                                    color: Design.text
+                                    font.weight: Font.DemiBold
+                                    elide: Text.ElideRight
+                                }
+
+                                Controls.Label {
+                                    Layout.fillWidth: true
+                                    text: model.description
+                                    color: Design.textMuted
+                                    font.pointSize: Design.smallFontSize
+                                    elide: Text.ElideRight
+                                }
+                            }
+
+                            Item {
+                                Layout.preferredWidth: 110
+                                implicitHeight: stateBadge.implicitHeight
+
+                                Badge {
+                                    id: stateBadge
+                                    anchors.centerIn: parent
+                                    text: model.activeState === "failed" ? qsTr("Failed")
+                                                                         : model.active ? qsTr("Running")
+                                                                                        : qsTr("Stopped")
+                                    badgeColor: model.activeState === "failed" ? Design.negative
+                                                                               : model.active ? Design.positive
+                                                                                              : Design.textMuted
+                                }
+                            }
+
+                            Item {
+                                Layout.preferredWidth: 110
+                                implicitHeight: 32
+
+                                AppSwitch {
+                                    anchors.centerIn: parent
+                                    checked: model.enabled
+                                    onClicked: Services.setEnabled(index, checked)
+                                }
+                            }
+
+                            RowLayout {
+                                Layout.preferredWidth: 96
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 0
+
+                                AppButton {
+                                    Layout.preferredWidth: 48
+                                    display: Controls.AbstractButton.IconOnly
+                                    icon.name: model.active ? "media-playback-stop" : "media-playback-start"
+                                    text: model.active ? qsTr("Stop") : qsTr("Start")
+                                    onClicked: model.active ? Services.stop(index) : Services.start(index)
+                                }
+
+                                AppButton {
+                                    Layout.preferredWidth: 48
+                                    display: Controls.AbstractButton.IconOnly
+                                    icon.name: "view-refresh"
+                                    text: qsTr("Restart")
+                                    onClicked: Services.restart(index)
+                                }
+                            }
                         }
                     }
                 }

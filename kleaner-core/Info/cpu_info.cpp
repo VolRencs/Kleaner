@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "cpu_info.h"
 
 #include "Utils/procfs.h"
@@ -111,8 +114,8 @@ void CpuInfo::update()
         }
         const quint64 idle = values.value(3) + values.value(4);
 
-        const quint64 deltaTotal = total - m_previousTotals.at(i);
-        const quint64 deltaIdle = idle - m_previousIdles.at(i);
+        const quint64 deltaTotal = total >= m_previousTotals.at(i) ? total - m_previousTotals.at(i) : 0;
+        const quint64 deltaIdle = idle >= m_previousIdles.at(i) ? idle - m_previousIdles.at(i) : 0;
 
         const double percent = deltaTotal > 0 ? 100.0 * static_cast<double>(deltaTotal - deltaIdle) / static_cast<double>(deltaTotal) : 0.0;
 

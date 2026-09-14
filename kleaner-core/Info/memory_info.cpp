@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "memory_info.h"
 
 #include "Utils/procfs.h"
@@ -34,7 +37,9 @@ void MemoryInfo::update()
     m_available = values.value(QStringLiteral("MemAvailable"));
     if (m_available == 0) {
         const qulonglong buffers = values.value(QStringLiteral("Buffers"));
-        const qulonglong cached = values.value(QStringLiteral("Cached")) + values.value(QStringLiteral("SReclaimable")) - values.value(QStringLiteral("Shmem"));
+        const qulonglong cachedAndReclaimable = values.value(QStringLiteral("Cached")) + values.value(QStringLiteral("SReclaimable"));
+        const qulonglong shmem = values.value(QStringLiteral("Shmem"));
+        const qulonglong cached = cachedAndReclaimable >= shmem ? cachedAndReclaimable - shmem : 0;
         m_available = freeMemory + buffers + cached;
     }
 

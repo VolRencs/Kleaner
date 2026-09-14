@@ -1,0 +1,39 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm --needed \
+            base-devel cmake ninja extra-cmake-modules \
+            qt6-base qt6-declarative qt6-svg qt6-wayland qt6-tools \
+            kirigami kquickcharts kcoreaddons kconfig kdbusaddons \
+            kstatusnotifieritem kio kauth qqc2-desktop-style breeze-icons \
+            appstream desktop-file-utils
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+
+      - name: Build
+        run: cmake --build build -j "$(nproc)"
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Validate desktop entry
+        run: desktop-file-validate desktop/org.volren.kleaner.desktop
+
+      - name: Validate AppStream metadata
+        run: appstreamcli validate build/desktop/org.volren.kleaner.metainfo.xml

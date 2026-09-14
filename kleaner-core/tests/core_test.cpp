@@ -1,8 +1,13 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include <QDir>
 #include <QFile>
 #include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QtTest>
+
+#include <limits>
 
 #include "Cleaner/cleaner.h"
 #include "Info/cpu_info.h"
@@ -24,6 +29,7 @@ class CoreTest : public QObject
 
     void formatBytesScalesUnits();
     void formatPercentRounds();
+    void formatDurationClampsHugeValues();
 
     void memoryInfoReportsMemory();
     void cpuInfoReportsCores();
@@ -68,6 +74,15 @@ void CoreTest::formatPercentRounds()
     QCOMPARE(format.percent(100.0, 0), QStringLiteral("100%"));
 }
 
+void CoreTest::formatDurationClampsHugeValues()
+{
+    Format format;
+    QVERIFY(!format.duration(0).isEmpty());
+    QVERIFY(!format.duration(3661).isEmpty());
+    // Must not overflow into garbage for absurd inputs.
+    QVERIFY(!format.duration(std::numeric_limits<qulonglong>::max()).isEmpty());
+}
+
 void CoreTest::memoryInfoReportsMemory()
 {
     MemoryInfo memory;
@@ -94,7 +109,7 @@ void CoreTest::systemInfoReportsKernel()
     SystemInfo info;
     QVERIFY(!info.kernel().isEmpty());
     QVERIFY(!info.hostname().isEmpty());
-    QVERIFY(!info.distribution().isEmpty());
+    QVERIFY(!info.platform().isEmpty());
     info.update();
 }
 

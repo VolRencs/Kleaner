@@ -1,93 +1,168 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
 
-import org.kde.kirigami as Kirigami
-
-Kirigami.ScrollablePage {
+Item {
     id: page
 
-    title: qsTr("Settings")
+    Controls.ScrollView {
+        id: scroll
 
-    ColumnLayout {
-        spacing: Kirigami.Units.largeSpacing
+        anchors.fill: parent
+        anchors.margins: Design.pagePadding
+        clip: true
+        Controls.ScrollBar.horizontal.policy: Controls.ScrollBar.AlwaysOff
+        Controls.ScrollBar.vertical: AppScrollBar {}
 
-        Kirigami.AbstractCard {
-            Layout.fillWidth: true
+        ColumnLayout {
+            width: scroll.availableWidth
+            spacing: Design.space16
 
-            contentItem: ColumnLayout {
-                spacing: Kirigami.Units.smallSpacing
+            PageHeader {
+                Layout.fillWidth: true
+                Layout.bottomMargin: Design.space4
+                title: qsTr("Settings")
+                subtitle: qsTr("Configure how Kleaner starts and behaves")
+            }
 
-                Controls.Label {
-                    Layout.fillWidth: true
-                    text: qsTr("Window")
-                    font.bold: true
-                }
+            AppCard {
+                Layout.fillWidth: true
 
-                Controls.Label {
-                    Layout.fillWidth: true
-                    text: qsTr("Page shown on startup")
-                    color: Kirigami.Theme.disabledTextColor
-                }
+                contentItem: ColumnLayout {
+                    spacing: Design.space12
 
-                Controls.ComboBox {
-                    id: startPageCombo
-                    Layout.fillWidth: true
-                    textRole: "text"
-                    valueRole: "value"
-                    model: [
-                        { text: qsTr("Dashboard"), value: "dashboard" },
-                        { text: qsTr("Resources"), value: "resources" },
-                        { text: qsTr("Processes"), value: "processes" },
-                        { text: qsTr("Services"), value: "services" },
-                        { text: qsTr("Startup Apps"), value: "startup" },
-                        { text: qsTr("System Cleaner"), value: "cleaner" },
-                        { text: qsTr("Hosts"), value: "hosts" }
-                    ]
-                    Component.onCompleted: currentIndex = indexOfValue(Settings.startPage)
-                    onActivated: Settings.startPage = currentValue
-                }
+                    Controls.Label {
+                        Layout.fillWidth: true
+                        text: qsTr("Startup")
+                        color: Design.text
+                        font.weight: Font.DemiBold
+                    }
 
-                Controls.Label {
-                    Layout.fillWidth: true
-                    Layout.topMargin: Kirigami.Units.smallSpacing
-                    text: qsTr("When closing the window")
-                    color: Kirigami.Theme.disabledTextColor
-                }
+                    SettingRow {
+                        Layout.fillWidth: true
+                        text: qsTr("Page shown on startup")
+                        description: qsTr("Which page Kleaner opens when launched.")
 
-                Controls.ComboBox {
-                    id: closeBehaviorCombo
-                    Layout.fillWidth: true
-                    textRole: "text"
-                    valueRole: "value"
-                    model: [
-                        { text: qsTr("Ask every time"), value: "ask" },
-                        { text: qsTr("Keep running in the tray"), value: "tray" },
-                        { text: qsTr("Quit"), value: "quit" }
-                    ]
-                    Component.onCompleted: currentIndex = indexOfValue(Settings.closeBehavior)
-                    onActivated: Settings.closeBehavior = currentValue
+                        AppComboBox {
+                            id: startPageCombo
+                            Layout.preferredWidth: 220
+                            textRole: "text"
+                            valueRole: "value"
+                            model: [
+                                { text: qsTr("Dashboard"), value: "dashboard" },
+                                { text: qsTr("Resources"), value: "resources" },
+                                { text: qsTr("Processes"), value: "processes" },
+                                { text: qsTr("Services"), value: "services" },
+                                { text: qsTr("Startup Apps"), value: "startup" },
+                                { text: qsTr("System Cleaner"), value: "cleaner" },
+                                { text: qsTr("Hosts"), value: "hosts" }
+                            ]
+                            Component.onCompleted: currentIndex = Math.max(0, indexOfValue(Settings.startPage))
+                            onActivated: Settings.startPage = currentValue
+                        }
+                    }
                 }
             }
-        }
 
-        Kirigami.AbstractCard {
-            Layout.fillWidth: true
-            visible: Tray.available
+            AppCard {
+                Layout.fillWidth: true
 
-            contentItem: ColumnLayout {
-                spacing: Kirigami.Units.smallSpacing
+                contentItem: ColumnLayout {
+                    spacing: Design.space12
 
-                Controls.Label {
-                    Layout.fillWidth: true
-                    text: qsTr("System Tray")
-                    font.bold: true
+                    Controls.Label {
+                        Layout.fillWidth: true
+                        text: qsTr("Window")
+                        color: Design.text
+                        font.weight: Font.DemiBold
+                    }
+
+                    SettingRow {
+                        Layout.fillWidth: true
+                        text: qsTr("When closing the window")
+                        description: Tray.available && Settings.useTray
+                                     ? qsTr("Choose whether Kleaner keeps running in the system tray.")
+                                     : qsTr("Choose whether Kleaner asks, minimizes to the tray or quits.")
+
+                        AppComboBox {
+                            id: closeBehaviorCombo
+                            Layout.preferredWidth: 220
+                            textRole: "text"
+                            valueRole: "value"
+                            model: {
+                                const items = [
+                                    { text: qsTr("Ask every time"), value: "ask" },
+                                    { text: qsTr("Quit"), value: "quit" }
+                                ];
+                                if (Tray.available) {
+                                    items.splice(1, 0, { text: qsTr("Keep running in the tray"), value: "tray" });
+                                }
+                                return items;
+                            }
+                            Component.onCompleted: currentIndex = Math.max(0, indexOfValue(Settings.closeBehavior))
+                            onActivated: Settings.closeBehavior = currentValue
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        visible: Tray.available
+                        Layout.preferredHeight: 1
+                        color: Design.border
+                    }
+
+                    SettingRow {
+                        Layout.fillWidth: true
+                        visible: Tray.available
+                        text: qsTr("System tray")
+                        description: qsTr("Show an icon in the system tray while Kleaner is running.")
+
+                        AppSwitch {
+                            checked: Settings.useTray
+                            onClicked: Settings.useTray = checked
+                        }
+                    }
                 }
+            }
 
-                Controls.Switch {
-                    text: qsTr("Use the system tray icon")
-                    checked: Settings.useTray
-                    onClicked: Settings.useTray = checked
+            AppCard {
+                Layout.fillWidth: true
+
+                contentItem: ColumnLayout {
+                    spacing: Design.space12
+
+                    Controls.Label {
+                        Layout.fillWidth: true
+                        text: qsTr("Language")
+                        color: Design.text
+                        font.weight: Font.DemiBold
+                    }
+
+                    SettingRow {
+                        Layout.fillWidth: true
+                        text: qsTr("Interface language")
+                        description: qsTr("Changes the language of the application interface.")
+
+                        AppComboBox {
+                            id: languageCombo
+                            Layout.preferredWidth: 220
+                            textRole: "text"
+                            valueRole: "value"
+                            model: {
+                                const items = [{ text: qsTr("System language"), value: "" }];
+                                const languages = Settings.availableLanguages();
+                                for (let i = 0; i < languages.length; ++i) {
+                                    items.push({ text: languages[i].name, value: languages[i].code });
+                                }
+                                return items;
+                            }
+                            currentIndex: Math.max(0, indexOfValue(Settings.language))
+                            onActivated: Settings.language = currentValue
+                        }
+                    }
                 }
             }
         }

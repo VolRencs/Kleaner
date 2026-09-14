@@ -1,9 +1,15 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include <KAuth/ActionReply>
 #include <KAuth/HelperSupport>
 
 #include <QDir>
 #include <QFileInfo>
+#include <QProcess>
+#include <QRegularExpression>
 #include <QSaveFile>
+#include <QStandardPaths>
 
 using namespace KAuth;
 
@@ -14,6 +20,8 @@ class KleanerHelper : public QObject
   public Q_SLOTS:
     ActionReply clean(const QVariantMap &args);
     ActionReply writehosts(const QVariantMap &args);
+    ActionReply removeorphans(const QVariantMap &args);
+    ActionReply vacuumjournal(const QVariantMap &args);
 };
 
 static ActionReply errorReply(const QString &message)
@@ -93,6 +101,71 @@ ActionReply KleanerHelper::writehosts(const QVariantMap &args)
 
     ActionReply reply;
     reply.setData(QVariantMap { { QStringLiteral("written"), content.size() } });
+    return reply;
+}
+
+ActionReply KleanerHelper::removeorphans(const QVariantMap &args)
+{
+    static const QRegularExpression validName(QStringLiteral("^[A-Za-z0-9@._+][A-Za-z0-9@._+-]*$"));
+
+    QStringList packages;
+    const QStringList requested = args.value(QStringLiteral("packages")).toStringList();
+    for (const QString &package : requested) {
+        const QString name = package.trimmed();
+        if (validName.match(name).hasMatch()) {
+            packages.append(name);
+        }
+    }
+
+    ActionReply reply;
+    if (packages.isEmpty()) {
+        reply.setData(QVariantMap { { QStringLiteral("removed"), 0 } });
+        return reply;
+    }
+
+    const QString pacman = QStandardPaths::findExecutable(QStringLiteral("pacman"), { QStringLiteral("/usr/bin"), QStringLiteral("/usr/local/bin") });
+    if (pacman.isEmpty()) {
+        return errorReply(QStringLiteral("pacman was not found on this system."));
+    }
+
+    QStringList arguments = { QStringLiteral("-Rns"), QStringLiteral("--noconfirm") };
+    arguments += packages;
+
+    QProcess removeProcess;
+    removeProcess.start(pacman, arguments);
+    if (!removeProcess.waitForFinished(120000)) {
+        return errorReply(QStringLiteral("Timed out while removing orphan packages."));
+    }
+    if (removeProcess.exitStatus() != QProcess::NormalExit || removeProcess.exitCode() != 0) {
+        const QString output = QString::fromLocal8Bit(removeProcess.readAllStandardError()).trimmed();
+        return errorReply(output.isEmpty() ? QStringLiteral("Failed to remove orphan packages.") : output);
+    }
+
+    reply.setData(QVariantMap { { QStringLiteral("removed"), packages.size() } });
+    return reply;
+}
+
+ActionReply KleanerHelper::vacuumjournal(const QVariantMap &args)
+{
+    Q_UNUSED(args)
+
+    const QString journalctl = QStandardPaths::findExecutable(QStringLiteral("journalctl"), { QStringLiteral("/usr/bin"), QStringLiteral("/usr/local/bin") });
+    if (journalctl.isEmpty()) {
+        return errorReply(QStringLiteral("journalctl was not found on this system."));
+    }
+
+    QProcess process;
+    process.start(journalctl, { QStringLiteral("--vacuum-size=50M"), QStringLiteral("--quiet") });
+    if (!process.waitForFinished(120000)) {
+        return errorReply(QStringLiteral("Timed out while vacuuming the systemd journal."));
+    }
+    if (process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0) {
+        const QString output = QString::fromLocal8Bit(process.readAllStandardError()).trimmed();
+        return errorReply(output.isEmpty() ? QStringLiteral("Failed to vacuum the systemd journal.") : output);
+    }
+
+    ActionReply reply;
+    reply.setData(QVariantMap { { QStringLiteral("vacuumed"), true } });
     return reply;
 }
 

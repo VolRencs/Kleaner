@@ -1,86 +1,116 @@
 # Kleaner
 
-Linux System Optimizer and Monitoring — a Qt 6 / KDE Frameworks 6 fork with a
-Kirigami (QML) user interface.
+[![License](https://img.shields.io/badge/license-GPL--3.0--only-blue.svg)](LICENSE)
+[![Qt](https://img.shields.io/badge/Qt-6.11%2B-green.svg)](https://www.qt.io/)
+[![KDE Frameworks](https://img.shields.io/badge/KDE%20Frameworks-6.30%2B-blue.svg)](https://kde.org/)
 
-> Kleaner is a fork of [QuentiumYT/Stacer](https://github.com/QuentiumYT/Stacer)
-> that is being rewritten around Qt 6.11, KDE Frameworks 6 and Wayland.
-> The project is currently packaged for Arch Linux only. Other distributions
-> will follow later.
+Kleaner is a Linux system optimizer and monitoring application with a modern
+dark interface. It is a fork of [Stacer](https://github.com/QuentiumYT/Stacer)
+rewritten around Qt 6, KDE Frameworks 6 and Wayland.
+
+The project targets **Arch Linux** only.
+
+![Dashboard](docs/screenshots/dashboard.png)
 
 ## Features
 
-- **Dashboard** — live CPU, memory and disk usage rings, system information.
-- **Resources** — rolling 60-second history charts for CPU usage, load
-  average, memory/swap, disk I/O and network throughput.
-- **Processes** — process list with CPU/memory usage, sorting, filtering,
-  terminate and force-kill actions.
+- **Dashboard** — live CPU, memory and disk gauges, system information, storage
+  usage and live metrics.
+- **Resources** — rolling 60-second history charts for CPU usage, load average,
+  memory/swap, disk I/O and network throughput.
+- **Processes** — sortable and filterable process list (CPU, memory, RSS,
+  state, …) with terminate and force-kill actions. The list updates every two
+  seconds without stealing your scroll position.
 - **Services** — systemd units over D-Bus with start/stop/restart, enable and
-  disable through polkit.
+  disable through polkit, and click-to-sort column headers.
 - **Startup Apps** — XDG autostart entries, including system entries from
   `/etc/xdg/autostart` (user overrides are created on demand).
-- **System Cleaner** — trash, application caches, logs and crash reports.
-  Privileged cleanup runs through a KAuth helper with an allowlist.
+- **System Cleaner** — trash, application caches, system logs, the systemd
+  journal, the pacman package cache, orphan packages and crash reports.
+  Selections are remembered between sessions. Privileged cleanup runs through a
+  KAuth helper with an allowlist.
 - **Hosts** — view and edit `/etc/hosts` with a KAuth helper writing the file
   atomically.
+- **Translations** — the interface is fully translated into Russian and
+  Ukrainian; other locales fall back to English.
 
-The user interface requires a Wayland session. Running under X11 is not
-supported and not tested.
+## Requirements
 
-## Installation (Arch Linux)
+- Arch Linux with systemd
+- Wayland session (Plasma or another compositor)
+- A polkit authentication agent
+- `qqc2-desktop-style` and an icon theme (`breeze-icons` recommended)
 
-Build and install with the provided PKGBUILD:
+## Installation
+
+### From the AUR
+
+The packaging files live in `packaging/arch`:
 
 ```bash
-cd packaging/arch
+git clone https://github.com/VolRencs/Kleaner.git
+cd Kleaner/packaging/arch
 makepkg -si
 ```
 
-Or build manually:
+### Manual build
 
 ```bash
 sudo pacman -S --needed \
-  base-devel cmake extra-cmake-modules \
+  base-devel cmake ninja extra-cmake-modules \
   qt6-base qt6-declarative qt6-svg qt6-wayland qt6-tools \
   kirigami kquickcharts kcoreaddons kconfig kdbusaddons \
   kstatusnotifieritem kio kauth qqc2-desktop-style breeze-icons
 
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j $(nproc)
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+cmake --build build
 sudo cmake --install build
 ```
 
-Run: `kleaner`
+`sudo cmake --install` (or `makepkg -si`) is required for privileged operations:
+it installs the KAuth helper and the polkit actions used by the system cleaner
+and the hosts editor.
 
-## Requirements
-
-- systemd (services page via D-Bus)
-- polkit agent (privileged cleaner and `/etc/hosts` writes)
-- `qqc2-desktop-style` and an icon theme (`breeze-icons` recommended)
+Run the application with `kleaner`, or start *Kleaner* from the application
+menu.
 
 ## Configuration
 
-Settings are stored in `~/.config/kleanerrc` (KConfig). Translations are
-installed to `/usr/share/kleaner/translations` and loaded according to the
-system locale.
+Settings are stored in `~/.config/kleanerrc` (KConfig). The interface language
+can be changed in *Settings → Language*; it defaults to the system locale.
+
+Translations are installed to `/usr/share/org.volren.kleaner/translations` and
+loaded according to the selected language.
 
 ## Development
 
 ```bash
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
 cmake --build build -j $(nproc)
+ctest --test-dir build --output-on-failure
 ./build/kleaner/kleaner
 ```
 
-Translation catalogs live in `translations/` and can be refreshed with the
-CMake targets:
+Translation catalogs live in `translations/` and can be refreshed with the CMake
+targets:
 
 ```bash
 cmake --build build --target update_translations
 cmake --build build --target release_translations
 ```
 
+## Contributing
+
+Bug reports and merge requests are welcome at
+[github.com/VolRencs/Kleaner](https://github.com/VolRencs/Kleaner).
+Please run `ctest` before submitting changes and keep the QML style consistent
+with the existing `Design` palette and `App*` controls.
+
+## Credits
+
+Kleaner is a fork of [Stacer](https://github.com/QuentiumYT/Stacer) by Quentin
+Lienhardt. The current application is developed by VolRen.
+
 ## License
 
-GPL-3.0. See [LICENSE](LICENSE). Kleaner is a fork of Stacer by Quentin
-Lienhardt.
+GPL-3.0-only. See [LICENSE](LICENSE).

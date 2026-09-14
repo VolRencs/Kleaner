@@ -1,8 +1,8 @@
 pkgbase = kleaner-git
-	pkgdesc = Linux System Optimizer and Monitoring (Qt 6 / Kirigami rewrite of Stacer)
-	pkgver = 1.7.0
+	pkgdesc = Linux System Optimizer and Monitoring (Qt 6 / KDE Frameworks 6)
+	pkgver = 1.0.0
 	pkgrel = 1
-	url = https://github.com/QuentiumYT/Stacer
+	url = https://volrencs.github.io/Kleaner/
 	arch = x86_64
 	arch = aarch64
 	license = GPL-3.0-only
@@ -25,6 +25,9 @@ pkgbase = kleaner-git
 	depends = qqc2-desktop-style
 	optdepends = breeze-icons: icon theme for the KDE desktop
 	provides = kleaner
+	conflicts = kleaner
 	options = !lto
+	source = kleaner-git::git+https://github.com/VolRencs/Kleaner.git
+	sha256sums = SKIP
 
 pkgname = kleaner-git

@@ -1,13 +1,14 @@
+// SPDX-FileCopyrightText: 2026 VolRen
+// SPDX-License-Identifier: GPL-3.0-only
+
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 
-Kirigami.Page {
+Item {
     id: page
-
-    title: qsTr("Startup Apps")
 
     onVisibleChanged: {
         if (visible) {
@@ -19,6 +20,7 @@ Kirigami.Page {
 
     Connections {
         target: StartupApps
+
         function onError(message) {
             inlineMessage.text = message;
             inlineMessage.visible = true;
@@ -34,28 +36,23 @@ Kirigami.Page {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Kirigami.Units.smallSpacing
+        anchors.margins: Design.pagePadding
+        spacing: Design.space16
 
-        Kirigami.InlineMessage {
-            id: inlineMessage
+        PageHeader {
             Layout.fillWidth: true
-            visible: false
-            type: Kirigami.MessageType.Error
-        }
+            title: qsTr("Startup Apps")
+            subtitle: qsTr("Applications launched automatically when you log in")
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: Kirigami.Units.smallSpacing
-
-            Kirigami.SearchField {
-                Layout.fillWidth: true
-                placeholderText: qsTr("Search startup apps…")
-                onTextChanged: StartupApps.filter = text
+            Badge {
+                Layout.alignment: Qt.AlignVCenter
+                text: qsTr("%1 entries").arg(startupList.count)
+                badgeColor: Design.textMuted
             }
 
-            Controls.Button {
-                icon.name: "list-add"
+            AppButton {
                 text: qsTr("Add")
+                icon.name: "list-add"
                 onClicked: {
                     nameField.text = "";
                     execField.text = "";
@@ -66,7 +63,7 @@ Kirigami.Page {
                 }
             }
 
-            Controls.Button {
+            AppButton {
                 icon.name: "view-refresh"
                 display: Controls.AbstractButton.IconOnly
                 text: qsTr("Refresh")
@@ -74,142 +71,231 @@ Kirigami.Page {
             }
         }
 
-        Controls.Label {
+        Kirigami.InlineMessage {
+            id: inlineMessage
             Layout.fillWidth: true
-            visible: startupList.count === 0
-            horizontalAlignment: Text.AlignHCenter
-            text: qsTr("No startup applications found.")
-            color: Kirigami.Theme.disabledTextColor
+            visible: false
+            type: Kirigami.MessageType.Error
         }
 
-        ListView {
-            id: startupList
+        AppSearchField {
+            Layout.fillWidth: true
+            placeholderText: qsTr("Search startup apps…")
+            text: StartupApps.filter
+            onTextChanged: StartupApps.filter = text
+        }
 
+        AppCard {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            clip: true
-            model: StartupApps
-            boundsBehavior: Flickable.StopAtBounds
+            padding: 0
 
-            ScrollBar.vertical: Controls.ScrollBar {}
+            contentItem: Item {
+                Controls.Label {
+                    anchors.centerIn: parent
+                    visible: startupList.count === 0
+                    horizontalAlignment: Text.AlignHCenter
+                    text: qsTr("No startup applications found.")
+                    color: Design.textMuted
+                }
 
-            delegate: Controls.ItemDelegate {
-                width: startupList.width
+                ListView {
+                    id: startupList
 
-                contentItem: RowLayout {
-                    spacing: Kirigami.Units.smallSpacing
+                    anchors.fill: parent
+                    visible: count > 0
+                    clip: true
+                    model: StartupApps
+                    boundsBehavior: Flickable.StopAtBounds
 
-                    Kirigami.Icon {
-                        Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-                        Layout.preferredHeight: Kirigami.Units.iconSizes.medium
-                        source: model.icon.length > 0 ? model.icon : "application-x-executable"
-                    }
+                    Controls.ScrollBar.vertical: AppScrollBar {}
 
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 0
+                    delegate: Controls.ItemDelegate {
+                        id: delegate
 
-                        Controls.Label {
-                            Layout.fillWidth: true
-                            text: model.name
-                            font.bold: true
-                            elide: Text.ElideRight
+                        width: startupList.width
+                        height: 64
+                        leftPadding: Design.space16
+                        rightPadding: Design.space16
+                        topPadding: 0
+                        bottomPadding: 0
+                        hoverEnabled: true
+
+                        background: Rectangle {
+                            color: delegate.hovered ? Design.surfaceHover : "transparent"
+
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                width: parent.width
+                                height: 1
+                                color: Design.border
+                                opacity: 0.6
+                            }
                         }
 
-                        Controls.Label {
-                            Layout.fillWidth: true
-                            text: model.exec
-                            color: Kirigami.Theme.disabledTextColor
-                            elide: Text.ElideRight
+                        contentItem: RowLayout {
+                            spacing: Design.space12
+
+                            Rectangle {
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.preferredWidth: 38
+                                Layout.preferredHeight: 38
+                                radius: Design.radiusSmall
+                                color: Design.surfaceHover
+
+                                Kirigami.Icon {
+                                    anchors.centerIn: parent
+                                    width: 22
+                                    height: 22
+                                    source: model.icon.length > 0 ? model.icon : "application-x-executable"
+                                }
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+
+                                Controls.Label {
+                                    Layout.fillWidth: true
+                                    text: model.name
+                                    color: Design.text
+                                    font.weight: Font.DemiBold
+                                    elide: Text.ElideRight
+                                }
+
+                                Controls.Label {
+                                    Layout.fillWidth: true
+                                    text: model.comment.length > 0 ? model.comment : model.exec
+                                    color: Design.textMuted
+                                    font.pointSize: Design.smallFontSize
+                                    elide: Text.ElideRight
+                                }
+                            }
+
+                            Badge {
+                                Layout.alignment: Qt.AlignVCenter
+                                visible: model.system
+                                text: qsTr("System")
+                                badgeColor: Design.textMuted
+                            }
+
+                            Item {
+                                Layout.preferredWidth: 72
+                                implicitHeight: 32
+
+                                AppSwitch {
+                                    anchors.centerIn: parent
+                                    checked: model.enabled
+                                    onClicked: StartupApps.setEnabled(index, checked)
+                                }
+                            }
+
+                            AppButton {
+                                visible: !model.system
+                                Layout.preferredWidth: 40
+                                display: Controls.AbstractButton.IconOnly
+                                icon.name: "document-edit"
+                                text: qsTr("Edit")
+                                onClicked: {
+                                    nameField.text = model.name;
+                                    execField.text = model.exec;
+                                    commentField.text = model.comment;
+                                    iconField.text = model.icon;
+                                    editDialog.editingRow = index;
+                                    editDialog.open();
+                                }
+                            }
+
+                            AppButton {
+                                visible: !model.system
+                                Layout.preferredWidth: 40
+                                display: Controls.AbstractButton.IconOnly
+                                icon.name: "edit-delete"
+                                text: qsTr("Remove")
+                                onClicked: StartupApps.remove(index)
+                            }
+
+                            Item {
+                                visible: model.system
+                                Layout.preferredWidth: 80
+                            }
                         }
-                    }
-
-                    Controls.Label {
-                        visible: model.system
-                        text: qsTr("System")
-                        color: Kirigami.Theme.disabledTextColor
-                    }
-
-                    Controls.Switch {
-                        checked: model.enabled
-                        onClicked: StartupApps.setEnabled(index, checked)
-                    }
-
-                    Controls.Button {
-                        visible: !model.system
-                        display: Controls.AbstractButton.IconOnly
-                        icon.name: "document-edit"
-                        text: qsTr("Edit")
-                        onClicked: {
-                            nameField.text = model.name;
-                            execField.text = model.exec;
-                            commentField.text = model.comment;
-                            iconField.text = model.icon;
-                            editDialog.editingRow = index;
-                            editDialog.open();
-                        }
-                    }
-
-                    Controls.Button {
-                        visible: !model.system
-                        display: Controls.AbstractButton.IconOnly
-                        icon.name: "edit-delete"
-                        text: qsTr("Remove")
-                        onClicked: StartupApps.remove(index)
                     }
                 }
             }
         }
     }
 
-    Controls.Dialog {
+    AppDialog {
         id: editDialog
 
         property int editingRow: -1
 
         title: editingRow >= 0 ? qsTr("Edit Startup App") : qsTr("Add Startup App")
-        modal: true
-        anchors.centerIn: parent
-        standardButtons: Controls.Dialog.NoButton
 
         contentItem: ColumnLayout {
-            spacing: Kirigami.Units.smallSpacing
+            spacing: Design.space8
 
-            Controls.TextField {
+            Controls.Label {
+                text: qsTr("Name")
+                color: Design.textMuted
+                font.pointSize: Design.smallFontSize
+            }
+
+            AppTextField {
                 id: nameField
                 Layout.fillWidth: true
                 placeholderText: qsTr("Name")
             }
 
-            Controls.TextField {
+            Controls.Label {
+                Layout.topMargin: Design.space4
+                text: qsTr("Command")
+                color: Design.textMuted
+                font.pointSize: Design.smallFontSize
+            }
+
+            AppTextField {
                 id: execField
                 Layout.fillWidth: true
                 placeholderText: qsTr("Command")
             }
 
-            Controls.TextField {
+            Controls.Label {
+                Layout.topMargin: Design.space4
+                text: qsTr("Comment")
+                color: Design.textMuted
+                font.pointSize: Design.smallFontSize
+            }
+
+            AppTextField {
                 id: commentField
                 Layout.fillWidth: true
                 placeholderText: qsTr("Comment")
             }
 
-            Controls.TextField {
+            Controls.Label {
+                Layout.topMargin: Design.space4
+                text: qsTr("Icon name")
+                color: Design.textMuted
+                font.pointSize: Design.smallFontSize
+            }
+
+            AppTextField {
                 id: iconField
                 Layout.fillWidth: true
                 placeholderText: qsTr("Icon name")
             }
         }
 
-        footer: RowLayout {
-            spacing: Kirigami.Units.smallSpacing
-
-            Controls.Button {
+        footer: AppDialogFooter {
+            AppButton {
                 Layout.fillWidth: true
                 text: qsTr("Cancel")
                 onClicked: editDialog.close()
             }
 
-            Controls.Button {
+            AppButton {
                 Layout.fillWidth: true
                 text: qsTr("Save")
                 highlighted: true
