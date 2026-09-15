@@ -2,6 +2,21 @@
 
 All notable changes to Kleaner are documented in this file.
 
+## 1.3.3 — 2026-09-15
+
+- The system cleaner's expand chevron is now a round Kirigami icon button;
+  the previous stock button drew a square hover highlight and focus ring.
+- Trash is a single atomic cleaner category: its internal files/info entries
+  are no longer listed and selecting it empties the whole trash at once.
+- The privileged cleanup helper accepts a narrower set of paths: the unused
+  /var/tmp entry was removed and package cache deletions are limited to
+  /var/cache/pacman/pkg.
+- Modernized the C++ code: the project builds with C++23 and uses QDirListing
+  iterators, std::ranges algorithms, QTranslator::load(QLocale) and
+  QLocale::codeToLanguage.
+- QML property accesses to parent components are now qualified, and CI builds
+  with clang++ in addition to GCC.
+
 ## 1.3.2 — 2026-09-14
 
 - Fixed the process list scrolling away while it refreshes: the list now uses
