@@ -5,6 +5,8 @@
 
 #include <QtConcurrent>
 
+#include <algorithm>
+
 StartupAppModel::StartupAppModel(QObject *parent) :
     QAbstractListModel(parent)
 {
@@ -141,12 +143,10 @@ int StartupAppModel::add(const QString &name, const QString &comment, const QStr
         return -1;
     }
 
-    for (int i = 0; i < m_view.size(); ++i) {
-        if (m_view.at(i).toMap().value(QStringLiteral("path")).toString() == path) {
-            return i;
-        }
-    }
-    return -1;
+    const auto found = std::ranges::find_if(m_view, [&path](const QVariant &app) {
+        return app.toMap().value(QStringLiteral("path")).toString() == path;
+    });
+    return found == m_view.cend() ? -1 : static_cast<int>(found - m_view.begin());
 }
 
 bool StartupAppModel::remove(int row)

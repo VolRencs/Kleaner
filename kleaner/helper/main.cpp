@@ -167,8 +167,7 @@ ActionReply KleanerHelper::clean(const QVariantMap &args)
         QStringLiteral("/var/log/"),
         QStringLiteral("/var/crash/"),
         QStringLiteral("/var/lib/systemd/coredump/"),
-        QStringLiteral("/var/tmp/"),
-        QStringLiteral("/var/cache/"),
+        QStringLiteral("/var/cache/pacman/pkg/"),
         QStringLiteral("/tmp/"),
     };
 

@@ -5,7 +5,7 @@
 
 #include "Utils/procfs.h"
 
-#include <QDir>
+#include <QDirListing>
 #include <QRegularExpression>
 
 CpuInfo::CpuInfo(QObject *parent) :
@@ -149,13 +149,13 @@ void CpuInfo::updateLoads()
 
 void CpuInfo::updateClocks()
 {
-    const QDir cpuDir(QStringLiteral("/sys/devices/system/cpu"));
-    const QStringList entries = cpuDir.entryList({ QStringLiteral("cpu[0-9]*") }, QDir::Dirs | QDir::NoSymLinks);
+    using Flag = QDirListing::IteratorFlag;
+    const QDirListing cpus(QStringLiteral("/sys/devices/system/cpu"), { QStringLiteral("cpu[0-9]*") }, Flag::DirsOnly);
 
     double sumKHz = 0.0;
     int count = 0;
-    for (const QString &entry : entries) {
-        const QString path = cpuDir.filePath(entry + QStringLiteral("/cpufreq/scaling_cur_freq"));
+    for (const auto &entry : cpus) {
+        const QString path = entry.filePath() + QStringLiteral("/cpufreq/scaling_cur_freq");
         bool ok = false;
         const quint64 khz = Procfs::readUInt64(path, &ok);
         if (ok && khz > 0) {

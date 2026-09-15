@@ -227,12 +227,11 @@ Kirigami.Page {
                                 Layout.preferredWidth: 28
                                 Layout.preferredHeight: 28
 
-                                Controls.Button {
+                                AppIconButton {
                                     anchors.fill: parent
                                     visible: delegate.expandable
-                                    flat: true
-                                    display: Controls.AbstractButton.IconOnly
-                                    icon.name: delegate.expanded ? "go-down" : "go-next"
+                                    iconSource: "go-next"
+                                    iconRotation: delegate.expanded ? 90 : 0
                                     text: delegate.expanded ? qsTr("Collapse") : qsTr("Expand")
                                     onClicked: Cleaner.toggleExpand(delegate.index)
                                 }

@@ -53,6 +53,7 @@ qt_add_qml_module(kleaner
         qml/components/AppComboBox.qml
         qml/components/AppDialog.qml
         qml/components/AppDialogFooter.qml
+        qml/components/AppIconButton.qml
         qml/components/AppScrollBar.qml
         qml/components/AppSearchField.qml
         qml/components/AppSeparator.qml

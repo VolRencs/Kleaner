@@ -287,9 +287,11 @@ Kirigami.ScrollablePage {
                     model: Disks.disks.length
 
                     delegate: ColumnLayout {
+                        id: diskDelegate
+
                         required property int index
 
-                        readonly property var disk: index < Disks.disks.length ? Disks.disks[index] : null
+                        readonly property var disk: diskDelegate.index < Disks.disks.length ? Disks.disks[diskDelegate.index] : null
 
                         Layout.fillWidth: true
                         spacing: Design.space8
@@ -299,14 +301,14 @@ Kirigami.ScrollablePage {
                             spacing: Design.space12
 
                             Controls.Label {
-                                text: disk ? (disk.name === "root" ? "/" : disk.mountPoint) : ""
+                                text: diskDelegate.disk ? (diskDelegate.disk.name === "root" ? "/" : diskDelegate.disk.mountPoint) : ""
                                 color: Design.text
                                 font.weight: Font.DemiBold
                             }
 
                             Badge {
                                 Layout.alignment: Qt.AlignVCenter
-                                text: disk ? disk.fileSystemType : ""
+                                text: diskDelegate.disk ? diskDelegate.disk.fileSystemType : ""
                                 badgeColor: Design.textMuted
                             }
 
@@ -315,7 +317,7 @@ Kirigami.ScrollablePage {
                             }
 
                             Controls.Label {
-                                text: disk ? Format.bytes(disk.used) + " / " + Format.bytes(disk.total) : ""
+                                text: diskDelegate.disk ? Format.bytes(diskDelegate.disk.used) + " / " + Format.bytes(diskDelegate.disk.total) : ""
                                 color: Design.textMuted
                                 font.pointSize: Design.smallFontSize
                             }
@@ -323,10 +325,10 @@ Kirigami.ScrollablePage {
                             Controls.Label {
                                 Layout.preferredWidth: 56
                                 horizontalAlignment: Text.AlignRight
-                                text: disk ? Format.percent(disk.percent) : ""
-                                color: disk && disk.percent > 90 ? Design.negative
-                                       : disk && disk.percent > 75 ? Design.warning
-                                                                   : Design.text
+                                text: diskDelegate.disk ? Format.percent(diskDelegate.disk.percent) : ""
+                                color: diskDelegate.disk && diskDelegate.disk.percent > 90 ? Design.negative
+                                       : diskDelegate.disk && diskDelegate.disk.percent > 75 ? Design.warning
+                                                                                             : Design.text
                                 font.weight: Font.DemiBold
                             }
                         }
@@ -338,12 +340,12 @@ Kirigami.ScrollablePage {
                             color: Design.track
 
                             Rectangle {
-                                width: parent.width * Math.min(1, (disk ? disk.percent : 0) / 100)
+                                width: parent.width * Math.min(1, (diskDelegate.disk ? diskDelegate.disk.percent : 0) / 100)
                                 height: parent.height
                                 radius: 3
-                                color: disk && disk.percent > 90 ? Design.negative
-                                       : disk && disk.percent > 75 ? Design.warning
-                                                                   : Design.accent
+                                color: diskDelegate.disk && diskDelegate.disk.percent > 90 ? Design.negative
+                                       : diskDelegate.disk && diskDelegate.disk.percent > 75 ? Design.warning
+                                                                                             : Design.accent
 
                                 Behavior on width {
                                     NumberAnimation {

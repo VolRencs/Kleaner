@@ -17,7 +17,6 @@
 #include "Utils/hosts.h"
 
 #include <QApplication>
-#include <QFileInfo>
 #include <QIcon>
 #include <QLibraryInfo>
 #include <QLocale>
@@ -27,8 +26,6 @@
 #include <QQuickWindow>
 #include <QTimer>
 #include <QTranslator>
-
-#include <utility>
 
 #include <KDBusService>
 
@@ -116,45 +113,24 @@ int main(int argc, char *argv[])
         QCoreApplication::removeTranslator(&qtTranslator);
 
         const QString configured = settings.language();
-        QStringList codes;
-        if (configured.isEmpty()) {
-            const QLocale system = QLocale::system();
-            for (const QString &uiLanguage : system.uiLanguages()) {
-                codes.append(uiLanguage);
-                codes.append(uiLanguage.section(QLatin1Char('_'), 0, 0));
-                codes.append(uiLanguage.section(QLatin1Char('-'), 0, 0));
-            }
-            codes.append(system.name());
-            codes.append(system.name().section(QLatin1Char('_'), 0, 0));
-            codes.removeAll(QString());
-            codes.removeDuplicates();
-        } else {
-            codes.append(configured);
-            QLocale::setDefault(QLocale(configured));
+        const QLocale locale = configured.isEmpty() ? QLocale::system() : QLocale(configured);
+        if (!configured.isEmpty()) {
+            QLocale::setDefault(locale);
         }
 
-        bool appLoaded = false;
+        // QTranslator::load() walks the locale's UI languages itself, so the
+        // ru-RU -> ru fallback chain does not have to be built by hand.
         for (const QString &directory : Settings::translationDirectories()) {
-            if (appLoaded) {
+            if (appTranslator.load(locale, QStringLiteral("kleaner"), QStringLiteral("_"), directory)) {
+                QCoreApplication::installTranslator(&appTranslator);
                 break;
-            }
-            for (const QString &code : std::as_const(codes)) {
-                const QString path = directory + QStringLiteral("/kleaner_%1.qm").arg(code);
-                if (QFileInfo::exists(path) && appTranslator.load(path)) {
-                    QCoreApplication::installTranslator(&appTranslator);
-                    appLoaded = true;
-                    break;
-                }
             }
         }
 
         // Qt's own strings (dialogs, controls) and KDE framework messages.
         const QString qtDirectory = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
-        for (const QString &code : std::as_const(codes)) {
-            if (qtTranslator.load(QStringLiteral("qtbase_%1").arg(code), qtDirectory)) {
-                QCoreApplication::installTranslator(&qtTranslator);
-                break;
-            }
+        if (qtTranslator.load(locale, QStringLiteral("qtbase"), QStringLiteral("_"), qtDirectory)) {
+            QCoreApplication::installTranslator(&qtTranslator);
         }
     };
     applyLanguage();

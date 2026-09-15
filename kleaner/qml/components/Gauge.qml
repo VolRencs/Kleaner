@@ -51,9 +51,9 @@ Item {
             ctx.arc(center, center, radius, 0, Math.PI * 2);
             ctx.stroke();
 
-            if (progress > 0.2) {
+            if (root.progress > 0.2) {
                 const start = -Math.PI / 2;
-                const end = start + Math.PI * 2 * (progress / 100);
+                const end = start + Math.PI * 2 * (root.progress / 100);
 
                 // Cheap layered glow instead of an expensive canvas shadow.
                 ctx.save();

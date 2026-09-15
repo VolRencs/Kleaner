@@ -4,10 +4,10 @@
 #pragma once
 
 #include <QHash>
+#include <QList>
 #include <QMutex>
 #include <QObject>
 #include <QString>
-#include <QVector>
 
 struct Process {
     int pid = 0;
@@ -29,7 +29,7 @@ class ProcessInfo : public QObject
   public:
     explicit ProcessInfo(QObject *parent = nullptr);
 
-    [[nodiscard]] QVector<Process> read();
+    [[nodiscard]] QList<Process> read();
 
     [[nodiscard]] Q_INVOKABLE bool killProcess(int pid, bool force);
 

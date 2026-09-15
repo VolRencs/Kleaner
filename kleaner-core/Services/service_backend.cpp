@@ -10,6 +10,8 @@
 #include <QFileInfo>
 #include <QSet>
 
+#include <algorithm>
+
 namespace
 {
 constexpr auto systemdService = "org.freedesktop.systemd1";
@@ -124,17 +126,13 @@ void ServiceBackend::handleListUnitFiles(QDBusPendingCallWatcher *watcher, quint
 
         // ListUnits may already have added this unit (the two D-Bus replies race).
         // Update it in place instead of appending a duplicate.
-        bool found = false;
-        for (int i = 0; i < m_pendingServices.size(); ++i) {
-            QVariantMap service = m_pendingServices.at(i).toMap();
-            if (service.value(QStringLiteral("unit")).toString() == unit) {
-                service.insert(QStringLiteral("enabled"), state == QLatin1String("enabled") || state == QLatin1String("enabled-runtime"));
-                m_pendingServices[i] = service;
-                found = true;
-                break;
-            }
-        }
-        if (found) {
+        const auto existing = std::ranges::find_if(m_pendingServices, [&unit](const QVariant &variant) {
+            return variant.toMap().value(QStringLiteral("unit")).toString() == unit;
+        });
+        if (existing != m_pendingServices.end()) {
+            QVariantMap service = existing->toMap();
+            service.insert(QStringLiteral("enabled"), state == QLatin1String("enabled") || state == QLatin1String("enabled-runtime"));
+            *existing = service;
             continue;
         }
 
@@ -198,20 +196,17 @@ void ServiceBackend::handleListUnits(QDBusPendingCallWatcher *watcher, quint64 g
         }
 
         // Update the matching entry from ListUnitFiles, or add it if missing (runtime units)
-        bool found = false;
-        for (int i = 0; i < m_pendingServices.size(); ++i) {
-            QVariantMap service = m_pendingServices.at(i).toMap();
-            if (service.value(QStringLiteral("unit")).toString() == name) {
-                service.insert(QStringLiteral("description"), description);
-                service.insert(QStringLiteral("active"), activeState == QLatin1String("active") || activeState == QLatin1String("activating"));
-                service.insert(QStringLiteral("activeState"), activeState);
-                m_pendingServices[i] = service;
-                found = true;
-                break;
-            }
-        }
+        const auto existing = std::ranges::find_if(m_pendingServices, [&name](const QVariant &variant) {
+            return variant.toMap().value(QStringLiteral("unit")).toString() == name;
+        });
 
-        if (!found) {
+        if (existing != m_pendingServices.end()) {
+            QVariantMap service = existing->toMap();
+            service.insert(QStringLiteral("description"), description);
+            service.insert(QStringLiteral("active"), activeState == QLatin1String("active") || activeState == QLatin1String("activating"));
+            service.insert(QStringLiteral("activeState"), activeState);
+            *existing = service;
+        } else {
             m_pendingServices.append(QVariantMap {
                 { QStringLiteral("name"), name.chopped(8) },
                 { QStringLiteral("unit"), name },

@@ -106,17 +106,19 @@ AppCard {
                 model: root.series.length
 
                 delegate: Rectangle {
+                    id: legendDelegate
+
                     required property int index
 
                     radius: Design.radiusItem
-                    color: root.hoveredIndex === index ? Design.surfaceHover : "transparent"
+                    color: root.hoveredIndex === legendDelegate.index ? Design.surfaceHover : "transparent"
                     implicitWidth: legendRow.implicitWidth + Design.space8
                     implicitHeight: legendRow.implicitHeight + 2 * Design.space4
 
-                    readonly property var entry: root.seriesAt(index)
+                    readonly property var entry: root.seriesAt(legendDelegate.index)
 
                     HoverHandler {
-                        onHoveredChanged: root.hoveredIndex = hovered ? index : -1
+                        onHoveredChanged: root.hoveredIndex = hovered ? legendDelegate.index : -1
                     }
 
                     RowLayout {
@@ -129,15 +131,15 @@ AppCard {
                             Layout.alignment: Qt.AlignVCenter
                             Layout.preferredWidth: Design.radiusItem
                             Layout.preferredHeight: legendName.implicitHeight
-                            color: entry !== null ? entry.color : "transparent"
+                            color: legendDelegate.entry !== null ? legendDelegate.entry.color : "transparent"
                         }
 
                         Controls.Label {
                             id: legendName
 
                             Layout.alignment: Qt.AlignVCenter
-                            text: entry !== null ? entry.name : ""
-                            color: root.hoveredIndex === index ? Design.text : Design.textMuted
+                            text: legendDelegate.entry !== null ? legendDelegate.entry.name : ""
+                            color: root.hoveredIndex === legendDelegate.index ? Design.text : Design.textMuted
                             font.pointSize: Design.smallFontSize
                         }
 
@@ -145,7 +147,7 @@ AppCard {
                             Layout.alignment: Qt.AlignVCenter
                             Layout.preferredWidth: root.legendValueWidth
                             horizontalAlignment: Text.AlignRight
-                            text: entry !== null ? root.valueFormatter(root.seriesValue(entry)) : ""
+                            text: legendDelegate.entry !== null ? root.valueFormatter(root.seriesValue(legendDelegate.entry)) : ""
                             color: Design.text
                             font.pointSize: Design.smallFontSize
                             font.weight: Font.DemiBold

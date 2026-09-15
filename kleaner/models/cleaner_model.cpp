@@ -34,6 +34,7 @@ CleanerModel::CleanerModel(QObject *parent) :
             Category category;
             category.title = categoryMap.value(QStringLiteral("title")).toString();
             category.size = categoryMap.value(QStringLiteral("size")).toULongLong();
+            category.action = categoryMap.value(QStringLiteral("action")).toString();
 
             const QVariantList entries = categoryMap.value(QStringLiteral("entries")).toList();
             category.entries.reserve(entries.size());
@@ -53,6 +54,12 @@ CleanerModel::CleanerModel(QObject *parent) :
             for (const Category::Entry &entry : std::as_const(category.entries)) {
                 allChecked = allChecked && entry.checked;
                 anyChecked = anyChecked || entry.checked;
+            }
+            if (!category.action.isEmpty()) {
+                // Whole-tree categories have no child entries; the remembered
+                // selection is the only source of truth for their state.
+                anyChecked = m_checkedPaths.contains(category.action);
+                allChecked = anyChecked;
             }
             category.check = allChecked ? Qt::Checked : (anyChecked ? Qt::PartiallyChecked : Qt::Unchecked);
 
@@ -116,9 +123,10 @@ QVariant CleanerModel::data(const QModelIndex &index, int role) const
     }
     if (role == CheckedRole) {
         if (row.entry < 0) {
-            return static_cast<int>(category.check);
+            return std::to_underlying(category.check);
         }
-        return static_cast<int>(category.entries.at(row.entry).checked ? Qt::Checked : Qt::Unchecked);
+        const Qt::CheckState state = category.entries.at(row.entry).checked ? Qt::Checked : Qt::Unchecked;
+        return std::to_underlying(state);
     }
     if (role == RootRole) {
         return row.entry < 0 ? false : category.entries.at(row.entry).root;
@@ -240,6 +248,13 @@ void CleanerModel::setChecked(int row, bool checked)
                 m_checkedPaths.remove(entry.path);
             }
         }
+        if (!category.action.isEmpty()) {
+            if (checked) {
+                m_checkedPaths.insert(category.action);
+            } else {
+                m_checkedPaths.remove(category.action);
+            }
+        }
         if (category.expanded && !category.entries.isEmpty()) {
             Q_EMIT dataChanged(index(row + 1), index(row + category.entries.size()), { CheckedRole });
         }
@@ -296,6 +311,12 @@ void CleanerModel::clean()
             continue;
         }
 
+        if (!category.action.isEmpty()) {
+            paths.append(category.action);
+            sizes.insert(category.action, QVariant::fromValue<qulonglong>(category.size));
+            continue;
+        }
+
         if (category.check == Qt::Checked) {
             for (const Category::Entry &entry : category.entries) {
                 collect(entry);
@@ -337,6 +358,13 @@ void CleanerModel::updateCheckedSize()
     qulonglong total = 0;
     bool hasChecked = false;
     for (const Category &category : std::as_const(m_categories)) {
+        if (!category.action.isEmpty()) {
+            if (category.check == Qt::Checked) {
+                total += category.size;
+                hasChecked = true;
+            }
+            continue;
+        }
         for (const Category::Entry &entry : category.entries) {
             if (entry.checked) {
                 total += entry.size;
@@ -357,14 +385,14 @@ void CleanerModel::updateCheckedSize()
 
 void CleanerModel::loadSelection()
 {
-    const KConfigGroup group(KSharedConfig::openConfig(QStringLiteral("kleanerrc")), QLatin1String(selectionGroup));
+    const KConfigGroup group(KSharedConfig::openConfig(), QLatin1String(selectionGroup));
     const QStringList paths = group.readEntry(QLatin1String(selectionKey), QStringList());
     m_checkedPaths = QSet<QString>(paths.begin(), paths.end());
 }
 
 void CleanerModel::saveSelection()
 {
-    KConfigGroup group(KSharedConfig::openConfig(QStringLiteral("kleanerrc")), QLatin1String(selectionGroup));
+    KConfigGroup group(KSharedConfig::openConfig(), QLatin1String(selectionGroup));
     group.writeEntry(QLatin1String(selectionKey), QStringList(m_checkedPaths.begin(), m_checkedPaths.end()));
     group.sync();
 }

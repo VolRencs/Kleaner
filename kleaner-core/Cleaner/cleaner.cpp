@@ -6,7 +6,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
-#include <QDirIterator>
+#include <QDirListing>
 #include <QFile>
 #include <QFileInfo>
 #include <QPointer>
@@ -26,6 +26,10 @@ struct CleanCategory {
     QString title;
     QStringList targets;
     bool root = false;
+    // Categories that are cleaned as a whole (e.g. the trash through KIO)
+    // expose a single pseudo path instead of child entries.
+    QString action;
+    qulonglong size = 0;
 };
 
 QVariantList entriesForTargets(const QStringList &targets, bool root)
@@ -73,8 +77,8 @@ QVariantList entriesForTargets(const QStringList &targets, bool root)
 
 QVariantMap buildCategory(const CleanCategory &category)
 {
-    const QVariantList entries = entriesForTargets(category.targets, category.root);
-    qulonglong total = 0;
+    const QVariantList entries = category.action.isEmpty() ? entriesForTargets(category.targets, category.root) : QVariantList();
+    qulonglong total = category.action.isEmpty() ? 0 : category.size;
     for (const QVariant &entry : entries) {
         total += entry.toMap().value(QStringLiteral("size")).toULongLong();
     }
@@ -83,6 +87,7 @@ QVariantMap buildCategory(const CleanCategory &category)
         { QStringLiteral("title"), category.title },
         { QStringLiteral("size"), total },
         { QStringLiteral("entries"), entries },
+        { QStringLiteral("action"), category.action },
     };
 }
 }
@@ -113,10 +118,9 @@ qulonglong Cleaner::directorySize(const QString &path)
     }
 
     qulonglong total = 0;
-    QDirIterator iterator(path, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-    while (iterator.hasNext()) {
-        iterator.next();
-        total += static_cast<qulonglong>(iterator.fileInfo().size());
+    using Flag = QDirListing::IteratorFlag;
+    for (const auto &entry : QDirListing(path, Flag::FilesOnly | Flag::Recursive | Flag::ResolveSymlinks)) {
+        total += static_cast<qulonglong>(entry.size());
     }
     return total;
 }
@@ -125,20 +129,22 @@ QVariantList Cleaner::buildCategories()
 {
     const QString home = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
-    // Trash
+    // Trash (emptied as a whole through KIO)
     CleanCategory trash;
     trash.title = tr("Trash");
-    trash.targets = { trashDirectory() + QStringLiteral("/files"), trashDirectory() + QStringLiteral("/info") };
+    trash.action = QStringLiteral("trash:");
+    trash.size = directorySize(trashDirectory() + QStringLiteral("/files")) + directorySize(trashDirectory() + QStringLiteral("/info"));
 
     // Application caches (user writable)
     CleanCategory caches;
     caches.title = tr("Application Caches");
 
     const QString genericCache = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation);
-    const QDir cacheDir(genericCache);
-    const QStringList cacheEntries = cacheDir.entryList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-    for (const QString &entry : cacheEntries) {
-        caches.targets.append(cacheDir.filePath(entry));
+    for (const auto &entry : QDirListing(genericCache, QDirListing::IteratorFlag::ExcludeOther)) {
+        if (entry.isSymLink() || (!entry.isDir() && !entry.isFile())) {
+            continue;
+        }
+        caches.targets.append(entry.filePath());
     }
     const QStringList knownCaches = {
         home + QStringLiteral("/.npm"),
@@ -159,9 +165,7 @@ QVariantList Cleaner::buildCategories()
     temporary.root = true;
     {
         const QDateTime now = QDateTime::currentDateTime();
-        const QDir tmpDir(QStringLiteral("/tmp"));
-        const QFileInfoList tmpEntries = tmpDir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::System);
-        for (const QFileInfo &entry : tmpEntries) {
+        for (const auto &entry : QDirListing(QStringLiteral("/tmp"))) {
             const QString name = entry.fileName();
             // Session sockets and per-service private directories must survive.
             if (name.startsWith(QLatin1String("systemd-private-"))
@@ -172,7 +176,7 @@ QVariantList Cleaner::buildCategories()
                 continue;
             }
             // Files touched within the last hour are most likely still in use.
-            if (entry.lastModified().secsTo(now) < 3600) {
+            if (entry.fileInfo().lastModified().secsTo(now) < 3600) {
                 continue;
             }
             temporary.targets.append(entry.filePath());
@@ -183,15 +187,14 @@ QVariantList Cleaner::buildCategories()
     CleanCategory logs;
     logs.title = tr("System Logs");
     logs.root = true;
-    const QDir logDir(QStringLiteral("/var/log"));
-    const QStringList logEntries = logDir.entryList(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-    for (const QString &entry : logEntries) {
-        const int dot = entry.lastIndexOf(QLatin1Char('.'));
-        const bool rotatedNumber = dot >= 0 && entry.mid(dot + 1).toInt() > 0;
-        if (entry.endsWith(QLatin1String(".log")) || entry.contains(QLatin1String(".log.")) || entry.endsWith(QLatin1String(".old"))
-            || entry.endsWith(QLatin1String(".gz")) || entry.endsWith(QLatin1String(".xz")) || entry.endsWith(QLatin1String(".zst"))
+    for (const auto &entry : QDirListing(QStringLiteral("/var/log"), QDirListing::IteratorFlag::FilesOnly)) {
+        const QString name = entry.fileName();
+        const int dot = name.lastIndexOf(QLatin1Char('.'));
+        const bool rotatedNumber = dot >= 0 && name.mid(dot + 1).toInt() > 0;
+        if (name.endsWith(QLatin1String(".log")) || name.contains(QLatin1String(".log.")) || name.endsWith(QLatin1String(".old"))
+            || name.endsWith(QLatin1String(".gz")) || name.endsWith(QLatin1String(".xz")) || name.endsWith(QLatin1String(".zst"))
             || rotatedNumber) {
-            logs.targets.append(logDir.filePath(entry));
+            logs.targets.append(entry.filePath());
         }
     }
     logs.targets.append(QStringLiteral("journal:"));
@@ -200,10 +203,8 @@ QVariantList Cleaner::buildCategories()
     CleanCategory packages;
     packages.title = tr("Pacman Package Cache");
     packages.root = true;
-    const QDir packageDir(QStringLiteral("/var/cache/pacman/pkg"));
-    const QStringList cachedPackages = packageDir.entryList(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-    for (const QString &package : cachedPackages) {
-        packages.targets.append(packageDir.filePath(package));
+    for (const auto &entry : QDirListing(QStringLiteral("/var/cache/pacman/pkg"), QDirListing::IteratorFlag::FilesOnly)) {
+        packages.targets.append(entry.filePath());
     }
 
     // Orphan packages (removed with pacman through the privileged helper)
@@ -227,10 +228,8 @@ QVariantList Cleaner::buildCategories()
         QStringLiteral("/var/lib/systemd/coredump"),
     };
     for (const QString &dirPath : crashDirs) {
-        const QDir dir(dirPath);
-        const QStringList entries = dir.entryList(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-        for (const QString &entry : entries) {
-            crash.targets.append(dir.filePath(entry));
+        for (const auto &entry : QDirListing(dirPath, QDirListing::IteratorFlag::FilesOnly)) {
+            crash.targets.append(entry.filePath());
         }
     }
 
@@ -275,7 +274,6 @@ void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QS
         return;
     }
 
-    const QString trash = trashDirectory();
     QStringList userPaths;
     QStringList rootPaths;
     QHash<QString, qulonglong> userPathSizes;
@@ -284,9 +282,11 @@ void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QS
 
     for (const QString &path : paths) {
         const QString cleanedPath = QDir::cleanPath(path);
-        if (cleanedPath.startsWith(trash + QLatin1Char('/'))) {
+        // The whole trash is emptied through KIO; the measured size is passed
+        // along under the aggregate pseudo path.
+        if (cleanedPath == QLatin1String("trash:")) {
             emptyTrash = true;
-            trashSize += sizes.value(cleanedPath).toULongLong();
+            trashSize += sizes.value(cleanedPath, sizes.value(path)).toULongLong();
             continue;
         }
 

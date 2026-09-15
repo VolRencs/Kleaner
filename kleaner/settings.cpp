@@ -4,7 +4,7 @@
 #include "settings.h"
 
 #include <QCoreApplication>
-#include <QDir>
+#include <QDirListing>
 #include <QLocale>
 #include <QSet>
 #include <QStandardPaths>
@@ -15,7 +15,7 @@
 
 Settings::Settings(QObject *parent) :
     QObject(parent),
-    m_group(KSharedConfig::openConfig(QStringLiteral("kleanerrc")), QStringLiteral("General"))
+    m_group(KSharedConfig::openConfig(), QStringLiteral("General"))
 {
 }
 
@@ -118,7 +118,7 @@ QVariantList Settings::availableLanguages() const
         }
         seen.insert(code);
 
-        const QLocale locale(QString(code).replace(QLatin1Char('-'), QLatin1Char('_')));
+        const QLocale locale(QLocale::codeToLanguage(code));
         // nativeLanguageName() reports "American English" for plain "en";
         // users expect the neutral language name in the selector.
         QString name = locale.language() == QLocale::English
@@ -136,10 +136,8 @@ QVariantList Settings::availableLanguages() const
 
     const QStringList directories = translationDirectories();
     for (const QString &directory : directories) {
-        const QDir dir(directory);
-        const QStringList files = dir.entryList({ QStringLiteral("kleaner_*.qm") }, QDir::Files);
-        for (const QString &file : files) {
-            QString code = file;
+        for (const auto &entry : QDirListing(directory, { QStringLiteral("kleaner_*.qm") }, QDirListing::IteratorFlag::FilesOnly)) {
+            QString code = entry.fileName();
             code.remove(QStringLiteral("kleaner_"));
             code.chop(3);
             appendLanguage(code);
@@ -150,7 +148,7 @@ QVariantList Settings::availableLanguages() const
     // must still be selectable when the system locale is something else.
     appendLanguage(QStringLiteral("en"));
 
-    std::sort(languages.begin(), languages.end(), [](const QVariant &a, const QVariant &b) {
+    std::ranges::sort(languages, [](const QVariant &a, const QVariant &b) {
         return a.toMap().value(QStringLiteral("name")).toString().localeAwareCompare(b.toMap().value(QStringLiteral("name")).toString()) < 0;
     });
 

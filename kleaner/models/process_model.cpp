@@ -202,7 +202,7 @@ void ProcessModel::applyFilterAndSort()
     }
 
     // Stable sorting keeps equal values in their previous relative order.
-    std::stable_sort(filtered.begin(), filtered.end(), [this](const Process &a, const Process &b) {
+    std::ranges::stable_sort(filtered, [this](const Process &a, const Process &b) {
         int comparison = 0;
         switch (m_sortBy) {
         case SortMemory:
@@ -302,10 +302,5 @@ bool ProcessModel::killPid(int pid, bool force)
 
 bool ProcessModel::hasPid(int pid) const
 {
-    for (const Process &process : m_view) {
-        if (process.pid == pid) {
-            return true;
-        }
-    }
-    return false;
+    return std::ranges::contains(m_view, pid, &Process::pid);
 }

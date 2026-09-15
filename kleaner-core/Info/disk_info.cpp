@@ -5,7 +5,7 @@
 
 #include "Utils/procfs.h"
 
-#include <QDir>
+#include <QDirListing>
 #include <QFileInfo>
 #include <QSet>
 #include <QStorageInfo>
@@ -95,13 +95,13 @@ void DiskInfo::update()
     qulonglong sectorsRead = 0;
     qulonglong sectorsWritten = 0;
 
-    const QDir blockDir(QStringLiteral("/sys/block"));
-    const QStringList devices = blockDir.entryList(QDir::Dirs);
-    for (const QString &device : devices) {
+    using Flag = QDirListing::IteratorFlag;
+    for (const auto &entry : QDirListing(QStringLiteral("/sys/block"), Flag::DirsOnly | Flag::ResolveSymlinks)) {
+        const QString device = entry.fileName();
         if (!isPhysicalBlockDevice(device)) {
             continue;
         }
-        const QList<QByteArray> fields = Procfs::read(blockDir.filePath(device + QStringLiteral("/stat"))).simplified().split(' ');
+        const QList<QByteArray> fields = Procfs::read(entry.filePath() + QStringLiteral("/stat")).simplified().split(' ');
         if (fields.size() < 7) {
             continue;
         }

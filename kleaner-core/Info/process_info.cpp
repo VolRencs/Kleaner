@@ -6,7 +6,7 @@
 #include "Utils/helpers.h"
 #include "Utils/procfs.h"
 
-#include <QDir>
+#include <QDirListing>
 #include <QMutexLocker>
 
 #include <csignal>
@@ -16,7 +16,7 @@ ProcessInfo::ProcessInfo(QObject *parent) :
 {
 }
 
-QVector<Process> ProcessInfo::read()
+QList<Process> ProcessInfo::read()
 {
     QMutexLocker locker(&m_mutex);
 
@@ -42,19 +42,17 @@ QVector<Process> ProcessInfo::read()
 
     QHash<int, CpuSample> currentCpu;
 
-    QVector<Process> processes;
+    QList<Process> processes;
     processes.reserve(512);
 
-    const QDir procDir(QStringLiteral("/proc"));
-    const QStringList entries = procDir.entryList(QDir::Dirs | QDir::NoSymLinks);
-    for (const QString &entry : entries) {
+    for (const auto &entry : QDirListing(QStringLiteral("/proc"), QDirListing::IteratorFlag::DirsOnly)) {
         bool isPid = false;
-        const int pid = entry.toInt(&isPid);
+        const int pid = entry.fileName().toInt(&isPid);
         if (!isPid || pid <= 0) {
             continue;
         }
 
-        const QString basePath = QStringLiteral("/proc/") + entry;
+        const QString basePath = entry.filePath();
         const QByteArray stat = Procfs::read(basePath + QStringLiteral("/stat"));
         if (stat.isEmpty()) {
             continue;

@@ -64,6 +64,8 @@ class CleanerModel : public QAbstractListModel
         qulonglong size = 0;
         bool expanded = false;
         Qt::CheckState check = Qt::Unchecked;
+        // Pseudo path for categories cleaned as a whole (e.g. the trash).
+        QString action;
         struct Entry {
             QString title;
             QString path;

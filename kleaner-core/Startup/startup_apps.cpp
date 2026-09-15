@@ -4,6 +4,7 @@
 #include "startup_apps.h"
 
 #include <QDir>
+#include <QDirListing>
 #include <QFile>
 #include <QFileInfo>
 #include <QLocale>
@@ -95,7 +96,7 @@ bool writeKeys(const QString &path, const QHash<QString, QString> &updates)
             missing.append(it.key() + QLatin1Char('=') + it.value());
         }
     }
-    std::sort(missing.begin(), missing.end());
+    std::ranges::sort(missing);
 
     if (!missing.isEmpty()) {
         if (desktopEntryHeader >= 0) {
@@ -215,22 +216,17 @@ QVariantList StartupApps::load() const
 {
     QHash<QString, StartupApp> apps;
 
-    const QDir systemDir(QStringLiteral("/etc/xdg/autostart"));
-    const QStringList systemFiles = systemDir.entryList({ QStringLiteral("*.desktop") }, QDir::Files);
-    for (const QString &fileName : systemFiles) {
-        const StartupApp app = readEntry(systemDir.filePath(fileName), true);
-        apps.insert(fileName, app);
+    using Flag = QDirListing::IteratorFlag;
+    for (const auto &entry : QDirListing(QStringLiteral("/etc/xdg/autostart"), { QStringLiteral("*.desktop") }, Flag::FilesOnly | Flag::ResolveSymlinks)) {
+        apps.insert(entry.fileName(), readEntry(entry.filePath(), true));
     }
 
-    const QDir userDir(userAutostartDir());
-    const QStringList userFiles = userDir.entryList({ QStringLiteral("*.desktop") }, QDir::Files);
-    for (const QString &fileName : userFiles) {
-        const StartupApp app = readEntry(userDir.filePath(fileName), false);
-        apps.insert(fileName, app);
+    for (const auto &entry : QDirListing(userAutostartDir(), { QStringLiteral("*.desktop") }, Flag::FilesOnly | Flag::ResolveSymlinks)) {
+        apps.insert(entry.fileName(), readEntry(entry.filePath(), false));
     }
 
     QList<StartupApp> sorted = apps.values();
-    std::sort(sorted.begin(), sorted.end(), [](const StartupApp &a, const StartupApp &b) {
+    std::ranges::sort(sorted, [](const StartupApp &a, const StartupApp &b) {
         return QString::localeAwareCompare(a.name, b.name) < 0;
     });
 

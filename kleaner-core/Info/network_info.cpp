@@ -6,6 +6,7 @@
 #include "Utils/procfs.h"
 
 #include <QDir>
+#include <QDirListing>
 
 #include <limits>
 
@@ -83,15 +84,15 @@ QString NetworkInfo::resolveDefaultInterface() const
 
 QString NetworkInfo::resolveFallbackInterface() const
 {
-    const QDir netDir(QStringLiteral("/sys/class/net"));
-    const QStringList entries = netDir.entryList(QDir::Dirs);
-    for (const QString &entry : entries) {
-        if (entry == QLatin1String("lo")) {
+    using Flag = QDirListing::IteratorFlag;
+    for (const auto &entry : QDirListing(QStringLiteral("/sys/class/net"), Flag::DirsOnly | Flag::ResolveSymlinks)) {
+        const QString name = entry.fileName();
+        if (name == QLatin1String("lo")) {
             continue;
         }
-        const QByteArray state = Procfs::read(netDir.filePath(entry + QStringLiteral("/operstate"))).trimmed();
+        const QByteArray state = Procfs::read(entry.filePath() + QStringLiteral("/operstate")).trimmed();
         if (state == "up") {
-            return entry;
+            return name;
         }
     }
     return {};

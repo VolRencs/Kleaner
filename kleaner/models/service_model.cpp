@@ -183,7 +183,7 @@ void ServiceModel::applyFilter()
         }
     }
 
-    std::stable_sort(filtered.begin(), filtered.end(), [this](const QVariant &a, const QVariant &b) {
+    std::ranges::stable_sort(filtered, [this](const QVariant &a, const QVariant &b) {
         const QVariantMap left = a.toMap();
         const QVariantMap right = b.toMap();
         int comparison = 0;
