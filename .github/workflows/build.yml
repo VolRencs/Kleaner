@@ -97,7 +97,7 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm --needed \
-            clang cmake ninja extra-cmake-modules \
+            clang openmp cmake ninja extra-cmake-modules \
             qt6-base qt6-declarative qt6-svg qt6-tools wayland-protocols \
             kirigami kcoreaddons kconfig kdbusaddons \
             kstatusnotifieritem kio kauth breeze-icons
