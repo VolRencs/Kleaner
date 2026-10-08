@@ -349,7 +349,7 @@ Kirigami.ScrollablePage {
 
                                 Behavior on width {
                                     NumberAnimation {
-                                        duration: 400
+                                        duration: Design.durationBar
                                         easing.type: Easing.OutCubic
                                     }
                                 }

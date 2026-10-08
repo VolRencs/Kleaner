@@ -3,7 +3,6 @@
 
 #include "process_model.h"
 
-#include <QFutureWatcher>
 #include <QSet>
 #include <QtConcurrent>
 

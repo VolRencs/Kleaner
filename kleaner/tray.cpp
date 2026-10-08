@@ -4,6 +4,7 @@
 #include "tray.h"
 
 #include <QAction>
+#include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusServiceWatcher>
@@ -20,6 +21,9 @@ constexpr auto watcherService = "org.kde.StatusNotifierWatcher";
 Tray::Tray(QObject *parent) :
     QObject(parent)
 {
+    // The autostart entry passes --hidden so the window stays in the tray.
+    m_startHidden = QCoreApplication::arguments().contains(QStringLiteral("--hidden"));
+
     // The StatusNotifierWatcher may appear or restart after startup; track it
     // instead of freezing the availability at construction time.
     m_watcher = new QDBusServiceWatcher(QString::fromLatin1(watcherService), QDBusConnection::sessionBus(),
@@ -87,6 +91,11 @@ void Tray::setAvailable(bool available)
 bool Tray::enabled() const
 {
     return m_enabled;
+}
+
+bool Tray::startHidden() const
+{
+    return m_startHidden;
 }
 
 void Tray::setEnabled(bool enabled)

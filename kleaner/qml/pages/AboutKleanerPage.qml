@@ -57,7 +57,7 @@ Kirigami.ScrollablePage {
 
                 Badge {
                     Layout.alignment: Qt.AlignHCenter
-                    text: Qt.application.version
+                    text: Application.version
                     badgeColor: Design.accent
                 }
 

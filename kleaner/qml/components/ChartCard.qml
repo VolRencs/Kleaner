@@ -213,7 +213,7 @@ AppCard {
         ctx.textBaseline = "middle";
         for (let i = 0; i <= rows; ++i) {
             const y = top + plotHeight * i / rows;
-            ctx.strokeStyle = Qt.rgba(Design.border.r, Design.border.g, Design.border.b, i === rows ? 0.9 : 0.5);
+            ctx.strokeStyle = Color.transparent(Design.border, i === rows ? 0.9 : 0.5);
             ctx.beginPath();
             ctx.moveTo(left, y);
             ctx.lineTo(w - right, y);
@@ -256,7 +256,7 @@ AppCard {
 
             const highlighted = s === root.hoveredIndex;
             const dimmed = root.hoveredIndex >= 0 && !highlighted;
-            const lineColor = dimmed ? Qt.rgba(color.r, color.g, color.b, 0.25) : color;
+            const lineColor = dimmed ? Color.transparent(color, 0.25) : color;
             const strength = root.fillOpacity * (dimmed ? 0.3 : 1.0);
 
             if (values.length < 2) {
@@ -285,7 +285,7 @@ AppCard {
                 ctx.lineTo(firstX, top + plotHeight);
                 ctx.closePath();
 
-                ctx.fillStyle = Qt.rgba(color.r, color.g, color.b, strength);
+                ctx.fillStyle = Color.transparent(color, strength);
                 ctx.fill();
             }
 
@@ -302,7 +302,7 @@ AppCard {
             ctx.lineJoin = "round";
 
             if (highlighted) {
-                ctx.strokeStyle = Qt.rgba(color.r, color.g, color.b, 0.22);
+                ctx.strokeStyle = Color.transparent(color, 0.22);
                 ctx.lineWidth = root.lineWidth + 3.5;
                 ctx.stroke();
                 ctx.strokeStyle = color;

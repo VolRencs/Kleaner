@@ -4,19 +4,33 @@
 #include "settings.h"
 
 #include <QCoreApplication>
+#include <QDir>
 #include <QDirListing>
+#include <QFile>
+#include <QFileInfo>
+#include <QFileSystemWatcher>
+#include <QGuiApplication>
 #include <QLocale>
 #include <QSet>
 #include <QStandardPaths>
 
 #include <algorithm>
 
+#include <KConfig>
 #include <KSharedConfig>
 
 Settings::Settings(QObject *parent) :
     QObject(parent),
-    m_group(KSharedConfig::openConfig(), QStringLiteral("General"))
+    m_group(KSharedConfig::openConfig(), QStringLiteral("General")),
+    m_autoStartWatcher(new QFileSystemWatcher(this))
 {
+    setupAutoStartWatch();
+    const auto watchChanged = [this] {
+        setupAutoStartWatch();
+        Q_EMIT autoStartChanged();
+    };
+    connect(m_autoStartWatcher, &QFileSystemWatcher::directoryChanged, this, watchChanged);
+    connect(m_autoStartWatcher, &QFileSystemWatcher::fileChanged, this, watchChanged);
 }
 
 QString Settings::startPage() const
@@ -107,6 +121,87 @@ void Settings::setWindowHeight(int height)
     Q_EMIT changed();
 }
 
+bool Settings::autoStart() const
+{
+    const QString path = autoStartFilePath();
+    if (!QFileInfo::exists(path)) {
+        return false;
+    }
+
+    const KConfig entry(path, KConfig::SimpleConfig);
+    const KConfigGroup group(&entry, QStringLiteral("Desktop Entry"));
+    return !group.readEntry(QStringLiteral("Hidden"), false)
+           && group.readEntry(QStringLiteral("X-GNOME-Autostart-enabled"), true);
+}
+
+void Settings::setAutoStart(bool enabled)
+{
+    if (autoStart() == enabled) {
+        return;
+    }
+
+    const QString path = autoStartFilePath();
+    if (enabled) {
+        QDir().mkpath(QFileInfo(path).absolutePath());
+        QFile file(path);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+            file.write(autoStartFileContent());
+        }
+    } else {
+        QFile::remove(path);
+    }
+
+    setupAutoStartWatch();
+    Q_EMIT autoStartChanged();
+}
+
+QString Settings::autoStartFilePath()
+{
+    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
+           + QStringLiteral("/autostart/" KLEANER_DESKTOP_NAME ".desktop");
+}
+
+QByteArray Settings::autoStartFileContent()
+{
+    QString command = QCoreApplication::applicationFilePath();
+    if (command.contains(QLatin1Char(' '))) {
+        command = QLatin1Char('"') + command + QLatin1Char('"');
+    }
+
+    QString name = QGuiApplication::applicationDisplayName();
+    if (name.isEmpty()) {
+        name = QCoreApplication::applicationName();
+    }
+
+    QString content;
+    content += QLatin1String("[Desktop Entry]\n");
+    content += QLatin1String("Type=Application\n");
+    content += QLatin1String("Name=") + name + QLatin1Char('\n');
+    content += QLatin1String("Exec=") + command + QLatin1String(" --hidden\n");
+    content += QStringLiteral("Icon=" KLEANER_DESKTOP_NAME "\n");
+    content += QLatin1String("Terminal=false\n");
+    content += QLatin1String("X-GNOME-Autostart-enabled=true\n");
+    return content.toUtf8();
+}
+
+void Settings::setupAutoStartWatch()
+{
+    const QString path = autoStartFilePath();
+    const QString directory = QFileInfo(path).absolutePath();
+
+    if (QFileInfo::exists(directory) && !m_autoStartWatcher->directories().contains(directory)) {
+        m_autoStartWatcher->addPath(directory);
+    }
+
+    if (QFileInfo::exists(path)) {
+        if (!m_autoStartWatcher->files().contains(path)) {
+            m_autoStartWatcher->addPath(path);
+        }
+    } else if (m_autoStartWatcher->files().contains(path)) {
+        m_autoStartWatcher->removePath(path);
+    }
+}
+
 QVariantList Settings::availableLanguages() const
 {
     QVariantList languages;
@@ -167,7 +262,6 @@ QStringList Settings::translationDirectories()
     }
     directories.append(appDir);
     directories.append(appDir + QStringLiteral("/translations"));
-    directories.append(appDir + QStringLiteral("/../translations"));
 
     directories.removeDuplicates();
     return directories;

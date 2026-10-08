@@ -81,9 +81,9 @@ Controls.Pane {
 
     background: Rectangle {
         radius: Design.radiusSmall
-        color: Qt.tint(Design.window, Design.alpha(root.accentColor, 0.16))
+        color: Color.tint(Design.window, Color.transparent(root.accentColor, 0.16))
         border.width: 1
-        border.color: Design.alpha(root.accentColor, 0.75)
+        border.color: Color.transparent(root.accentColor, 0.75)
     }
 
     contentItem: RowLayout {

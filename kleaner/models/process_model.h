@@ -7,11 +7,16 @@
 #include <QFutureWatcher>
 #include <QList>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 #include "Info/process_info.h"
 
 class ProcessModel : public QAbstractListModel
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Processes)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(QString filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(int sortBy READ sortBy WRITE setSortBy NOTIFY sortByChanged)
     Q_PROPERTY(bool reverse READ reverse WRITE setReverse NOTIFY reverseChanged)

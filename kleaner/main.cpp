@@ -17,6 +17,7 @@
 #include "Utils/hosts.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QIcon>
 #include <QLibraryInfo>
 #include <QLocale>
@@ -148,21 +149,29 @@ int main(int argc, char *argv[])
     ServiceModel serviceModel;
     StartupAppModel startupAppModel;
 
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Cpu", &cpuInfo);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Memory", &memoryInfo);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Network", &networkInfo);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Disks", &diskInfo);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "SystemInformation", &systemInfo);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Format", &format);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Settings", &settings);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Tray", &tray);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Hosts", &hosts);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Cleaner", &cleanerModel);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Processes", &processModel);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "Services", &serviceModel);
-    qmlRegisterSingletonInstance("Kleaner", 1, 0, "StartupApps", &startupAppModel);
-
     QQmlApplicationEngine engine;
+
+    // The C++ singletons are declared in the QML module and bound to the
+    // engine here, before the first QML file is loaded.
+    const auto registerSingletonInstance = [&engine](const QString &typeName, QObject *instance) {
+        if (!engine.setExternalSingletonInstance(QStringLiteral("Kleaner"), typeName, instance)) {
+            qWarning() << "Kleaner: failed to register the QML singleton" << typeName;
+        }
+    };
+
+    registerSingletonInstance(QStringLiteral("Cpu"), &cpuInfo);
+    registerSingletonInstance(QStringLiteral("Memory"), &memoryInfo);
+    registerSingletonInstance(QStringLiteral("Network"), &networkInfo);
+    registerSingletonInstance(QStringLiteral("Disks"), &diskInfo);
+    registerSingletonInstance(QStringLiteral("SystemInformation"), &systemInfo);
+    registerSingletonInstance(QStringLiteral("Format"), &format);
+    registerSingletonInstance(QStringLiteral("Settings"), &settings);
+    registerSingletonInstance(QStringLiteral("Tray"), &tray);
+    registerSingletonInstance(QStringLiteral("Hosts"), &hosts);
+    registerSingletonInstance(QStringLiteral("Cleaner"), &cleanerModel);
+    registerSingletonInstance(QStringLiteral("Processes"), &processModel);
+    registerSingletonInstance(QStringLiteral("Services"), &serviceModel);
+    registerSingletonInstance(QStringLiteral("StartupApps"), &startupAppModel);
 
     QObject::connect(&dbusService, &KDBusService::activateRequested, &engine, [&engine](const QStringList &, const QString &) {
         const QList<QObject *> rootObjects = engine.rootObjects();

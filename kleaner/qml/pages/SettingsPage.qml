@@ -68,6 +68,31 @@ Kirigami.ScrollablePage {
                         }
                     }
                 }
+
+                AppSeparator {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                }
+
+                SettingRow {
+                    Layout.fillWidth: true
+                    text: qsTr("Launch at login")
+                    description: qsTr("Start Kleaner automatically when you log in.")
+
+                    AppSwitch {
+                        id: autoStartSwitch
+
+                        checked: Settings.autoStart
+                        onClicked: Settings.autoStart = checked
+
+                        Binding {
+                            target: autoStartSwitch
+                            property: "checked"
+                            value: Settings.autoStart
+                            restoreMode: Binding.RestoreBindingOrValue
+                        }
+                    }
+                }
             }
         }
 

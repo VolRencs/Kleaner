@@ -5,9 +5,14 @@
 
 #include <QObject>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 class MemoryInfo : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Memory)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(qulonglong total READ total NOTIFY changed)
     Q_PROPERTY(qulonglong used READ used NOTIFY changed)
     Q_PROPERTY(qulonglong swapTotal READ swapTotal NOTIFY changed)

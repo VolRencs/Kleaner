@@ -7,9 +7,14 @@
 #include <QObject>
 #include <QVariantList>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 class DiskInfo : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Disks)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(QVariantList disks READ disks NOTIFY changed)
     Q_PROPERTY(double readRate READ readRate NOTIFY changed)
     Q_PROPERTY(double writeRate READ writeRate NOTIFY changed)

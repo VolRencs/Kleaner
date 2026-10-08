@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 VolRen
 # SPDX-License-Identifier: GPL-3.0-only
 
-find_package(Qt6 6.11 REQUIRED COMPONENTS Quick QuickControls2 Svg Widgets Concurrent LinguistTools)
+find_package(Qt6 6.12 REQUIRED COMPONENTS Quick QuickControls2 Widgets Concurrent LinguistTools)
 find_package(KF6 6.30 REQUIRED COMPONENTS Kirigami Config DBusAddons StatusNotifierItem Auth)
 
 qt_add_executable(kleaner
@@ -24,9 +24,9 @@ target_link_libraries(kleaner
     PRIVATE
         Qt6::Quick
         Qt6::QuickControls2
-        Qt6::Svg
         Qt6::Widgets
         Qt6::Concurrent
+        Qt6::QmlIntegration
         KF6::Kirigami
         KF6::ConfigCore
         KF6::DBusAddons
@@ -78,6 +78,18 @@ qt_add_qml_module(kleaner
         qml/pages/HostsPage.qml
         qml/pages/SettingsPage.qml
         qml/pages/AboutKleanerPage.qml
+)
+
+# Expose the QML types of the core library through the application's module.
+qt_generate_foreign_qml_types(kleaner-core kleaner)
+
+# The generated QML registration code includes the headers of the registered
+# types by file name, so their directories have to be on the include path.
+target_include_directories(kleaner PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/models
+    ${PROJECT_SOURCE_DIR}/kleaner-core/Info
+    ${PROJECT_SOURCE_DIR}/kleaner-core/Utils
 )
 
 qt_add_resources(kleaner "kleaner-resources"

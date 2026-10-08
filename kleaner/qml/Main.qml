@@ -16,7 +16,9 @@ Kirigami.ApplicationWindow {
     title: root.pageTitles[root.currentPage] !== undefined
            ? root.pageTitles[root.currentPage]
            : "Kleaner"
-    visible: true
+    // The autostart entry passes --hidden; if the tray is unavailable or
+    // disabled the window still opens so the application stays reachable.
+    visible: !Tray.startHidden || !Tray.available || !Settings.useTray
     width: 1240
     height: 800
     minimumWidth: 780
@@ -41,13 +43,13 @@ Kirigami.ApplicationWindow {
     Kirigami.Theme.linkColor: Design.accent
     Kirigami.Theme.linkBackgroundColor: Design.accentSoft
     Kirigami.Theme.visitedLinkColor: Design.violet
-    Kirigami.Theme.visitedLinkBackgroundColor: Design.alpha(Design.violet, 0.16)
+    Kirigami.Theme.visitedLinkBackgroundColor: Color.transparent(Design.violet, 0.16)
     Kirigami.Theme.positiveTextColor: Design.positive
     Kirigami.Theme.neutralTextColor: Design.warning
     Kirigami.Theme.negativeTextColor: Design.negative
-    Kirigami.Theme.positiveBackgroundColor: Design.alpha(Design.positive, 0.14)
-    Kirigami.Theme.neutralBackgroundColor: Design.alpha(Design.warning, 0.14)
-    Kirigami.Theme.negativeBackgroundColor: Design.alpha(Design.negative, 0.14)
+    Kirigami.Theme.positiveBackgroundColor: Color.transparent(Design.positive, 0.14)
+    Kirigami.Theme.neutralBackgroundColor: Color.transparent(Design.warning, 0.14)
+    Kirigami.Theme.negativeBackgroundColor: Color.transparent(Design.negative, 0.14)
 
     readonly property var pageUrls: ({
         "dashboard": "pages/DashboardPage.qml",

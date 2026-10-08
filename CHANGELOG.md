@@ -2,6 +2,29 @@
 
 All notable changes to Kleaner are documented in this file.
 
+## 1.4.0 — 2026-10-08
+
+- Qt 6.12 is now the minimum supported version. The CMake build requires
+  CMake 3.25 (`qt_standard_project_setup(REQUIRES 6.12)`); newer Qt releases
+  are supported as well.
+- The C++ singletons are registered in the QML module and bound to the engine
+  with the new `QQmlEngine::setExternalSingletonInstance()` API, replacing
+  `qmlRegisterSingletonInstance()`. QML tooling now sees every type, so
+  `qmllint` runs clean.
+- QML uses the new `Color` singleton instead of the `Qt.rgba()`,
+  `Qt.lighter()`, `Qt.tint()` and `Qt.hsva()` helpers, and typed
+  `Application.version`/`Application.layoutDirection` access.
+- Settings has a "Launch at login" switch that installs or removes the XDG
+  autostart entry for Kleaner.
+- The autostart entry starts Kleaner hidden in the system tray when the tray is
+  available and enabled; launching Kleaner manually still opens the window.
+- Cancelling or denying the polkit authentication prompt now ends the cleanup
+  with an error message instead of leaving the progress message on screen.
+- Animations follow the platform "reduce motion" accessibility preference.
+- Build cleanup: the unused QtSvg link was dropped (the SVG icon plugins stay
+  a runtime dependency), and the translation lookup no longer probes a path
+  that never existed.
+
 ## 1.3.3 — 2026-09-15
 
 - The system cleaner's expand chevron is now a round Kirigami icon button;

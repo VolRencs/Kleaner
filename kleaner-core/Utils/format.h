@@ -5,9 +5,14 @@
 
 #include <QObject>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 class Format : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Format)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
 
   public:
     explicit Format(QObject *parent = nullptr);

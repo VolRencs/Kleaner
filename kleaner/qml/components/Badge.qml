@@ -20,6 +20,6 @@ Controls.Label {
 
     background: Rectangle {
         radius: height / 2
-        color: Design.alpha(root.badgeColor, 0.14)
+        color: Color.transparent(root.badgeColor, 0.14)
     }
 }

@@ -6,11 +6,16 @@
 #include <QAbstractListModel>
 #include <QVariantList>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 #include "Services/service_backend.h"
 
 class ServiceModel : public QAbstractListModel
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Services)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(QString filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)

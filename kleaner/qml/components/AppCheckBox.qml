@@ -31,10 +31,10 @@ Controls.CheckBox {
                                                                       : Design.border
 
         Behavior on color {
-            ColorAnimation { duration: 120 }
+            ColorAnimation { duration: Design.durationNormal }
         }
         Behavior on border.color {
-            ColorAnimation { duration: 120 }
+            ColorAnimation { duration: Design.durationNormal }
         }
 
         Canvas {

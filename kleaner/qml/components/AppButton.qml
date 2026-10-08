@@ -31,9 +31,9 @@ Controls.Button {
     readonly property color highlightColor: root.destructive ? Design.negative : Design.accent
     // Tonal primary button: a tinted surface instead of a fully saturated fill,
     // which is too bright against the dark window.
-    readonly property color highlightBase: Design.alpha(root.highlightColor, 0.16)
-    readonly property color highlightHover: Design.alpha(root.highlightColor, 0.24)
-    readonly property color highlightPressed: Design.alpha(root.highlightColor, 0.32)
+    readonly property color highlightBase: Color.transparent(root.highlightColor, 0.16)
+    readonly property color highlightHover: Color.transparent(root.highlightColor, 0.24)
+    readonly property color highlightPressed: Color.transparent(root.highlightColor, 0.32)
 
     readonly property color foregroundColor: {
         if (!root.enabled) {
@@ -51,13 +51,13 @@ Controls.Button {
     readonly property color backgroundColor: {
         if (root.highlighted) {
             if (!root.enabled) {
-                return Design.alpha(root.highlightColor, 0.08);
+                return Color.transparent(root.highlightColor, 0.08);
             }
             return root.down ? root.highlightPressed : root.hovered ? root.highlightHover : root.highlightBase;
         }
         if (root.flat) {
-            return root.down ? Design.alpha(Design.accent, 0.22)
-                             : root.hovered ? Design.alpha(Design.accent, 0.12)
+            return root.down ? Color.transparent(Design.accent, 0.22)
+                             : root.hovered ? Color.transparent(Design.accent, 0.12)
                                             : Design.accentClear;
         }
         if (root.down) {

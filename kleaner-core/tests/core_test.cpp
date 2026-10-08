@@ -17,7 +17,30 @@
 #include "Utils/format.h"
 #include "Utils/helpers.h"
 #include "Utils/hosts.h"
+#include "Utils/kauth.h"
 #include "Utils/procfs.h"
+
+#include <KAuth/ActionReply>
+#include <KJob>
+
+namespace
+{
+class FakeJob : public KJob
+{
+  public:
+    void start() override
+    {
+    }
+
+    void fail(int code, const QString &text = {})
+    {
+        setError(code);
+        if (!text.isEmpty()) {
+            setErrorText(text);
+        }
+    }
+};
+}
 
 class CoreTest : public QObject
 {
@@ -38,6 +61,8 @@ class CoreTest : public QObject
     void cpuInfoReportsCores();
     void systemInfoReportsKernel();
     void hostsLoadsSystemFile();
+
+    void kauthErrorTextFallbacks();
 
     void cleanerComputesDirectorySize();
     void cleanerEmitsCleanedForMultipleUserPaths();
@@ -140,6 +165,28 @@ void CoreTest::hostsLoadsSystemFile()
 {
     Hosts hosts;
     QVERIFY(!hosts.entriesProperty().isEmpty());
+}
+
+void CoreTest::kauthErrorTextFallbacks()
+{
+    QVERIFY(Kauth::errorText(nullptr).isEmpty());
+
+    FakeJob job;
+    QVERIFY(Kauth::errorText(&job).isEmpty());
+
+    // KAuth reports denied authorization without any error text, so the helper
+    // has to fall back to a translated message.
+    job.fail(KAuth::ActionReply::AuthorizationDeniedError);
+    QCOMPARE(Kauth::errorText(&job), QStringLiteral("Authentication was denied"));
+
+    job.fail(KAuth::ActionReply::UserCancelledError);
+    QCOMPARE(Kauth::errorText(&job), QStringLiteral("Authentication was cancelled"));
+
+    job.fail(KAuth::ActionReply::BackendError);
+    QCOMPARE(Kauth::errorText(&job), QStringLiteral("The privileged operation failed"));
+
+    job.fail(KAuth::ActionReply::BackendError, QStringLiteral("boom"));
+    QCOMPARE(Kauth::errorText(&job), QStringLiteral("boom"));
 }
 
 void CoreTest::cleanerComputesDirectorySize()

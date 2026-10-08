@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: 2026 VolRen
 # SPDX-License-Identifier: GPL-3.0-only
 
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.25)
 
 project(kleaner
-    VERSION 1.3.3
+    VERSION 1.4.0
     DESCRIPTION "Linux System Optimizer and Monitoring"
     HOMEPAGE_URL "https://volrencs.github.io/Kleaner/"
     LANGUAGES CXX
@@ -30,10 +30,10 @@ include(KDEClangFormat)
 set(QT_SKIP_AUTO_PLUGIN_INCLUSION ON)
 set(QT_SKIP_AUTO_QML_PLUGIN_INCLUSION ON)
 
-find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick QuickControls2 DBus)
+find_package(Qt6 6.12 REQUIRED COMPONENTS Core)
 find_package(KF6 6.30 REQUIRED COMPONENTS CoreAddons)
 
-qt_standard_project_setup(REQUIRES 6.11)
+qt_standard_project_setup(REQUIRES 6.12)
 
 # Single source of truth for the application identity.
 # Changing these variables renames the application everywhere.

@@ -10,10 +10,6 @@ import org.kde.kirigami as Kirigami
 QtObject {
     id: design
 
-    function alpha(color, a) {
-        return Qt.rgba(color.r, color.g, color.b, a);
-    }
-
     // Surfaces
     readonly property color window: "#0f1115"
     readonly property color sidebar: "#0a0c0f"
@@ -21,14 +17,14 @@ QtObject {
     readonly property color surfaceHover: "#1c212b"
     // Fully transparent variant of surfaceHover: animating to "transparent"
     // would interpolate the RGB channels to black and visibly darken the item.
-    readonly property color surfaceHoverClear: design.alpha(design.surfaceHover, 0)
+    readonly property color surfaceHoverClear: Color.transparent(design.surfaceHover, 0)
     readonly property color surfaceActive: "#232a35"
     readonly property color elevated: "#1a1f28"
 
     // Lines
     readonly property color border: "#232a35"
     readonly property color borderStrong: "#323c4c"
-    readonly property color track: design.alpha("#ffffff", 0.07)
+    readonly property color track: Color.transparent("#ffffff", 0.07)
 
     // Text
     readonly property color text: "#eef1f6"
@@ -39,10 +35,10 @@ QtObject {
     readonly property color accent: "#3daee9"
     readonly property color accentHover: "#5cbef1"
     readonly property color accentText: "#08131a"
-    readonly property color accentSoft: design.alpha(design.accent, 0.16)
+    readonly property color accentSoft: Color.transparent(design.accent, 0.16)
     // Transparent accent for animations: keeps the RGB channels stable so
     // fading out does not pass through black.
-    readonly property color accentClear: design.alpha(design.accent, 0)
+    readonly property color accentClear: Color.transparent(design.accent, 0)
 
     readonly property color positive: "#4cd07d"
     readonly property color warning: "#f5b74f"
@@ -88,11 +84,15 @@ QtObject {
     readonly property int iconXLarge: 22
 
     // Motion. Kept in one place instead of scattering literals across the UI.
-    readonly property int durationFast: 100
-    readonly property int durationNormal: 120
-    readonly property int durationSlow: 140
-    readonly property int durationPage: 180
-    readonly property int durationGauge: 650
+    // The platform "reduce motion" accessibility preference is honoured by
+    // collapsing the animations to zero duration.
+    readonly property bool reduceMotion: Application.styleHints.accessibility.motionPreference === Qt.MotionPreference.ReducedMotion
+    readonly property int durationFast: design.reduceMotion ? 0 : 100
+    readonly property int durationNormal: design.reduceMotion ? 0 : 120
+    readonly property int durationSlow: design.reduceMotion ? 0 : 140
+    readonly property int durationPage: design.reduceMotion ? 0 : 180
+    readonly property int durationGauge: design.reduceMotion ? 0 : 650
+    readonly property int durationBar: design.reduceMotion ? 0 : 400
 
     // Typography
     readonly property string fontFamily: Kirigami.Theme.defaultFont.family

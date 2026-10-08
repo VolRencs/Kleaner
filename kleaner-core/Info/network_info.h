@@ -7,9 +7,14 @@
 #include <QObject>
 #include <QString>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 class NetworkInfo : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Network)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(QString interface READ interface NOTIFY changed)
     Q_PROPERTY(double rxRate READ rxRate NOTIFY changed)
     Q_PROPERTY(double txRate READ txRate NOTIFY changed)

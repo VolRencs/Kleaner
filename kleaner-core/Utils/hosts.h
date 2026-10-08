@@ -8,9 +8,14 @@
 #include <QStringList>
 #include <QVariantList>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 class Hosts : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Hosts)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(QVariantList entries READ entriesProperty NOTIFY entriesChanged)
 
   public:

@@ -7,11 +7,16 @@
 #include <QFutureWatcher>
 #include <QVariantList>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 #include "Startup/startup_apps.h"
 
 class StartupAppModel : public QAbstractListModel
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(StartupApps)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(QString filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 

@@ -69,7 +69,7 @@ Item {
 
                 const gradient = ctx.createLinearGradient(center - radius, center - radius, center + radius, center + radius);
                 gradient.addColorStop(0, root.accent);
-                gradient.addColorStop(1, Qt.lighter(root.accent, 1.35));
+                gradient.addColorStop(1, Color.lighter(root.accent, 1.35));
 
                 ctx.beginPath();
                 ctx.lineWidth = lineWidth;

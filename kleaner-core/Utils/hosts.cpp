@@ -3,6 +3,8 @@
 
 #include "hosts.h"
 
+#include "Utils/kauth.h"
+
 #include <QFile>
 #include <QFileInfo>
 #include <QMap>
@@ -159,7 +161,7 @@ void Hosts::save()
     KAuth::ExecuteJob *job = action.execute();
     connect(job, &KJob::result, this, [this](KJob *kjob) {
         if (kjob->error() != KJob::NoError) {
-            Q_EMIT saved(false, kjob->errorString());
+            Q_EMIT saved(false, Kauth::errorText(kjob));
         } else {
             reload();
             Q_EMIT saved(true, {});

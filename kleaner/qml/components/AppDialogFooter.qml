@@ -20,6 +20,6 @@ Item {
         anchors.rightMargin: Design.space20
         anchors.bottomMargin: Design.space20
         spacing: Design.space8
-        LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
+        LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     }
 }

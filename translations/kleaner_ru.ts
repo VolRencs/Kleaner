@@ -75,6 +75,14 @@
     </message>
 </context>
 <context>
+    <name>AppInlineMessage</name>
+    <message>
+        <location filename="../kleaner/qml/components/AppInlineMessage.qml" line="116"/>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+</context>
+<context>
     <name>AppSearchField</name>
     <message>
         <location filename="../kleaner/qml/components/AppSearchField.qml" line="64"/>
@@ -85,18 +93,18 @@
 <context>
     <name>ChartCard</name>
     <message>
-        <location filename="../kleaner/qml/components/ChartCard.qml" line="75"/>
+        <location filename="../kleaner/qml/components/ChartCard.qml" line="77"/>
         <source>min %1 · avg %2 · max %3</source>
         <translation>мин %1 · сред %2 · макс %3</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/components/ChartCard.qml" line="226"/>
-        <location filename="../kleaner/qml/components/ChartCard.qml" line="228"/>
+        <location filename="../kleaner/qml/components/ChartCard.qml" line="230"/>
+        <location filename="../kleaner/qml/components/ChartCard.qml" line="232"/>
         <source>-%1s</source>
         <translation>-%1 с</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/components/ChartCard.qml" line="230"/>
+        <location filename="../kleaner/qml/components/ChartCard.qml" line="234"/>
         <source>now</source>
         <translation>сейчас</translation>
     </message>
@@ -104,47 +112,47 @@
 <context>
     <name>Cleaner</name>
     <message>
-        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="55"/>
+        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="58"/>
         <source>Systemd Journal</source>
         <translation>Журнал systemd</translation>
     </message>
     <message>
-        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="135"/>
+        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="136"/>
         <source>Trash</source>
         <translation>Корзина</translation>
     </message>
     <message>
-        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="141"/>
+        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="142"/>
         <source>Application Caches</source>
         <translation>Кэш приложений</translation>
     </message>
     <message>
-        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="165"/>
+        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="166"/>
         <source>Temporary Files</source>
         <translation>Временные файлы</translation>
     </message>
     <message>
-        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="192"/>
+        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="190"/>
         <source>System Logs</source>
         <translation>Системные журналы</translation>
     </message>
     <message>
-        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="210"/>
+        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="206"/>
         <source>Pacman Package Cache</source>
         <translation>Кэш пакетов pacman</translation>
     </message>
     <message>
-        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="221"/>
+        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="214"/>
         <source>Orphan Packages</source>
         <translation>Пакеты-сироты</translation>
     </message>
     <message>
-        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="234"/>
+        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="226"/>
         <source>Crash Reports</source>
         <translation>Отчёты о сбоях</translation>
     </message>
     <message>
-        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="387"/>
+        <location filename="../kleaner-core/Cleaner/cleaner.cpp" line="378"/>
         <source>Failed to remove %1</source>
         <translation>Не удалось удалить %1</translation>
     </message>
@@ -152,94 +160,94 @@
 <context>
     <name>CleanerPage</name>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="49"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="51"/>
         <source>System Cleaner</source>
         <translation>Очистка системы</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="50"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="52"/>
         <source>Remove caches, logs and other files you no longer need</source>
         <translation>Удалите кэш, журналы и другие ненужные файлы</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="81"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="83"/>
         <source>Scanning for removable files…</source>
         <translation>Поиск файлов для удаления…</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="81"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="83"/>
         <source>Ready to clean</source>
         <translation>Готово к очистке</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="90"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="92"/>
         <source>This may take a moment.</source>
         <translation>Это может занять некоторое время.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="91"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="93"/>
         <source>Select the categories you want to remove, then clean them up.</source>
         <translation>Выберите категории для удаления и очистите их.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="122"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="124"/>
         <source>selected</source>
         <translation>выбрано</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="130"/>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="162"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="132"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="164"/>
         <source>Scan</source>
         <translation>Сканировать</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="138"/>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="300"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="140"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="301"/>
         <source>Clean</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="158"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="160"/>
         <source>Nothing to clean yet</source>
         <translation>Пока нечего очищать</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="159"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="161"/>
         <source>Scan the system to look for caches, logs and other removable files.</source>
         <translation>Запустите сканирование, чтобы найти кэши, журналы и другие удаляемые файлы.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="298"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="299"/>
         <source>Clean Selected Files</source>
         <translation>Очистить выбранные файлы</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="299"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="300"/>
         <source>Remove the selected files (%1)? This cannot be undone.</source>
         <translation>Удалить выбранные файлы (%1)? Это действие необратимо.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="238"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="239"/>
         <source>Collapse</source>
         <translation>Свернуть</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="238"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="239"/>
         <source>Expand</source>
         <translation>Развернуть</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="272"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="273"/>
         <source>root</source>
         <translation>root</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="25"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="23"/>
         <source>Cleaning…</source>
         <translation>Очистка…</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="36"/>
+        <location filename="../kleaner/qml/pages/CleanerPage.qml" line="34"/>
         <source>Freed %1 · %2 items removed</source>
         <translation>Освобождено %1 · удалено объектов: %2</translation>
     </message>
@@ -507,9 +515,27 @@
     </message>
 </context>
 <context>
+    <name>KAuth</name>
+    <message>
+        <location filename="../kleaner-core/Utils/kauth.cpp" line="26"/>
+        <source>Authentication was denied</source>
+        <translation>Аутентификация отклонена</translation>
+    </message>
+    <message>
+        <location filename="../kleaner-core/Utils/kauth.cpp" line="28"/>
+        <source>Authentication was cancelled</source>
+        <translation>Аутентификация отменена</translation>
+    </message>
+    <message>
+        <location filename="../kleaner-core/Utils/kauth.cpp" line="30"/>
+        <source>The privileged operation failed</source>
+        <translation>Привилегированная операция не удалась</translation>
+    </message>
+</context>
+<context>
     <name>Main</name>
     <message>
-        <location filename="../kleaner/qml/Main.qml" line="208"/>
+        <location filename="../kleaner/qml/Main.qml" line="204"/>
         <source>System Optimizer</source>
         <translation>Оптимизатор системы</translation>
     </message>
@@ -572,43 +598,43 @@
     </message>
     <message>
         <location filename="../kleaner/qml/Main.qml" line="72"/>
-        <location filename="../kleaner/qml/Main.qml" line="314"/>
+        <location filename="../kleaner/qml/Main.qml" line="310"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
         <location filename="../kleaner/qml/Main.qml" line="73"/>
-        <location filename="../kleaner/qml/Main.qml" line="338"/>
+        <location filename="../kleaner/qml/Main.qml" line="334"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/Main.qml" line="406"/>
+        <location filename="../kleaner/qml/Main.qml" line="402"/>
         <source>Quit Kleaner</source>
         <translation>Выход из Kleaner</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/Main.qml" line="418"/>
+        <location filename="../kleaner/qml/Main.qml" line="414"/>
         <source>Keep Kleaner running in the system tray?</source>
         <translation>Оставить Kleaner в системном трее?</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/Main.qml" line="419"/>
+        <location filename="../kleaner/qml/Main.qml" line="415"/>
         <source>Do you want to quit Kleaner?</source>
         <translation>Завершить Kleaner?</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/Main.qml" line="426"/>
+        <location filename="../kleaner/qml/Main.qml" line="422"/>
         <source>Do not ask again</source>
         <translation>Больше не спрашивать</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/Main.qml" line="433"/>
+        <location filename="../kleaner/qml/Main.qml" line="429"/>
         <source>Quit</source>
         <translation>Выйти</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/Main.qml" line="447"/>
+        <location filename="../kleaner/qml/Main.qml" line="443"/>
         <source>Keep in Tray</source>
         <translation>Оставить в трее</translation>
     </message>
@@ -616,7 +642,7 @@
 <context>
     <name>ProcessModel</name>
     <message>
-        <location filename="../kleaner/models/process_model.cpp" line="296"/>
+        <location filename="../kleaner/models/process_model.cpp" line="297"/>
         <source>Could not terminate process %1. You may not have permission.</source>
         <translation>Не удалось завершить процесс %1. Возможно, недостаточно прав.</translation>
     </message>
@@ -669,23 +695,23 @@
         <translation>Система не сообщила о запущенных процессах.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="346"/>
-        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="353"/>
+        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="355"/>
+        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="362"/>
         <source>%1%</source>
         <translation>%1%</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="390"/>
+        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="399"/>
         <source>Force Kill Process</source>
         <translation>Принудительно завершить процесс</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="392"/>
+        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="401"/>
         <source>Force kill process %1? Unsaved data in the application will be lost.</source>
         <translation>Принудительно завершить процесс %1? Несохранённые данные приложения будут потеряны.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="393"/>
+        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="402"/>
         <source>End process %1? Unsaved data in the application may be lost.</source>
         <translation>Завершить процесс %1? Несохранённые данные приложения могут быть потеряны.</translation>
     </message>
@@ -706,7 +732,7 @@
     </message>
     <message>
         <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="125"/>
-        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="394"/>
+        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="403"/>
         <source>Force Kill</source>
         <translation>Завершить принудительно</translation>
     </message>
@@ -727,8 +753,8 @@
     </message>
     <message>
         <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="114"/>
-        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="390"/>
-        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="394"/>
+        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="399"/>
+        <location filename="../kleaner/qml/pages/ProcessesPage.qml" line="403"/>
         <source>End Process</source>
         <translation>Завершить процесс</translation>
     </message>
@@ -761,72 +787,72 @@
         <translation>Загрузка ЦП</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="53"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="52"/>
         <source>Core %1</source>
         <translation>Ядро %1</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="64"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="63"/>
         <source>CPU Load Average</source>
         <translation>Средняя нагрузка ЦП</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="72"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="68"/>
         <source>1 min</source>
         <translation>1 мин</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="73"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="69"/>
         <source>5 min</source>
         <translation>5 мин</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="74"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="70"/>
         <source>15 min</source>
         <translation>15 мин</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="80"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="76"/>
         <source>Memory and Swap</source>
         <translation>Память и подкачка</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="85"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="81"/>
         <source>Memory</source>
         <translation>Память</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="86"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="82"/>
         <source>Swap</source>
         <translation>Подкачка</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="92"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="88"/>
         <source>Disk Read / Write</source>
         <translation>Чтение / запись диска</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="97"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="93"/>
         <source>Read</source>
         <translation>Чтение</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="98"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="94"/>
         <source>Write</source>
         <translation>Запись</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="104"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="100"/>
         <source>Network Download / Upload</source>
         <translation>Сеть: загрузка / отдача</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="109"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="105"/>
         <source>Download</source>
         <translation>Загрузка</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="110"/>
+        <location filename="../kleaner/qml/pages/ResourcesPage.qml" line="106"/>
         <source>Upload</source>
         <translation>Отдача</translation>
     </message>
@@ -834,8 +860,8 @@
 <context>
     <name>ServiceBackend</name>
     <message>
-        <location filename="../kleaner-core/Services/service_backend.cpp" line="246"/>
-        <location filename="../kleaner-core/Services/service_backend.cpp" line="288"/>
+        <location filename="../kleaner-core/Services/service_backend.cpp" line="238"/>
+        <location filename="../kleaner-core/Services/service_backend.cpp" line="280"/>
         <source>systemd is not available on this system.</source>
         <translation>systemd недоступен в этой системе.</translation>
     </message>
@@ -918,32 +944,32 @@
         <translation>В этой системе не используется systemd.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="263"/>
+        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="267"/>
         <source>Failed</source>
         <translation>Сбой</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="264"/>
+        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="268"/>
         <source>Running</source>
         <translation>Работает</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="265"/>
+        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="269"/>
         <source>Stopped</source>
         <translation>Остановлена</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="301"/>
+        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="305"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="301"/>
+        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="305"/>
         <source>Start</source>
         <translation>Запустить</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="309"/>
+        <location filename="../kleaner/qml/pages/ServicesPage.qml" line="313"/>
         <source>Restart</source>
         <translation>Перезапустить</translation>
     </message>
@@ -951,127 +977,137 @@
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="23"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="21"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="84"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="107"/>
         <source>Window</source>
         <translation>Окно</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="42"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="40"/>
         <source>Page shown on startup</source>
         <translation>Страница при запуске</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="24"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="22"/>
         <source>Configure how Kleaner starts and behaves</source>
         <translation>Настройте запуск и поведение Kleaner</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="35"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="33"/>
         <source>Startup</source>
         <translation>Автозапуск</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="43"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="41"/>
         <source>Which page Kleaner opens when launched.</source>
         <translation>Какую страницу открывать при запуске.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="51"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="49"/>
         <source>Dashboard</source>
         <translation>Обзор</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="55"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="53"/>
         <source>Startup Apps</source>
         <translation>Автозапуск</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="56"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="54"/>
         <source>System Cleaner</source>
         <translation>Очистка системы</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="57"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="55"/>
         <source>Hosts</source>
         <translation>Хосты</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="91"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="79"/>
+        <source>Launch at login</source>
+        <translation>Запускать при входе в систему</translation>
+    </message>
+    <message>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="80"/>
+        <source>Start Kleaner automatically when you log in.</source>
+        <translation>Автоматически запускать Kleaner при входе в систему.</translation>
+    </message>
+    <message>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="114"/>
         <source>When closing the window</source>
         <translation>При закрытии окна</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="93"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="116"/>
         <source>Choose whether Kleaner keeps running in the system tray.</source>
         <translation>Выберите, должен ли Kleaner оставаться в системном трее.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="94"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="117"/>
         <source>Choose whether Kleaner asks, minimizes to the tray or quits.</source>
         <translation>Выберите: Kleaner спрашивает, сворачивается в трей или завершается.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="103"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="126"/>
         <source>Ask every time</source>
         <translation>Спрашивать каждый раз</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="107"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="130"/>
         <source>Keep running in the tray</source>
         <translation>Продолжать работу в трее</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="104"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="127"/>
         <source>Quit</source>
         <translation>Выйти</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="133"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="156"/>
         <source>System tray</source>
         <translation>Системный трей</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="134"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="157"/>
         <source>Show an icon in the system tray while Kleaner is running.</source>
         <translation>Показывать значок в системном трее, пока Kleaner запущен.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="161"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="184"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="168"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="191"/>
         <source>Interface language</source>
         <translation>Язык интерфейса</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="169"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="192"/>
         <source>Changes the language of the application interface.</source>
         <translation>Изменяет язык интерфейса приложения.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="177"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="200"/>
         <source>System language</source>
         <translation>Системный язык</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="54"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="52"/>
         <source>Services</source>
         <translation>Службы</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="53"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="51"/>
         <source>Processes</source>
         <translation>Процессы</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="52"/>
+        <location filename="../kleaner/qml/pages/SettingsPage.qml" line="50"/>
         <source>Resources</source>
         <translation>Ресурсы</translation>
     </message>
@@ -1079,17 +1115,17 @@
 <context>
     <name>StartupAppModel</name>
     <message>
-        <location filename="../kleaner/models/startup_app_model.cpp" line="119"/>
+        <location filename="../kleaner/models/startup_app_model.cpp" line="121"/>
         <source>Could not change the startup entry.</source>
         <translation>Не удалось изменить запись автозапуска.</translation>
     </message>
     <message>
-        <location filename="../kleaner/models/startup_app_model.cpp" line="130"/>
+        <location filename="../kleaner/models/startup_app_model.cpp" line="132"/>
         <source>Could not save the startup entry.</source>
         <translation>Не удалось сохранить запись автозапуска.</translation>
     </message>
     <message>
-        <location filename="../kleaner/models/startup_app_model.cpp" line="140"/>
+        <location filename="../kleaner/models/startup_app_model.cpp" line="142"/>
         <source>Could not create the startup entry.</source>
         <translation>Не удалось создать запись автозапуска.</translation>
     </message>
@@ -1102,117 +1138,117 @@
 <context>
     <name>StartupAppsPage</name>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="40"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="38"/>
         <source>Startup Apps</source>
         <translation>Автозапуск</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="80"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="78"/>
         <source>Search startup apps…</source>
         <translation>Поиск в автозапуске…</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="50"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="48"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="41"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="39"/>
         <source>Applications launched automatically when you log in</source>
         <translation>Приложения, запускаемые автоматически при входе в систему</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="45"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="43"/>
         <source>%1 entries</source>
         <translation>Записей: %1</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="66"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="64"/>
         <source>Refresh</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="96"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="94"/>
         <source>No startup applications found</source>
         <translation>Приложения автозапуска не найдены</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="98"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="96"/>
         <source>Try a different search term.</source>
         <translation>Попробуйте другой поисковый запрос.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="99"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="97"/>
         <source>Applications that launch on login will appear here.</source>
         <translation>Здесь появятся приложения, запускаемые при входе.</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="192"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="194"/>
         <source>System</source>
         <translation>Системное</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="221"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="223"/>
         <source>Edit</source>
         <translation>Изменить</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="237"/>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="266"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="239"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="268"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="264"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="266"/>
         <source>Remove Startup App</source>
         <translation>Удалить приложение из автозапуска</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="265"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="267"/>
         <source>Remove “%1” from the list of startup applications?</source>
         <translation>Удалить «%1» из списка автозапуска?</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="276"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="278"/>
         <source>Add Startup App</source>
         <translation>Добавить автозапуск</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="276"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="278"/>
         <source>Edit Startup App</source>
         <translation>Изменить автозапуск</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="286"/>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="287"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="288"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="289"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="293"/>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="294"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="295"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="296"/>
         <source>Command</source>
         <translation>Команда</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="300"/>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="301"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="302"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="303"/>
         <source>Comment</source>
         <translation>Комментарий</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="307"/>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="308"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="309"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="310"/>
         <source>Icon name</source>
         <translation>Имя значка</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="315"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="317"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="321"/>
+        <location filename="../kleaner/qml/pages/StartupAppsPage.qml" line="323"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>

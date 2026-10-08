@@ -6,9 +6,14 @@
 #include <QObject>
 #include <QString>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 class SystemInfo : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(SystemInformation)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(QString hostname READ hostname CONSTANT)
     Q_PROPERTY(QString distribution READ distribution CONSTANT)
     Q_PROPERTY(QString kernel READ kernel CONSTANT)

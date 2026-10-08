@@ -7,9 +7,14 @@
 #include <QObject>
 #include <QVariantList>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 class CpuInfo : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Cpu)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(int coreCount READ coreCount NOTIFY changed)
     Q_PROPERTY(double usage READ usage NOTIFY changed)
     Q_PROPERTY(QVariantList coreUsages READ coreUsages NOTIFY changed)

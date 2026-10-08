@@ -8,7 +8,7 @@
 
 [![build](https://github.com/VolRencs/Kleaner/actions/workflows/build.yml/badge.svg)](https://github.com/VolRencs/Kleaner/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](LICENSE)
-[![Qt](https://img.shields.io/badge/Qt-6.11%2B-green?style=flat-square)](https://www.qt.io/)
+[![Qt](https://img.shields.io/badge/Qt-6.12%2B-green?style=flat-square)](https://www.qt.io/)
 [![KDE Frameworks](https://img.shields.io/badge/KDE%20Frameworks-6.30%2B-blue?style=flat-square)](https://kde.org/)
 
 [Website](https://volrencs.github.io/Kleaner/) ·
@@ -39,7 +39,9 @@ only.
 - **Services** — systemd units over D-Bus with start/stop/restart, enable and
   disable through polkit, and click-to-sort column headers.
 - **Startup Apps** — XDG autostart entries, including system entries from
-  `/etc/xdg/autostart` (user overrides are created on demand).
+  `/etc/xdg/autostart` (user overrides are created on demand). Kleaner itself
+  can start with the session (*Settings → Launch at login*) and stays hidden in
+  the system tray when the tray is available.
 - **System Cleaner** — trash, application caches, temporary files (`/tmp`),
   system logs, the systemd journal (rotated and vacuumed completely), the pacman
   package cache, orphan packages and crash reports. Selections are remembered

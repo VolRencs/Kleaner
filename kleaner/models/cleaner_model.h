@@ -7,11 +7,16 @@
 #include <QList>
 #include <QSet>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 #include "Cleaner/cleaner.h"
 
 class CleanerModel : public QAbstractListModel
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Cleaner)
+    QML_SINGLETON
+    QML_UNCREATABLE("Provided by the application")
     Q_PROPERTY(bool scanning READ scanning NOTIFY scanningChanged)
     Q_PROPERTY(bool cleaning READ cleaning NOTIFY cleaningChanged)
     Q_PROPERTY(qulonglong checkedSize READ checkedSize NOTIFY checkedSizeChanged)

@@ -34,6 +34,10 @@ Kirigami.Page {
                 statusMessage.showPositive(qsTr("Freed %1 · %2 items removed")
                                            .arg(Format.bytes(Cleaner.lastFreedBytes))
                                            .arg(Cleaner.lastRemovedCount));
+            } else {
+                // Nothing was removed and there is no error: clear the sticky
+                // "Cleaning…" message.
+                statusMessage.dismiss();
             }
         }
     }

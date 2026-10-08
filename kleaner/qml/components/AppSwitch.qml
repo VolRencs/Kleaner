@@ -22,7 +22,7 @@ Controls.Switch {
         border.color: root.hovered ? Design.borderStrong : Design.border
 
         Behavior on color {
-            ColorAnimation { duration: 140 }
+            ColorAnimation { duration: Design.durationSlow }
         }
 
         Rectangle {
@@ -35,12 +35,12 @@ Controls.Switch {
 
             Behavior on x {
                 NumberAnimation {
-                    duration: 140
+                    duration: Design.durationSlow
                     easing.type: Easing.OutCubic
                 }
             }
             Behavior on color {
-                ColorAnimation { duration: 140 }
+                ColorAnimation { duration: Design.durationSlow }
             }
         }
     }

@@ -3,6 +3,8 @@
 
 #include "cleaner.h"
 
+#include "Utils/kauth.h"
+
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
@@ -342,7 +344,7 @@ void Cleaner::clean(const QStringList &paths, const QVariantMap &sizes, const QS
                 state->count += data.value(QStringLiteral("removed")).toInt();
                 state->freed += data.value(QStringLiteral("freed")).toULongLong();
             }
-            finish(kjob->error() != KJob::NoError ? kjob->errorString() : QString());
+            finish(Kauth::errorText(kjob));
         });
         job->start();
     }

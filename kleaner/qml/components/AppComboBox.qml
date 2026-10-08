@@ -5,6 +5,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls as Controls
+import QtQuick.Window
 
 import org.kde.kirigami as Kirigami
 import Kleaner
@@ -17,6 +18,8 @@ Controls.ComboBox {
     leftPadding: 12
     rightPadding: 34
     font.pointSize: Design.baseFontSize
+
+    readonly property real windowHeight: root.Window.window ? root.Window.window.height : 0
 
     // Index of the first entry whose `value` property matches, or -1. Used to
     // drive the current index from settings without breaking on user input.
@@ -119,12 +122,12 @@ Controls.ComboBox {
     popup: Controls.Popup {
         id: popup
 
-        readonly property real popupHeight: Math.min((contentItem ? contentItem.implicitHeight : 0) + padding * 2, root.Window.height - 40)
+        readonly property real popupHeight: Math.min((contentItem ? contentItem.implicitHeight : 0) + padding * 2, root.windowHeight - 40)
         readonly property real sceneY: root.mapToItem(null, 0, 0).y
         // The popup position is relative to the combo box. Flip it above when
         // it would run past the bottom of the window and there is room on top;
         // otherwise clamp the height so it always fits on screen.
-        readonly property bool openAbove: sceneY + root.height + 4 + popupHeight > root.Window.height
+        readonly property bool openAbove: sceneY + root.height + 4 + popupHeight > root.windowHeight
                                           && sceneY - popupHeight - 4 >= 0
 
         y: openAbove ? -popupHeight - 4 : root.height + 4

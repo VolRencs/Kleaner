@@ -26,7 +26,7 @@ Controls.TextField {
                                                       : Design.border
 
         Behavior on border.color {
-            ColorAnimation { duration: 120 }
+            ColorAnimation { duration: Design.durationNormal }
         }
     }
 }

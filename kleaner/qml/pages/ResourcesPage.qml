@@ -24,7 +24,7 @@ Kirigami.ScrollablePage {
             return Design.accent;
         }
         const hue = (Design.accent.hsvHue + index / count) % 1.0;
-        return Qt.hsva(hue, Design.accent.hsvSaturation, Design.accent.hsvValue, 1.0);
+        return Color.hsva(hue, Design.accent.hsvSaturation, Design.accent.hsvValue, 1.0);
     }
 
     ColumnLayout {
