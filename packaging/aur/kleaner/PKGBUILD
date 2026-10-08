@@ -23,7 +23,7 @@ optdepends=('breeze-icons: icon theme for the KDE desktop')
 conflicts=('kleaner-git')
 options=('!lto')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/VolRencs/Kleaner/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('SKIP')
+sha256sums=('a5f3c92a025101a19f6387574e926fc7ebfe53833d091d43f92e6f89fe8b6ae9')
 
 build() {
     cmake -S "Kleaner-$pkgver" -B build -G Ninja \
